@@ -85,42 +85,44 @@ def process_script_for_food(script_path, food_names):
         print(f"Error processing script: {e}")
         return Counter(), ""
 
-def extract_food_contexts(script_text, food_names, food_mentions, context_words=5):
-    """
-    Extract context for food mentions in the script.
-    """
-    food_contexts = {}
+# def extract_food_contexts(script_text, food_names, food_mentions, context_words=5):
+#     """
+#     Extract context for food mentions in the script.
+#     """
+
+#     # Dictionary to store food names (key) and its surrounding context (values)
+#     food_contexts = {}
     
-    try:
-        # Split into words
-        words = script_text.split()
+#     try:
+#         # Split split into words
+#         words = script_text.split()
         
-        # Find contexts for each food
-        for food in food_names:
-            if food not in food_mentions or food_mentions[food] == 0:
-                continue
+#         # Find contexts for each food
+#         for food in food_names:
+#             if food not in food_mentions or food_mentions[food] == 0:
+#                 continue
                 
-            food_lower = food.lower()
-            food_words = food_lower.split()
-            food_word_count = len(food_words)
-            food_contexts[food] = []
+#             food_lower = food.lower()
+#             food_words = food_lower.split()
+#             food_word_count = len(food_words)
+#             food_contexts[food] = [] # Store all food context for the food
             
-            # Search for the food name in the script
-            for i in range(len(words) - food_word_count + 1):
-                potential_food = ' '.join(words[i:i+food_word_count])
+#             # Search for the food name in the script
+#             for i in range(len(words) - food_word_count + 1):
+#                 potential_food = ' '.join(words[i:i+food_word_count])
                 
-                if potential_food == food_lower:
-                    # Extract context
-                    start = max(0, i - context_words)
-                    end = min(len(words), i + food_word_count + context_words)
-                    context = ' '.join(words[start:end])
-                    food_contexts[food].append(context)
+#                 if potential_food == food_lower:
+#                     # Extract context
+#                     start = max(0, i - context_words)
+#                     end = min(len(words), i + food_word_count + context_words)
+#                     context = ' '.join(words[start:end])
+#                     food_contexts[food].append(context)
         
-        return food_contexts
+#         return food_contexts
     
-    except Exception as e:
-        print(f"Error extracting contexts: {e}")
-        return {}
+#     except Exception as e:
+#         print(f"Error extracting contexts: {e}")
+#         return {}
 
 def get_movie_foods(movie_title, script_folder, food_database_path):
     """
