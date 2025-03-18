@@ -1,0 +1,94 @@
+apple
+orange
+banana
+strawberry
+grape
+watermelon
+tomato
+potato
+carrot
+broccoli
+spinach
+lettuce
+rice
+pasta
+bread
+cereal
+sandwich
+pizza
+burger
+hotdog
+taco
+burrito
+sushi
+cake
+pie
+cookie
+chocolate
+cheese
+butter
+egg
+milk
+coffee
+tea
+juice
+water
+soda
+chicken
+beef
+pork
+fish
+bacon
+ham
+turkey
+steak
+salmon
+shrimp
+lobster
+crab
+french fries
+sweet potato
+green beans
+cauliflower
+ice cream
+apple pie
+banana bread
+fruit salad
+chicken soup
+beef stew
+pork chop
+chicken wing
+chicken breast
+turkey sandwich
+ham sandwich
+tuna sandwich
+grilled cheese
+mac cheese
+spaghetti sauce
+tomato soup
+potato salad
+caesar salad
+garden salad
+potato chips
+corn chips
+tortilla chips
+peanut butter
+olive oil
+hot sauce
+soy sauce
+salad dressing
+orange juice
+apple juice
+chocolate milk
+iced tea
+grilled chicken
+fried chicken
+roast beef
+mashed potatoes
+baked potato
+hamburger
+cheeseburger
+club sandwich
+tuna salad
+egg salad
+pasta salad

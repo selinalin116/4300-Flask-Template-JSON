@@ -1,0 +1,391 @@
+FOOD MENTIONS IN SCRIPTS
+--------------------------------------------------
+
+'bloody mary' appears 16 times in total
+Found in 12 scripts:
+  - Ocean's-Twelve.txt: 1 occurrences
+  - Lost-in-Translation.txt: 1 occurrences
+  - Tin-Men.txt: 2 occurrences
+  - Rushmore.txt: 1 occurrences
+  - Fear-and-Loathing-in-Las-Vegas.txt: 1 occurrences
+  - Ocean's-Eleven.txt: 1 occurrences
+  - Deadpoo.txt: 1 occurrences
+  - Freddy-vs.-Jason.txt: 3 occurrences
+  - Doors,-The.txt: 1 occurrences
+  - Anonymous.txt: 1 occurrences
+  - Fletc.txt: 1 occurrences
+  - Withnail-and-I.txt: 2 occurrences
+Example contexts (up to 5):
+  [1] "...train day 11 reuben is handed a bloody mary by the porter who then continues on..."
+  [2] "...bright light she squints and drinks a bloody mary bob is distant she looks across at..."
+  [3] "...the second to waiter get me a bloody mary waiter to sam anything other than the..."
+  [4] "...waiter to sam anything other than the bloody mary tilley to sam what number is sally..."
+  [5] "...he is cleaning it and drinking a bloody mary his secretary buzzes him on the speakerphone..."
+
+'apple pie' appears 34 times in total
+Found in 24 scripts:
+  - August-Osage-County.txt: 2 occurrences
+  - American-Pie.txt: 2 occurrences
+  - Cider-House-Rules,-The.txt: 2 occurrences
+  - Rocky-Horror-Picture-Show,-The.txt: 1 occurrences
+  - Inglourious-Basterds.txt: 1 occurrences
+  - Rambling-Rose.txt: 1 occurrences
+  - Heathers.txt: 1 occurrences
+  - True-Romance.txt: 1 occurrences
+  - Cast-Away.txt: 1 occurrences
+  - Hesher.txt: 1 occurrences
+  - Bottle-Rocke.txt: 1 occurrences
+  - Birds,-The.txt: 2 occurrences
+  - Basquia.txt: 2 occurrences
+  - Serial-Mo.txt: 1 occurrences
+  - Sting,-The.txt: 1 occurrences
+  - First-Cow.txt: 1 occurrences
+  - Majestic,-The-(The-Bijou).txt: 1 occurrences
+  - Catch-Me-If-You-Can.txt: 1 occurrences
+  - Meet-John-Doe.txt: 2 occurrences
+  - From-Dusk-Till-Dawn.txt: 3 occurrences
+  - Big-Fis.txt: 1 occurrences
+  - La-La-Land.txt: 2 occurrences
+  - Petulia.txt: 1 occurrences
+  - Taxi-Driver.txt: 2 occurrences
+Example contexts (up to 5):
+  [1] "...disapprove johnna cuts into a freshly baked apple pie in the kitchen barbara okay what about..."
+  [2] "...indian but she makes the best goddamn apple pie i ever ate johnna smiles nods to..."
+  [3] "...jim shrugs embarrassed oz feels like warm apple pie dude jim apple pie then mcdonald s..."
+  [4] "...feels like warm apple pie dude jim apple pie then mcdonald s or homemade they just..."
+  [5] "...dining room table the remnants of an apple pie in front of them homer is still..."
+
+'chicken soup' appears 12 times in total
+Found in 9 scripts:
+  - Lock,-Stock-and-Two-Smoking-Barrels.txt: 1 occurrences
+  - Beach,-The.txt: 1 occurrences
+  - It's-Complicated.txt: 1 occurrences
+  - Omega-Man.txt: 1 occurrences
+  - Being-John-Malkovic.txt: 2 occurrences
+  - Moneyba.txt: 2 occurrences
+  - Jacob's-Ladder.txt: 1 occurrences
+  - Vanilla-Sky.txt: 2 occurrences
+  - Frozen.txt: 1 occurrences
+Example contexts (up to 5):
+  [1] "...mate tom listen it s all completely chicken soup nick it s what tom kosher as..."
+  [2] "...burger or get some massage and green chicken soup you could be anywhere in the world..."
+  [3] "...in their robes watching oprah and eating chicken soup on trays jake reaches for the salt..."
+  [4] "...s gimme some more of that great chicken soup ugh lisa laughs goes to cabinet for..."
+  [5] "...agent into phone teresa get me a chicken soup to malkovich and maxine chicken soup maxine..."
+
+'ice cream' appears 556 times in total
+Found in 242 scripts:
+  - Big-Eyes.txt: 2 occurrences
+  - Cinema-Paradiso.txt: 3 occurrences
+  - Inventing-the-Abbotts.txt: 7 occurrences
+  - Pretty-Woman-(final-script).txt: 1 occurrences
+  - Gamer.txt: 1 occurrences
+  - Ed-TV.txt: 2 occurrences
+  - 17-Again.txt: 4 occurrences
+  - Real-Genius.txt: 1 occurrences
+  - This-Boy's-Life.txt: 2 occurrences
+  - Speed-Racer.txt: 1 occurrences
+  - A-Good-Person.txt: 1 occurrences
+  - American-Fiction.txt: 2 occurrences
+  - House-of-1000-Corpses.txt: 1 occurrences
+  - Nickel-Boys.txt: 5 occurrences
+  - Gone-Baby-Gone.txt: 1 occurrences
+  - My-Gir.txt: 2 occurrences
+  - Dogma.txt: 1 occurrences
+  - Changeling.txt: 1 occurrences
+  - Avengers-Endgame.txt: 1 occurrences
+  - Poor-Things.txt: 2 occurrences
+  - Day-the-Earth-Stood-Still,-The.txt: 1 occurrences
+  - Collateral-Damage.txt: 4 occurrences
+  - Never-Been-Kissed.txt: 1 occurrences
+  - Dances-with-Wolves.txt: 1 occurrences
+  - Man-On-Fire.txt: 2 occurrences
+  - Men-Who-Stare-at-Goats,-The.txt: 2 occurrences
+  - Little-Nicky.txt: 1 occurrences
+  - Nex.txt: 3 occurrences
+  - Punch-Drunk-Love.txt: 1 occurrences
+  - Fast-Times-at-Ridgemont-Hig.txt: 4 occurrences
+  - Freaked.txt: 3 occurrences
+  - Notting-Hi.txt: 2 occurrences
+  - Jaws.txt: 3 occurrences
+  - Life.txt: 5 occurrences
+  - Heavenly-Creatures.txt: 1 occurrences
+  - After-School-Specia.txt: 3 occurrences
+  - Mystery-Men.txt: 2 occurrences
+  - Mud.txt: 1 occurrences
+  - At-First-Sig.txt: 1 occurrences
+  - Rush-Hour.txt: 5 occurrences
+  - Witness.txt: 1 occurrences
+  - Bruce-Almighty.txt: 1 occurrences
+  - Friday-the-13.txt: 1 occurrences
+  - Sweet-Smell-of-Success.txt: 1 occurrences
+  - Milk.txt: 1 occurrences
+  - Antitrus.txt: 1 occurrences
+  - Despicable-Me-2.txt: 9 occurrences
+  - Toy-Story.txt: 1 occurrences
+  - Ricky-Stanicky.txt: 1 occurrences
+  - Roo.txt: 6 occurrences
+  - Last-Boy-Scout,-The.txt: 3 occurrences
+  - Peggy-Sue-Got-Married.txt: 1 occurrences
+  - Out-of-Sig.txt: 1 occurrences
+  - It's-a-Wonderful-Life.txt: 3 occurrences
+  - Substance,-The.txt: 1 occurrences
+  - Next-Three-Days,-The.txt: 2 occurrences
+  - Days-of-Heaven.txt: 3 occurrences
+  - Pleasantville.txt: 5 occurrences
+  - Ali.txt: 2 occurrences
+  - Blind-Side,-The.txt: 1 occurrences
+  - Trainspotting.txt: 2 occurrences
+  - Town,-The.txt: 2 occurrences
+  - Big.txt: 2 occurrences
+  - Inglourious-Basterds.txt: 1 occurrences
+  - Cruel-Intentions.txt: 2 occurrences
+  - Scarface.txt: 5 occurrences
+  - Rise-of-the-Planet-of-the-Apes.txt: 3 occurrences
+  - Forrest-Gump.txt: 7 occurrences
+  - Bad-Santa.txt: 1 occurrences
+  - Storytelling.txt: 2 occurrences
+  - Leprechaun-2.txt: 1 occurrences
+  - American-Beauty.txt: 1 occurrences
+  - Devil's-Advocate.txt: 1 occurrences
+  - John-Q.txt: 1 occurrences
+  - When-a-Stranger-Calls.txt: 1 occurrences
+  - Adventures-of-Buckaroo-Banzai-Across-the-Eighth-Dimension,-The.txt: 1 occurrences
+  - Rambling-Rose.txt: 3 occurrences
+  - Gangs-of-New-York.txt: 1 occurrences
+  - Ghostbusters-2.txt: 1 occurrences
+  - Pretty-Woman.txt: 1 occurrences
+  - Imaginarium-of-Doctor-Parnassus,-The.txt: 1 occurrences
+  - Frozen-(Disney).txt: 1 occurrences
+  - Descendants,-The.txt: 2 occurrences
+  - Battle-of-Shaker-Heights,-The.txt: 1 occurrences
+  - Flora-and-Son.txt: 1 occurrences
+  - I.txt: 1 occurrences
+  - It's-Complicated.txt: 9 occurrences
+  - Fantastic-Mr-Fox.txt: 1 occurrences
+  - Iron-Lady,-The.txt: 5 occurrences
+  - Zero-Dark-Thirty.txt: 3 occurrences
+  - Double-Indemnity.txt: 3 occurrences
+  - Monkeybone.txt: 1 occurrences
+  - Above-the-Law.txt: 1 occurrences
+  - Slumdog-Millionaire.txt: 1 occurrences
+  - Sunshine-Cleaning.txt: 5 occurrences
+  - Case-39.txt: 3 occurrences
+  - Cars-2.txt: 5 occurrences
+  - Enoug.txt: 3 occurrences
+  - Anna-Karenina.txt: 1 occurrences
+  - American,-The.txt: 4 occurrences
+  - Perks-of-Being-a-Wallflower,-The.txt: 2 occurrences
+  - Zerophilia.txt: 1 occurrences
+  - Legion.txt: 11 occurrences
+  - Wall-Street-Money-Never-Sleeps.txt: 1 occurrences
+  - Rambo-First-Blood-II-The-Mission.txt: 1 occurrences
+  - Air.txt: 1 occurrences
+  - Hall-Pass.txt: 4 occurrences
+  - They.txt: 1 occurrences
+  - Heathers.txt: 1 occurrences
+  - Game,-The.txt: 1 occurrences
+  - True-Romance.txt: 2 occurrences
+  - Holdovers,-The.txt: 3 occurrences
+  - Something's-Gotta-Give.txt: 2 occurrences
+  - Saving-Mr.-Banks.txt: 3 occurrences
+  - Paria.txt: 1 occurrences
+  - Leaving-Las-Vegas.txt: 1 occurrences
+  - Supergir.txt: 1 occurrences
+  - Up.txt: 3 occurrences
+  - Hesher.txt: 7 occurrences
+  - South-Park.txt: 4 occurrences
+  - Here-Comes-Peter-Cottontai.txt: 2 occurrences
+  - Stepmo.txt: 1 occurrences
+  - Field-of-Dreams.txt: 1 occurrences
+  - Sugar-and-Spice.txt: 3 occurrences
+  - Sugar.txt: 1 occurrences
+  - Arbitrage.txt: 1 occurrences
+  - Starship-Troopers.txt: 1 occurrences
+  - Die-Hard.txt: 1 occurrences
+  - Bad-Dreams.txt: 2 occurrences
+  - Moneyba.txt: 2 occurrences
+  - I-am-Sa.txt: 5 occurrences
+  - Semi-Pro.txt: 2 occurrences
+  - Swingers.txt: 2 occurrences
+  - Crazy,-Stupid,-Love.txt: 8 occurrences
+  - Drag-Me-to-He.txt: 2 occurrences
+  - Tremors.txt: 1 occurrences
+  - TMNT.txt: 1 occurrences
+  - Batman-2.txt: 1 occurrences
+  - Battle-Los-Angeles.txt: 2 occurrences
+  - Remember-Me.txt: 1 occurrences
+  - Birds,-The.txt: 1 occurrences
+  - Shipping-News,-The.txt: 2 occurrences
+  - Bridesmaids.txt: 1 occurrences
+  - American-Milkshake.txt: 1 occurrences
+  - Final-Destination-2.txt: 1 occurrences
+  - Funny-People.txt: 4 occurrences
+  - Sister-Ac.txt: 5 occurrences
+  - Megamind.txt: 1 occurrences
+  - Wonder-Woman.txt: 5 occurrences
+  - Get-Shorty.txt: 2 occurrences
+  - Fruitvale-Station.txt: 1 occurrences
+  - Six-Degrees-of-Separation.txt: 1 occurrences
+  - Ted.txt: 4 occurrences
+  - Lincoln-Lawyer,-The.txt: 3 occurrences
+  - Body-Hea.txt: 1 occurrences
+  - Secret-Life-of-Walter-Mitty,-The.txt: 1 occurrences
+  - Autumn-in-New-York.txt: 2 occurrences
+  - Believer,-The.txt: 1 occurrences
+  - Memory.txt: 1 occurrences
+  - Margot-at-the-Wedding.txt: 1 occurrences
+  - Kids-Are-All-Right,-The.txt: 1 occurrences
+  - Prophecy,-The.txt: 1 occurrences
+  - Big-Sick,-The.txt: 4 occurrences
+  - True-Lies.txt: 1 occurrences
+  - Eastern-Promises.txt: 1 occurrences
+  - Asteroid-City.txt: 3 occurrences
+  - Smokin'-Aces.txt: 3 occurrences
+  - Blink-Twice.txt: 3 occurrences
+  - Rust-and-Bone.txt: 1 occurrences
+  - Zootopia.txt: 5 occurrences
+  - Groundhog-Day.txt: 1 occurrences
+  - 25th-Hour.txt: 1 occurrences
+  - Sweet-Hereafter,-The.txt: 3 occurrences
+  - Django-Unchained.txt: 1 occurrences
+  - Coraline.txt: 3 occurrences
+  - Chinatown.txt: 2 occurrences
+  - Hanna.txt: 2 occurrences
+  - Amityville-Asylum,-The.txt: 3 occurrences
+  - No-Hard-Feelings.txt: 5 occurrences
+  - Sling-Blade.txt: 1 occurrences
+  - Moonrise-Kingdo.txt: 1 occurrences
+  - Grabbers.txt: 1 occurrences
+  - Austin-Powers---The-Spy-Who-Shagged-Me.txt: 9 occurrences
+  - Killer,-The.txt: 1 occurrences
+  - Men-in-Black-3.txt: 2 occurrences
+  - Blast-from-the-Past,-The.txt: 1 occurrences
+  - Erin-Brockovic.txt: 1 occurrences
+  - S.-Darko.txt: 2 occurrences
+  - Catch-Me-If-You-Can.txt: 2 occurrences
+  - Bonnie-and-Clyde.txt: 8 occurrences
+  - Meet-John-Doe.txt: 2 occurrences
+  - Sandlot-Kids,-The.txt: 1 occurrences
+  - Assignment,-The.txt: 1 occurrences
+  - Blow.txt: 1 occurrences
+  - Strangers-on-a-Train.txt: 1 occurrences
+  - Teenage-Mutant-Ninja-Turtles-Mutant-Mayhe.txt: 21 occurrences
+  - Henry's-Crime.txt: 2 occurrences
+  - Wall-Stree.txt: 1 occurrences
+  - Battle-of-Algiers,-The.txt: 5 occurrences
+  - Mr-Brooks.txt: 2 occurrences
+  - Clerks.txt: 1 occurrences
+  - 500-Days-of-Summer.txt: 2 occurrences
+  - Help,-The.txt: 2 occurrences
+  - Looper.txt: 2 occurrences
+  - Blue-Velve.txt: 1 occurrences
+  - Win-Win.txt: 1 occurrences
+  - Happy-Birthday,-Wanda-June.txt: 3 occurrences
+  - Petulia.txt: 3 occurrences
+  - Shining,-The.txt: 5 occurrences
+  - Oblivion.txt: 1 occurrences
+  - Pulp-Fiction.txt: 1 occurrences
+  - Logan.txt: 2 occurrences
+  - Airplane.txt: 2 occurrences
+  - Nines,-The.txt: 1 occurrences
+  - Stuntman,-The.txt: 9 occurrences
+  - Arthur.txt: 2 occurrences
+  - Amelia.txt: 1 occurrences
+  - Awakenings.txt: 1 occurrences
+  - Terminator.txt: 1 occurrences
+  - Man-on-the-Moon.txt: 1 occurrences
+  - Jurassic-Park.txt: 2 occurrences
+  - Wrestler,-The.txt: 2 occurrences
+  - Capote.txt: 1 occurrences
+  - Color-Purple,-The.txt: 1 occurrences
+  - Traffic.txt: 2 occurrences
+  - Ghost-World.txt: 5 occurrences
+  - JFK.txt: 1 occurrences
+  - Game-6.txt: 2 occurrences
+  - Malcolm-X.txt: 3 occurrences
+  - Single-White-Female.txt: 3 occurrences
+  - Under-Fire.txt: 2 occurrences
+  - Do-The-Right-Thing.txt: 6 occurrences
+  - Invention-of-Lying,-The.txt: 2 occurrences
+  - Silver-Bulle.txt: 3 occurrences
+  - Catwoman.txt: 4 occurrences
+  - Knocked-Up.txt: 1 occurrences
+  - Charade.txt: 2 occurrences
+  - Dog-Day-Afternoon.txt: 4 occurrences
+  - Barbie.txt: 1 occurrences
+  - Hitchcock.txt: 2 occurrences
+  - Suspect-Zero.txt: 1 occurrences
+  - All-About-Steve.txt: 1 occurrences
+Example contexts (up to 5):
+  [1] "...alone time he winks is that the ice cream truck why don t you go get..."
+  [2] "...ah jane s grand she s eating ice cream she has new shoes she has a..."
+  [3] "...there is a greatdin the boy selling ice cream soda pop and candy shouts and runs..."
+  [4] "...voices and laughter of the children smoke ice cream soft drinks the usher has opened the..."
+  [5] "...open the kids blow up the empty ice cream sacks and pop them next to his..."
+
+'french fries' appears 84 times in total
+Found in 53 scripts:
+  - Warrior.txt: 1 occurrences
+  - Take-Shelter.txt: 1 occurrences
+  - Real-Genius.txt: 1 occurrences
+  - American-Graffiti.txt: 2 occurrences
+  - Bamboozled.txt: 1 occurrences
+  - Martha-Marcy-May-Marlene.txt: 2 occurrences
+  - Platoon.txt: 1 occurrences
+  - 12-and-Holding.txt: 1 occurrences
+  - Hard-to-Ki.txt: 1 occurrences
+  - Pleasantville.txt: 2 occurrences
+  - American-Psycho.txt: 1 occurrences
+  - Foxcatcher.txt: 1 occurrences
+  - Bad-Teacher.txt: 1 occurrences
+  - Natural-Born-Killers.txt: 1 occurrences
+  - Monkeybone.txt: 1 occurrences
+  - Getaway,-The.txt: 1 occurrences
+  - Date-Nig.txt: 1 occurrences
+  - Fear-and-Loathing-in-Las-Vegas.txt: 1 occurrences
+  - True-Romance.txt: 2 occurrences
+  - Paria.txt: 1 occurrences
+  - Even-Cowgirls-Get-the-Blues.txt: 1 occurrences
+  - Diner.txt: 3 occurrences
+  - Station-Wes.txt: 1 occurrences
+  - Bottle-Rocke.txt: 1 occurrences
+  - I-am-Sa.txt: 1 occurrences
+  - Jacob's-Ladder.txt: 1 occurrences
+  - Remember-Me.txt: 1 occurrences
+  - Basquia.txt: 1 occurrences
+  - Shipping-News,-The.txt: 1 occurrences
+  - Custody.txt: 1 occurrences
+  - Reservoir-Dogs.txt: 1 occurrences
+  - L.A.-Confidentia.txt: 1 occurrences
+  - Syriana.txt: 2 occurrences
+  - Margot-at-the-Wedding.txt: 1 occurrences
+  - Boyhood.txt: 2 occurrences
+  - Sling-Blade.txt: 7 occurrences
+  - Catch-Me-If-You-Can.txt: 2 occurrences
+  - Bonnie-and-Clyde.txt: 2 occurrences
+  - Strangers-on-a-Train.txt: 1 occurrences
+  - Joker.txt: 3 occurrences
+  - Moon.txt: 2 occurrences
+  - Spare-Me.txt: 1 occurrences
+  - Petulia.txt: 2 occurrences
+  - Hea.txt: 1 occurrences
+  - Shining,-The.txt: 1 occurrences
+  - Pulp-Fiction.txt: 2 occurrences
+  - Man-on-the-Moon.txt: 1 occurrences
+  - Taxi-Driver.txt: 1 occurrences
+  - Capote.txt: 1 occurrences
+  - Harold-and-Kumar-Go-to-White-Castle.txt: 2 occurrences
+  - Breaking-Away.txt: 10 occurrences
+  - Runaway-Bride.txt: 1 occurrences
+  - Four-Rooms.txt: 1 occurrences
+Example contexts (up to 5):
+  [1] "...on the table paddy cont d off french fries and another thing you don t eat..."
+  [2] "...metal bins filled with fried oysters and french fries curtis gets in line with his family..."
+  [3] "...sharing a milkshake and feeding each other french fries mitch i don t think i m..."
+  [4] "...laurie pretends to be interested in her french fries but is obviously expecting something big steve..."
+  [5] "...a mexicali chili barb two orders of french fries debbie and cherry cokes the intercom clicks..."
+
+--------------------------------------------------
+Total phrases found: 5
+Total phrases searched: 5
