@@ -1,6 +1,7 @@
 import os
 import re
 import string
+import pandas as pd
 from collections import Counter
 
 def load_food_database(file_path):
@@ -10,7 +11,7 @@ def load_food_database(file_path):
     """
     try:
         with open(file_path, 'r', encoding='utf-8') as file:
-            food_names = [line.strip() for line in file.readlines()]
+            food_names = [line.strip().replace(",","") for line in file.readlines()]
         return food_names
     except Exception as e:
         print(f"Error loading food database: {e}")
