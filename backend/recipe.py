@@ -22,7 +22,7 @@ vectorizer = TfidfVectorizer(stop_words='english', max_df=0.7, min_df=5)
 recipe_tfidf = vectorizer.fit_transform(recipe_descriptions)
 
 k = 40  # recipesvd has a graph that explains this choice
-u, s, vt = svds(recipe_tfidf, k=k)
+u, s, rec_vt = svds(recipe_tfidf, k=k)
 recipe_vectors = normalize(u, axis=1)
 
 def clean_recipe_data(recipe):
