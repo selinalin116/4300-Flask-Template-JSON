@@ -126,7 +126,6 @@ from recipe import recipe_vectors, recipes, clean_recipe_data
 import os
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
-import movie_preprocessing
 import helperfunctions
 
 os.environ['ROOT_PATH'] = os.path.abspath(os.path.join("..",os.curdir))
@@ -183,10 +182,10 @@ def find_foods():
     rec_svd_results = [recipes[i] for i in rec_top_indices]
     recipe_results = [clean_recipe_data(recipe) for recipe in rec_svd_results]
 
-    result = movie_preprocessing.get_movie_foods(movie_title, SCRIPT_FOLDER, FOOD_DATABASE)
+    # result = movie_preprocessing.get_movie_foods(movie_title, SCRIPT_FOLDER, FOOD_DATABASE)
     return jsonify({
         "cocktails": cleaned_results,
-        "foods": result["foods"],
+        # "foods": result["foods"],
         "recipes": recipe_results
     })
 
