@@ -56,6 +56,7 @@ from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 import movie_preprocessing
 import helperfunctions
+import helperfunctions
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
 
@@ -79,6 +80,7 @@ def find_foods():
     if not movie_title:
         return jsonify({"error": "Please enter a movie title"})
     
+    script = helperfunctions.get_movie_script(movie_title, SCRIPT_FOLDER)
     script = helperfunctions.get_movie_script(movie_title, SCRIPT_FOLDER)
     if not script:
         return jsonify({"error": "Script not found"})
@@ -104,6 +106,7 @@ def find_foods():
     result = movie_preprocessing.get_movie_foods(movie_title, SCRIPT_FOLDER, FOOD_DATABASE)
     return jsonify({
         "cocktails": cleaned_results,
+        "foods": result["foods"]
         "foods": result["foods"]
     })
 
