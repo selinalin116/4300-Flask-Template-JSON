@@ -175,16 +175,16 @@ def find_foods():
     # print(cleaned_results)
 
     # Recipe SVD
-    rec_similarities = script_projected.dot(recipe_vectors.T)
-    rec_top_indices = np.argsort(-rec_similarities[0])[:3]
-    rec_svd_results = [recipes[i] for i in rec_top_indices]
-    recipe_results = [clean_recipe_data(recipe) for recipe in rec_svd_results]
+    # rec_similarities = script_projected.dot(recipe_vectors.T)
+    # rec_top_indices = np.argsort(-rec_similarities[0])[:3]
+    # rec_svd_results = [recipes[i] for i in rec_top_indices]
+    # recipe_results = [clean_recipe_data(recipe) for recipe in rec_svd_results]
 
     result = movie_preprocessing.get_movie_foods(movie_title, SCRIPT_FOLDER, FOOD_DATABASE)
     return jsonify({
         "cocktails": cleaned_results,
         "foods": result["foods"],
-        "recipes": recipe_results
+        # "recipes": recipe_results
     })
 
 # if __name__ == '__main__':
