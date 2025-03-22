@@ -134,7 +134,9 @@ os.environ['ROOT_PATH'] = os.path.abspath(os.path.join("..",os.curdir))
 current_directory = os.path.dirname(os.path.abspath(__file__))
 
 SCRIPT_FOLDER = os.path.join(current_directory, 'data/scripts')  
+# FOOD_DATABASE = os.path.join(current_directory, 'data/recipes_names.csv')  
 FOOD_DATABASE = os.path.join(current_directory, 'database.txt')  
+
 
 app = Flask(__name__)
 CORS(app)

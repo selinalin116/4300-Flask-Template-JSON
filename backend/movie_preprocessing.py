@@ -14,6 +14,11 @@ def load_food_database(file_path):
         with open(file_path, 'r', encoding='utf-8') as file:
             food_names = [line.strip().replace(",","") for line in file.readlines()]
         return food_names
+        
+        # Uses recipes_names.csv, but veryyy slow
+        # names = pd.read_csv("data/recipes_names.csv")
+        # food_names = [name for name in names['name']]
+        # return food_names
     except Exception as e:
         print(f"Error loading food database: {e}")
         return []

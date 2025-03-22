@@ -4,6 +4,7 @@ from sklearn.preprocessing import normalize
 import pandas as pd
 import json
 import zipfile
+import ast
 
 zip_filename = 'data/recipes_cleaned.zip'
 file_inside_zip = 'recipes_cleaned.json'
@@ -28,5 +29,5 @@ def clean_recipe_data(recipe):
     return {
         'name': recipe['name'],
         'description': recipe['description'],
-        'ingredients': recipe['ingredients']
+        'ingredients': ast.literal_eval(recipe['ingredients'])
     }
