@@ -50,6 +50,7 @@ def fetch_cocktails():
     return cocktails
 
 cocktails = fetch_cocktails()
+print(cocktails)
 
 cocktail_texts = [
     " ".join([

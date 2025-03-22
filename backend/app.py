@@ -50,7 +50,7 @@
 import requests
 from cocktail import *
 import requests
-from cocktail import *
+from recipe import *
 import os
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
@@ -89,6 +89,7 @@ def find_foods():
     script_projected = script_tfidf.dot(vt.T)
     script_projected = normalize(script_projected)
     
+    # Cocktail SVD
     similarities = script_projected.dot(cocktail_vectors.T)
     top_indices = np.argsort(-similarities[0])[:3]
     svd_results = [cocktails[i] for i in top_indices]
@@ -103,6 +104,12 @@ def find_foods():
     #     return jsonify([cocktails[i] for i, _ in top_jaccard])
     cleaned_results = [clean_cocktail_data(c) for c in svd_results]
     # print(cleaned_results)
+
+    # Recipe SVD
+    similarities = script_projected.dot(recipe_vectors.T)
+    top_indices = np.argsort(-similarities[0])[:3]
+    svd_results = [recipes[i] for i in top_indices]
+
     result = movie_preprocessing.get_movie_foods(movie_title, SCRIPT_FOLDER, FOOD_DATABASE)
     return jsonify({
         "cocktails": cleaned_results,
