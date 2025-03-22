@@ -47,13 +47,13 @@
 #     app.run(debug=True,host="0.0.0.0",port=5000)
 # app.py
 
-
 import requests
 from cocktail import *
 import os
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 import movie_preprocessing
+import helperfunctions
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
 
@@ -76,7 +76,7 @@ def find_foods():
     if not movie_title:
         return jsonify({"error": "Please enter a movie title"})
     
-    script = get_movie_script(movie_title, SCRIPT_FOLDER)
+    script = helperfunctions.find_script_file(movie_title, SCRIPT_FOLDER)
     if not script:
         return jsonify({"error": "Script not found"})
     
