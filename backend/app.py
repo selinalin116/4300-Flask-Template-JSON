@@ -56,7 +56,8 @@ from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 import movie_preprocessing
 import helperfunctions
-import helperfunctions
+
+os.environ['ROOT_PATH'] = os.path.abspath(os.path.join("..",os.curdir))
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
 
@@ -65,8 +66,6 @@ FOOD_DATABASE = os.path.join(current_directory, 'database.txt')
 
 app = Flask(__name__)
 CORS(app)
-
-
 
 @app.route("/")
 def home():
@@ -116,5 +115,8 @@ def find_foods():
         "foods": result["foods"]
     })
 
-if __name__ == '__main__':
-    app.run(debug=True, host="0.0.0.0", port=5000)
+# if __name__ == '__main__':
+#     app.run(debug=True, host="0.0.0.0", port=5000)
+
+if 'DB_NAME' not in os.environ:
+    app.run(debug=True,host="0.0.0.0",port=5000)
