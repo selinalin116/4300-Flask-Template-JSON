@@ -41,7 +41,6 @@ with open("ingredient_drink_index.json", "w") as f:
     json.dump(ingredient_drink_index, f, indent=4)
 
 
-
 def fetch_cocktails():
     cocktails = []
     for letter in 'abcdefghijklmnopqrstuvwxyz':
