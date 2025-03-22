@@ -89,3 +89,22 @@
 .episode-desc{
     font-family: 'Montserrat', sans-serif;
 }
+.food-count {
+    color: #3498db;
+    font-size: 0.9em;
+    font-weight: normal;
+    margin-left: 8px;
+}
+.food-item {
+    margin: 1rem 0;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.section-header {
+    color: #2c3e50;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 0.5rem;
+    margin: 1.5rem 0;
+}
