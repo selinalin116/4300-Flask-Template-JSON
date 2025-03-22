@@ -5,11 +5,6 @@ from scipy.sparse.linalg import svds
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import normalize
 import os
-import numpy as np
-from scipy.sparse.linalg import svds
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.preprocessing import normalize
-import os
 
 ingredient_drink_index = {}
 
@@ -40,7 +35,6 @@ for x in ingredients:
 with open("ingredient_drink_index.json", "w") as f:
     json.dump(ingredient_drink_index, f, indent=4)
 
-
 def fetch_cocktails():
     cocktails = []
     for letter in 'abcdefghijklmnopqrstuvwxyz':
@@ -66,14 +60,6 @@ cocktail_tfidf = vectorizer.fit_transform(cocktail_texts)
 k = 40  # Same as class demo
 U, s, vt = svds(cocktail_tfidf, k=k)
 cocktail_vectors = normalize(U, axis=1)
-
-def get_movie_script(movie_title, folder):
-    """Your existing script loader from P02"""
-    script_path = os.path.join(folder, f"{movie_title.lower().replace(' ', '_')}.txt")
-    if os.path.exists(script_path):
-        with open(script_path, 'r') as f:
-            return f.read()
-    return None
 
 def jaccard_similarity(script, ingredients):
     script_words = set(script.lower().split())
