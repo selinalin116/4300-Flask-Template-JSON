@@ -107,7 +107,6 @@ def find_foods():
     return jsonify({
         "cocktails": cleaned_results,
         "foods": result["foods"]
-        "foods": result["foods"]
     })
 
 if __name__ == '__main__':

@@ -4,7 +4,7 @@ import string
 import pandas as pd
 from collections import Counter
 import helperfunctions
-import helperfunctions
+from cocktail import *
 
 def load_food_database(file_path):
     """
@@ -92,7 +92,6 @@ def load_food_database(file_path):
 #     # If no match is found
 #     return None
 
-def process_script_for_food(script_text, food_names):
 def process_script_for_food(script_text, food_names):
     """
     Process a script's text content and find food mentions.
