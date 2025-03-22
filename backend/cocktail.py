@@ -68,7 +68,7 @@ def jaccard_similarity(script, ingredients):
     return len(intersection) / (len(script_words | ingredient_words) + 1e-8)
 
 def clean_cocktail_data(cocktail):
-    """Extract only name, ingredients, and image from cocktail data"""
+    """Extract only name, ingredients, image, and link from cocktail data"""
     ingredients = []
     for i in range(1, 16):
         ingredient = cocktail.get(f'strIngredient{i}')
@@ -81,8 +81,13 @@ def clean_cocktail_data(cocktail):
                 else ingredient
             )
     
+    drink_id = cocktail.get('idDrink', '')
+    drink_name = cocktail.get('strDrink', '').replace(" ", "-").lower()
+    cocktail_url = f"https://www.thecocktaildb.com/drink/{drink_id}/{drink_name}"
+    
     return {
         'name': cocktail.get('strDrink', 'Unnamed Cocktail'),
         'image': cocktail.get('strDrinkThumb', ''),
-        'ingredients': ingredients
+        'ingredients': ingredients,
+        'recipe_link': cocktail_url
     }

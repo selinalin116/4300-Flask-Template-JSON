@@ -126,7 +126,6 @@ from recipe import recipe_vectors, recipes, clean_recipe_data, rec_vt
 import os
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
-import movie_preprocessing
 import helperfunctions
 
 os.environ['ROOT_PATH'] = os.path.abspath(os.path.join("..",os.curdir))
@@ -161,9 +160,31 @@ def find_foods():
     script_projected = script_tfidf.dot(vt.T)
     script_projected = normalize(script_projected)
     
+    script_words = set(script.split())
+    
+    # cocktail SVD
     similarities = script_projected.dot(cocktail_vectors.T)
-    top_indices = np.argsort(-similarities[0])[:3]
-    svd_results = [cocktails[i] for i in top_indices]
+    
+    # jaccard similairty for cocktails
+    cocktail_jaccard_scores = []
+    for cocktail in cocktails:
+        cocktail_ingredients = set(cocktail.get('ingredients', []))  # Ensure ingredients are a list
+        jaccard_score = helperfunctions.jaccard_similarity(script_words, cocktail_ingredients)
+        cocktail_jaccard_scores.append(jaccard_score)
+    
+    # combine jaccard similarity for cocktails
+    combined_cocktail_scores = []
+    for i, cocktail in enumerate(cocktails):
+        svd_score = similarities[0][i]
+        jaccard_score = cocktail_jaccard_scores[i]
+        combined_score = helperfunctions.combine_scores(jaccard_score, svd_score, alpha=0.5)  # Adjust alpha as needed
+        combined_cocktail_scores.append((cocktail, combined_score))
+    
+    # Sort and Get Top Cocktails
+    combined_cocktail_scores = sorted(combined_cocktail_scores, key=lambda x: -x[1])
+    top_cocktails = [clean_cocktail_data(cocktail) for cocktail, score in combined_cocktail_scores[:3]]
+
+
     # if not svd_results:
     #     jaccard_scores = [
     #         (i, jaccard_similarity(script, " ".join(
@@ -173,7 +194,7 @@ def find_foods():
     #     ]
     #     top_jaccard = sorted(jaccard_scores, key=lambda x: -x[1])[:5]
     #     return jsonify([cocktails[i] for i, _ in top_jaccard])
-    cleaned_results = [clean_cocktail_data(c) for c in svd_results]
+    # cleaned_results = [clean_cocktail_data(c) for c in svd_results]
     # print(cleaned_results)
 
     # Recipe SVD
@@ -184,11 +205,27 @@ def find_foods():
     rec_svd_results = [recipes[i] for i in rec_top_indices]
     recipe_results = [clean_recipe_data(recipe) for recipe in rec_svd_results]
 
-    result = movie_preprocessing.get_movie_foods(movie_title, SCRIPT_FOLDER, FOOD_DATABASE)
+    recipe_jaccard_scores = []
+    for recipe in recipes:
+        recipe_ingredients = set(recipe['ingredients'])
+        jaccard_score = helperfunctions.jaccard_similarity(script_words, recipe_ingredients)
+        recipe_jaccard_scores.append(jaccard_score)
+
+    combined_scores = []
+    for i, recipe in enumerate(recipes):
+        svd_score = rec_similarities[0][i]
+        jaccard_score = recipe_jaccard_scores[i]
+        combined_score = helperfunctions.combine_scores(jaccard_score, svd_score, alpha=0.5)  # Adjust alpha as needed
+        combined_scores.append((recipe, combined_score))
+
+    combined_scores = sorted(combined_scores, key=lambda x: -x[1])
+    top_recipes = [clean_recipe_data(recipe) for recipe, score in combined_scores[:3]]
+
+    # result = movie_preprocessing.get_movie_foods(movie_title, SCRIPT_FOLDER, FOOD_DATABASE)
     return jsonify({
-        "cocktails": cleaned_results,
-        "foods": result["foods"],
-        "recipes": recipe_results
+        "cocktails": top_cocktails,
+        # "foods": result["foods"],
+        "recipes": top_recipes
     })
 
 # if __name__ == '__main__':
