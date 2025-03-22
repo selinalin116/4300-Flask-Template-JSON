@@ -104,7 +104,7 @@ def find_foods():
     result = movie_preprocessing.get_movie_foods(movie_title, SCRIPT_FOLDER, FOOD_DATABASE)
     return jsonify({
         "cocktails": cleaned_results,
-        "foods": result
+        "foods": result["foods"]
     })
 
 if __name__ == '__main__':
