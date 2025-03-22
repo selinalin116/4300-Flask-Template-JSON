@@ -15,10 +15,7 @@ with zipfile.ZipFile(zip_filename, 'r') as zipf:
 
 recipes = json.loads(data)
 
-with open("data/recipes_cleaned.json") as file:
-    recipes = json.load(file)
-
-recipe_descriptions = [description for description in recipes['description']]
+recipe_descriptions = [i['description'] for i in recipes]
 
 vectorizer = TfidfVectorizer(stop_words='english', max_df=0.7, min_df=5)
 recipe_tfidf = vectorizer.fit_transform(recipe_descriptions)
@@ -26,3 +23,10 @@ recipe_tfidf = vectorizer.fit_transform(recipe_descriptions)
 k = 40  # Same as class demo
 U, s, vt = svds(recipe_tfidf, k=k)
 recipe_vectors = normalize(U, axis=1)
+
+def clean_recipe_data(recipe):
+    return {
+        'name': recipe['name'],
+        'description': recipe['description'],
+        'ingredients': recipe['ingredients']
+    }
