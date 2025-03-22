@@ -49,14 +49,13 @@
 
 import requests
 from cocktail import *
-import requests
-from cocktail import *
 import os
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 import movie_preprocessing
 import helperfunctions
-import helperfunctions
+
+os.environ['ROOT_PATH'] = os.path.abspath(os.path.join("..",os.curdir))
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
 
