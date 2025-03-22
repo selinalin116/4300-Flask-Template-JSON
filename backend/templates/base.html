@@ -58,7 +58,9 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap"
+    rel="stylesheet">
+
 <body>
     <div class="full-body-container">
         <div class="top-text">
@@ -68,7 +70,8 @@
             </div>
             <div class="input-box" onclick="sendFocus()">
                 <img src="{{ url_for('static', filename='images/mag.png') }}" />
-                <input placeholder="Search for a movie (e.g., Star Wars, The Avengers)" id="movie-search" onkeyup="handleKeyUp(event)">
+                <input placeholder="Search for a movie (e.g., Star Wars, The Avengers)" id="movie-search"
+                    onkeyup="handleKeyUp(event)">
                 <button onclick="searchMovie()">Search</button>
             </div>
         </div>
@@ -81,12 +84,6 @@
     </div>
 
     <script>
-        function foodItemTemplate(food, count, context) {
-            return `<div class='food-item'>
-                <h3 class='food-name'>${food} <span class="food-count">(${count} mentions)</span></h3>
-            </div>`;
-        }
-
         function noResultsTemplate(movieTitle) {
             return `<div class='no-results'>
                 <h3>No food mentions found in "${movieTitle}"</h3>
@@ -110,62 +107,83 @@
                 searchMovie();
             }
         }
+        function foodItemTemplate(foodItem) {
+            return `<div class='food-item'>
+            <h3 class='food-name'>${foodItem.name} <span class="food-count">(${foodItem.count} mentions)</span></h3>
+        </div>`;
+        }
+
+        function cocktailTemplate(cocktail) {
+            return `<div class='cocktail-card'>
+            <img src="${cocktail.image}" alt="${cocktail.name}" class="cocktail-image">
+            <div class="cocktail-info">
+                <h3>${cocktail.name}</h3>
+                <ul class="ingredients-list">
+                    ${cocktail.ingredients.map(ing => `<li>${ing}</li>`).join('')}
+                </ul>
+            </div>
+        </div>`;
+        }
 
         function searchMovie() {
             const movieTitle = document.getElementById("movie-search").value.trim();
             if (!movieTitle) return;
 
-            // Show loading indicator
-            document.getElementById("loading-indicator").style.display = "block";
-            document.getElementById("answer-box").innerHTML = "";
-            
-            // Make request to backend
-            fetch("/find-foods?" + new URLSearchParams({ movie: movieTitle }).toString())
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Hide loading indicator
-                document.getElementById("loading-indicator").style.display = "none";
-                
-                if (data.error) {
-                    document.getElementById("answer-box").innerHTML = errorTemplate(data.error);
-                    return;
-                }
-                
-                if (data.foods && data.foods.length > 0) {
-                    const resultsDiv = document.createElement("div");
-                    resultsDiv.className = "results-container";
-                    
-                    // Add header
-                    const headerDiv = document.createElement("div");
-                    headerDiv.className = "results-header";
-                    headerDiv.innerHTML = `
-                        <h2>Food Mentions in "${data.movie_title}"</h2>
-                    `;
-                    resultsDiv.appendChild(headerDiv);
-                    
-                    // Add each food item
-                    data.foods.forEach(food => {
-                        let tempDiv = document.createElement("div");
-                        tempDiv.innerHTML = foodItemTemplate(food.name, food.count);
-                        tempDiv.className = "food-result";
-                        resultsDiv.appendChild(tempDiv);
-                    });
-                    
-                    document.getElementById("answer-box").appendChild(resultsDiv);
-                } else {
-                    document.getElementById("answer-box").innerHTML = noResultsTemplate(data.movie_title || movieTitle);
-                }
-            })
-            .catch(error => {
-                document.getElementById("loading-indicator").style.display = "none";
-                document.getElementById("answer-box").innerHTML = errorTemplate("Failed to search for food mentions. Please try again later.");
-                console.error('Error:', error);
-            });
+            const answerBox = document.getElementById("answer-box");
+            const loadingIndicator = document.getElementById("loading-indicator");
+
+            loadingIndicator.style.display = "block";
+            answerBox.innerHTML = "";
+
+            fetch(`/find-foods?movie=${encodeURIComponent(movieTitle)}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Network error');
+                    return response.json();
+                })
+                .then(data => {
+                    loadingIndicator.style.display = "none";
+                    answerBox.innerHTML = "";
+
+                    if (data.error) {
+                        answerBox.innerHTML = errorTemplate(data.error);
+                        return;
+                    }
+
+                    const resultsContainer = document.createElement("div");
+                    resultsContainer.className = "results-container";
+                    resultsContainer.innerHTML = `<h2>Results for "${movieTitle}"</h2>`;
+
+                    // Add cocktails section
+                    if (data.cocktails?.length > 0) {
+                        const cocktailSection = document.createElement("div");
+                        cocktailSection.innerHTML = `<h3 class="section-header">Recommended Drinks</h3>`;
+                        data.cocktails.forEach(cocktail => {
+                            cocktailSection.innerHTML += cocktailTemplate(cocktail);
+                        });
+                        resultsContainer.appendChild(cocktailSection);
+                    }
+
+                    // Add food section
+                    if (data.foods && data.foods.length > 0) {
+                        const foodSection = document.createElement("div");
+                        foodSection.innerHTML = `<h3 class="section-header">Food Mentions</h3>`;
+                        data.foods.forEach(food => {
+                            foodSection.innerHTML += foodItemTemplate(food);  // Pass the whole food object
+                        });
+                        resultsContainer.appendChild(foodSection);
+                    }
+
+                    if (resultsContainer.children.length > 1) { // 1 is the initial h2
+                        answerBox.appendChild(resultsContainer);
+                    } else {
+                        answerBox.innerHTML = noResultsTemplate(movieTitle);
+                    }
+                })
+                .catch(error => {
+                    loadingIndicator.style.display = "none";
+                    answerBox.innerHTML = errorTemplate("Failed to get results. Please try again.");
+                    console.error('Error:', error);
+                });
         }
     </script>
 </body>
