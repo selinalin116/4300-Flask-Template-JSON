@@ -5,6 +5,11 @@ from scipy.sparse.linalg import svds
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import normalize
 import os
+import numpy as np
+from scipy.sparse.linalg import svds
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.preprocessing import normalize
+import os
 
 ingredient_drink_index = {}
 
@@ -34,6 +39,7 @@ for x in ingredients:
 # write to file
 with open("ingredient_drink_index.json", "w") as f:
     json.dump(ingredient_drink_index, f, indent=4)
+
 
 
 def fetch_cocktails():

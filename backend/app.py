@@ -47,6 +47,9 @@
 #     app.run(debug=True,host="0.0.0.0",port=5000)
 # app.py
 
+
+import requests
+from cocktail import *
 import requests
 from cocktail import *
 import os
@@ -64,6 +67,7 @@ app = Flask(__name__)
 CORS(app)
 
 
+
 @app.route("/")
 def home():
     return render_template('base.html', title="Movie Food Finder")
@@ -76,7 +80,7 @@ def find_foods():
     if not movie_title:
         return jsonify({"error": "Please enter a movie title"})
     
-    script = helperfunctions.get_movie_script(movie_title, SCRIPT_FOLDER)
+    script = get_movie_script(movie_title, SCRIPT_FOLDER)
     if not script:
         return jsonify({"error": "Script not found"})
     
@@ -101,7 +105,7 @@ def find_foods():
     result = movie_preprocessing.get_movie_foods(movie_title, SCRIPT_FOLDER, FOOD_DATABASE)
     return jsonify({
         "cocktails": cleaned_results,
-        "foods": result["foods"]
+        "foods": result
     })
 
 if __name__ == '__main__':
