@@ -182,6 +182,23 @@ def find_foods():
     rec_svd_results = [recipes[i] for i in rec_top_indices]
     recipe_results = [clean_recipe_data(recipe) for recipe in rec_svd_results]
 
+    script_words = set(script.split())
+    recipe_jaccard_scores = []
+    for recipe in recipes:
+        recipe_ingredients = set(recipe['ingredients'])
+        jaccard_score = helperfunctions.jaccard_similarity(script_words, recipe_ingredients)
+        recipe_jaccard_scores.append(jaccard_score)
+
+    combined_scores = []
+    for i, recipe in enumerate(recipes):
+        svd_score = rec_similarities[0][i]
+        jaccard_score = recipe_jaccard_scores[i]
+        combined_score = combine_scores(jaccard_score, svd_score, alpha=0.5)  # Adjust alpha as needed
+        combined_scores.append((recipe, combined_score))
+        
+    combined_scores = sorted(combined_scores, key=lambda x: -x[1])
+    top_recipes = [clean_recipe_data(recipe) for recipe, score in combined_scores[:3]]
+
     # result = movie_preprocessing.get_movie_foods(movie_title, SCRIPT_FOLDER, FOOD_DATABASE)
     return jsonify({
         "cocktails": cleaned_results,

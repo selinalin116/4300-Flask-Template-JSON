@@ -30,3 +30,11 @@ def get_movie_script(movie_title, folder):
                     return f.read()
     
     return None
+
+def jaccard_similarity(set1, set2):
+    intersection = len(set1 & set2)
+    union = len(set1 | set2)
+    return intersection / union if union != 0 else 0
+
+def combine_scores(jaccard_score, svd_score, alpha = .5):
+    return alpha * jaccard_score + (1 - alpha) * svd_score
