@@ -65,8 +65,6 @@ FOOD_DATABASE = os.path.join(current_directory, 'database.txt')
 app = Flask(__name__)
 CORS(app)
 
-
-
 @app.route("/")
 def home():
     return render_template('base.html', title="Movie Food Finder")
@@ -108,5 +106,8 @@ def find_foods():
         "foods": result["foods"]
     })
 
-if __name__ == '__main__':
-    app.run(debug=True, host="0.0.0.0", port=5000)
+# if __name__ == '__main__':
+#     app.run(debug=True, host="0.0.0.0", port=5000)
+
+if 'DB_NAME' not in os.environ:
+    app.run(debug=True,host="0.0.0.0",port=5000)
