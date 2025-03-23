@@ -54,8 +54,8 @@ cocktail_texts = [
     for c in cocktails
 ]
 
-vectorizer = TfidfVectorizer(stop_words='english', max_df=0.7, min_df=5)
-cocktail_tfidf = vectorizer.fit_transform(cocktail_texts)
+cocktail_vectorizer = TfidfVectorizer(stop_words='english', max_df=0.7, min_df=5)
+cocktail_tfidf = cocktail_vectorizer.fit_transform(cocktail_texts)
 
 k = 40  # Same as class demo
 U, s, vt = svds(cocktail_tfidf, k=k)

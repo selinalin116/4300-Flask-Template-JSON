@@ -5,6 +5,7 @@ import pandas as pd
 import json
 import zipfile
 import ast
+import helperfunctions
 
 zip_filename = 'data/recipes_cleaned.zip'
 file_inside_zip = 'recipes_cleaned.json'
@@ -18,8 +19,8 @@ recipes = json.loads(data)
 
 recipe_descriptions = [i['description'] for i in recipes]
 
-vectorizer = TfidfVectorizer(stop_words='english', max_df=0.7, min_df=5)
-recipe_tfidf = vectorizer.fit_transform(recipe_descriptions)
+recipe_vectorizer = TfidfVectorizer(stop_words='english', max_df=0.7, min_df=5)
+recipe_tfidf = recipe_vectorizer.fit_transform(recipe_descriptions)
 
 k = 40  # recipesvd has a graph that explains this choice
 u, s, rec_vt = svds(recipe_tfidf, k=k)
