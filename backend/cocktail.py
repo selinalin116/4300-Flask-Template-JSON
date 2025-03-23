@@ -83,7 +83,7 @@ def clean_cocktail_data(cocktail):
     
     drink_id = cocktail.get('idDrink', '')
     drink_name = cocktail.get('strDrink', '').replace(" ", "-").lower()
-    cocktail_url = f"https://www.thecocktaildb.com/drink/{drink_id}/{drink_name}"
+    cocktail_url = f"https://www.thecocktaildb.com/drink/{drink_id}-{drink_name}"
     
     return {
         'name': cocktail.get('strDrink', 'Unnamed Cocktail'),
