@@ -6,7 +6,7 @@ import json
 import zipfile
 import ast
 
-zip_filename = '/home/irisho/4300-Flask-Template-JSON/backend/data/recipes_cleaned.zip'
+zip_filename = 'data/recipes_cleaned.zip'
 file_inside_zip = 'recipes_cleaned.json'
 
 # Open the ZIP file and read the file inside it

@@ -199,7 +199,7 @@ def find_foods():
 
     # Recipe SVD
     # TODO: script_projected probably needs to be redone here
-    rec_script_projected = script_tfidf.dot(rec_vt.T)
+    rec_script_projected = script_tfidf.dot(vt.T)
     rec_similarities = rec_script_projected.dot(recipe_vectors.T)
     rec_top_indices = np.argsort(-rec_similarities[0])[:3]
     rec_svd_results = [recipes[i] for i in rec_top_indices]
