@@ -122,7 +122,7 @@
 
 import requests
 from cocktail import *
-from recipe import recipe_vectors, recipes, clean_recipe_data
+from recipe import recipe_vectors, recipes, clean_recipe_data, rec_vt, recipe_vectorizer
 import os
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
@@ -156,7 +156,8 @@ def find_foods():
     if not script:
         return jsonify({"error": "Script not found"})
     
-    script_tfidf = vectorizer.transform([script])
+    # vectorizer = TfidfVectorizer(stop_words='english', max_df=0.7, min_df=5)
+    script_tfidf = cocktail_vectorizer.transform([script])
     script_projected = script_tfidf.dot(vt.T)
     script_projected = normalize(script_projected)
     
@@ -199,7 +200,9 @@ def find_foods():
 
     # Recipe SVD
     # TODO: script_projected probably needs to be redone here
-    rec_similarities = script_projected.dot(recipe_vectors.T)
+    rec_script_tfidf = recipe_vectorizer.transform([script])
+    rec_script_projected = rec_script_tfidf.dot(rec_vt.T)
+    rec_similarities = rec_script_projected.dot(recipe_vectors.T)
     rec_top_indices = np.argsort(-rec_similarities[0])[:3]
     rec_svd_results = [recipes[i] for i in rec_top_indices]
     recipe_results = [clean_recipe_data(recipe) for recipe in rec_svd_results]

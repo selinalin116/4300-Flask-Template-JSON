@@ -21,7 +21,7 @@
             </div>
         </div>
         <div id="loading-indicator" style="display: none;">
-            <p>Searching for foods in the movie...</p>
+            <p>Retrieving recommendations...</p>
         </div>
         <div id="answer-box">
             <!-- Results will appear here -->
@@ -134,14 +134,14 @@
                     }
 
                     // Add food section
-                    if (data.foods && data.foods.length > 0) {
-                        const foodSection = document.createElement("div");
-                        foodSection.innerHTML = `<h3 class="section-header">Food Mentions</h3>`;
-                        data.foods.forEach(food => {
-                            foodSection.innerHTML += foodItemTemplate(food);  // Pass the whole food object
-                        });
-                        resultsContainer.appendChild(foodSection);
-                    }
+                    // if (data.foods && data.foods.length > 0) {
+                    //     const foodSection = document.createElement("div");
+                    //     foodSection.innerHTML = `<h3 class="section-header">Food Mentions</h3>`;
+                    //     data.foods.forEach(food => {
+                    //         foodSection.innerHTML += foodItemTemplate(food);  // Pass the whole food object
+                    //     });
+                    //     resultsContainer.appendChild(foodSection);
+                    // }
 
                     if (resultsContainer.children.length > 1) { // 1 is the initial h2
                         answerBox.appendChild(resultsContainer);
