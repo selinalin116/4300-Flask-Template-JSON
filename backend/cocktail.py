@@ -1,10 +1,7 @@
 import requests
-import json
-import numpy as np
 from scipy.sparse.linalg import svds
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import normalize
-import os
 
 ingredient_drink_index = {}
 
@@ -36,6 +33,9 @@ ingredients = ingredient_response.json().get("drinks", [])
 #     json.dump(ingredient_drink_index, f, indent=4)
 
 def fetch_cocktails():
+    """
+    Fetch cocktails from cocktaildb API.
+    """
     cocktails = []
     for letter in 'abcdefghijklmnopqrstuvwxyz':
         response = requests.get(f'https://www.thecocktaildb.com/api/json/v1/1/search.php?f={letter}')
@@ -62,13 +62,18 @@ U, s, vt = svds(cocktail_tfidf, k=k)
 cocktail_vectors = normalize(U, axis=1)
 
 def jaccard_similarity(script, ingredients):
+    """
+    Calculate jaccard similarity between a movie script and a recipe's ingredients.
+    """
     script_words = set(script.lower().split())
     ingredient_words = set(ingredients.lower().split())
     intersection = script_words & ingredient_words
     return len(intersection) / (len(script_words | ingredient_words) + 1e-8)
 
 def clean_cocktail_data(cocktail):
-    """Extract only name, ingredients, image, and link from cocktail data"""
+    """
+    Extract only name, ingredients, image, and link from cocktail data.
+    """
     ingredients = []
     for i in range(1, 16):
         ingredient = cocktail.get(f'strIngredient{i}')

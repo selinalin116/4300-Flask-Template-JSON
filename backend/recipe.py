@@ -1,11 +1,9 @@
 from scipy.sparse.linalg import svds
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import normalize
-import pandas as pd
 import json
 import zipfile
 import ast
-import helperfunctions
 
 zip_filename = 'data/recipes_cleaned.zip'
 file_inside_zip = 'recipes_cleaned.json'
@@ -27,6 +25,9 @@ u, s, rec_vt = svds(recipe_tfidf, k=k)
 recipe_vectors = normalize(u, axis=1)
 
 def clean_recipe_data(recipe):
+    """
+    Extracts and formats key details from a recipe dictionary.
+    """
     return {
         'name': recipe['name'],
         'description': recipe['description'],

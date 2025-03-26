@@ -3,10 +3,6 @@ import re
 import string
 import nltk
 import ssl
-import math
-from collections import Counter
-import numpy as np
-from scipy.sparse import csr_matrix
 from sklearn.metrics.pairwise import cosine_similarity as sklearn_cosine_similarity
 
 # Fix for SSL certificate verification issues
@@ -108,24 +104,22 @@ def get_movie_script(movie_title, folder, min_word_length=3):
 
 
 def jaccard_similarity(set1, set2):
+    """
+    Calculate jaccard similarity between two sets.
+    """
     intersection = len(set1 & set2)
     union = len(set1 | set2)
     return intersection / union if union != 0 else 0
 
 def combine_scores(jaccard_score, svd_score, alpha = .5):
+    """
+    Combines two similarity scores (Jaccard and SVD-based) using a weighted sum.
+    """
     return alpha * jaccard_score + (1 - alpha) * svd_score
 
 def cosine_similarity(script, recipes, recipe_vectorizer):
     """
     Calculate cosine similarity between script and recipes using existing TF-IDF vectorizer
-    
-    Args:
-        script: Movie script text
-        recipes: List of recipe dictionaries
-        recipe_vectorizer: TF-IDF vectorizer trained on recipe data
-        
-    Returns:
-        list: List of similarity scores for each recipe
     """
     # Transform script using existing recipe vectorizer
     script_tfidf = recipe_vectorizer.transform([script])

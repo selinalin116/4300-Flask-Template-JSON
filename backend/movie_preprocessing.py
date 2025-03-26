@@ -3,7 +3,7 @@ import re
 import string
 import pandas as pd
 from collections import Counter
-import helperfunctions
+import backend.helper_functions as helper_functions
 
 def load_food_database(file_path):
     """
@@ -60,7 +60,7 @@ def get_movie_foods(movie_title, script_folder, food_database_path):
         return {"error": "Food database could not be loaded"}
     
     # Find the script file
-    script_path = helperfunctions.get_movie_script(movie_title, script_folder)
+    script_path = helper_functions.get_movie_script(movie_title, script_folder)
     if not script_path:
         return {
             "movie_title": movie_title,
