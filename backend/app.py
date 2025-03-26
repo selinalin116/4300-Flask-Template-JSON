@@ -203,9 +203,9 @@ def find_foods():
     rec_script_tfidf = recipe_vectorizer.transform([script])
     rec_script_projected = rec_script_tfidf.dot(rec_vt.T)
     rec_similarities = rec_script_projected.dot(recipe_vectors.T)
-    rec_top_indices = np.argsort(-rec_similarities[0])[:3]
-    rec_svd_results = [recipes[i] for i in rec_top_indices]
-    recipe_results = [clean_recipe_data(recipe) for recipe in rec_svd_results]
+    # rec_top_indices = np.argsort(-rec_similarities[0])[:3]
+    # rec_svd_results = [recipes[i] for i in rec_top_indices]
+    # recipe_results = [clean_recipe_data(recipe) for recipe in rec_svd_results]
 
     recipe_jaccard_scores = []
     for recipe in recipes:
@@ -213,10 +213,14 @@ def find_foods():
         jaccard_score = helperfunctions.jaccard_similarity(script_words, recipe_ingredients)
         recipe_jaccard_scores.append(jaccard_score)
 
+    # cosine similarity for 
+    # cosine_scores = helperfunctions.cosine_similarity(script, recipes, recipe_vectorizer)
+
     combined_scores = []
     for i, recipe in enumerate(recipes):
         svd_score = rec_similarities[0][i]
         jaccard_score = recipe_jaccard_scores[i]
+        # cosine_score = cosine_scores[i]
         combined_score = helperfunctions.combine_scores(jaccard_score, svd_score, alpha=0.5)  # Adjust alpha as needed
         combined_scores.append((recipe, combined_score))
 
