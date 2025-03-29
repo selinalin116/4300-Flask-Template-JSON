@@ -1,5 +1,6 @@
 <!doctype html>
 <title>Foodtastic</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -8,6 +9,9 @@
 
 <body>
     <div class="full-body-container">
+        <nav class = "navbar">
+            <h2 class = "navbar-text">FoodTastic</h2>
+        </nav>
         <div class="top-text">
             <div class="header-text">
                 <h1>Foodtastic</h1>
@@ -23,7 +27,7 @@
         <div id="loading-indicator" style="display: none;">
             <p>Retrieving recommendations...</p>
         </div>
-        <div id="answer-box">
+        <div id="answer-box" class = "answer-box">
             <!-- Results will appear here -->
         </div>
     </div>
@@ -59,16 +63,14 @@
         }
 
         function cocktailTemplate(cocktail) {
-            console.log(cocktail)
             return `<div class='cocktail-card'>
-            <img src="${cocktail.image}" alt="${cocktail.name}" class="cocktail-image" style="width: 100px; height: 100px;">
-            <div class="cocktail-info">
-                <h3>${cocktail.name}</h3>
+                <h3 class="cocktail-name">${cocktail.name}</h3>
+                <img src="${cocktail.image}" alt="${cocktail.name}" class="cocktail-image">
                 <ul class="ingredients-list">
                     ${cocktail.ingredients.map(ing => `<li>${ing}</li>`).join('')}
                 </ul>
-                <a href="${cocktail.recipe_link}" target="_blank">View Recipe</a>            </div>
-        </div>`;
+                <a href="${cocktail.recipe_link}" target="_blank" class="recipe-link">View Recipe</a>
+            </div>`;
         }
 
         function recipeTemplate(recipe) {
@@ -84,6 +86,81 @@
             </div>
         </div>`;
         }
+
+        // function searchMovie() {
+        //     const movieTitle = document.getElementById("movie-search").value.trim();
+        //     if (!movieTitle) return;
+
+        //     const answerBox = document.getElementById("answer-box");
+        //     const loadingIndicator = document.getElementById("loading-indicator");
+
+        //     loadingIndicator.style.display = "block";
+        //     answerBox.innerHTML = "";
+
+        //     fetch(`/find-foods?movie=${encodeURIComponent(movieTitle)}`)
+        //         .then(response => {
+        //             if (!response.ok) throw new Error('Network error');
+        //             return response.json();
+        //         })
+        //         .then(data => {
+        //             loadingIndicator.style.display = "none";
+        //             answerBox.innerHTML = "";
+
+        //             if (data.error) {
+        //                 answerBox.innerHTML = errorTemplate(data.error);
+        //                 return;
+        //             }
+
+        //             const resultsContainer = document.createElement("div");
+        //             resultsContainer.className = "results-container";
+        //             resultsContainer.innerHTML = `<h2>Results for "${movieTitle}"</h2>`;
+
+        //             // Add cocktails section
+        //             if (data.cocktails?.length > 0) {
+        //                 const cocktailMain = document.createElement("div");
+        //                 cocktailMain.className = "cocktail-main";
+        //                 cocktailMain.innerHTML = `<h3 class="section-header">Recommended Drinks</h3>`;
+        //                 const cocktailSection = document.createElement("div");
+        //                 cocktailMain.appendChild(cocktailSection);
+        //                 cocktailSection.className = "cocktail-section"
+        //                 data.cocktails.forEach(cocktail => {
+        //                     cocktailSection.innerHTML += cocktailTemplate(cocktail);
+        //                 });
+        //                 resultsContainer.appendChild(cocktailMain);
+        //             }
+
+        //             // Add recipes section
+        //             if (data.recipes?.length > 0) {
+        //                 const recipeSection = document.createElement("div");
+        //                 recipeSection.innerHTML = `<h3 class="section-header">Recommended Recipes</h3>`;
+        //                 data.recipes.forEach(recipe => {
+        //                     recipeSection.innerHTML += recipeTemplate(recipe);
+        //                 });
+        //                 resultsContainer.appendChild(recipeSection);
+        //             }
+
+        //             // Add food section
+        //             // if (data.foods && data.foods.length > 0) {
+        //             //     const foodSection = document.createElement("div");
+        //             //     foodSection.innerHTML = `<h3 class="section-header">Food Mentions</h3>`;
+        //             //     data.foods.forEach(food => {
+        //             //         foodSection.innerHTML += foodItemTemplate(food);  // Pass the whole food object
+        //             //     });
+        //             //     resultsContainer.appendChild(foodSection);
+        //             // }
+
+        //             if (resultsContainer.children.length > 1) { // 1 is the initial h2
+        //                 answerBox.appendChild(resultsContainer);
+        //             } else {
+        //                 answerBox.innerHTML = noResultsTemplate(movieTitle);
+        //             }
+        //         })
+        //         .catch(error => {
+        //             loadingIndicator.style.display = "none";
+        //             answerBox.innerHTML = errorTemplate("Failed to get results. Please try again.");
+        //             console.error('Error:', error);
+        //         });
+        // }
 
         function searchMovie() {
             const movieTitle = document.getElementById("movie-search").value.trim();
@@ -115,33 +192,37 @@
 
                     // Add cocktails section
                     if (data.cocktails?.length > 0) {
+                        const cocktailMain = document.createElement("div");
+                        cocktailMain.className = "cocktail-main";
+                        cocktailMain.innerHTML = `<h3 class="section-header">Recommended Drinks</h3>`;
+                        
                         const cocktailSection = document.createElement("div");
-                        cocktailSection.innerHTML = `<h3 class="section-header">Recommended Drinks</h3>`;
+                        cocktailSection.className = "cocktail-section";
+                        
                         data.cocktails.forEach(cocktail => {
                             cocktailSection.innerHTML += cocktailTemplate(cocktail);
                         });
-                        resultsContainer.appendChild(cocktailSection);
+                        
+                        cocktailMain.appendChild(cocktailSection);
+                        resultsContainer.appendChild(cocktailMain);
                     }
 
                     // Add recipes section
                     if (data.recipes?.length > 0) {
+                        const recipeMain = document.createElement("div");
+                        recipeMain.className = "recipe-main";
+                        recipeMain.innerHTML = `<h3 class="section-header">Recommended Recipes</h3>`;
+                        
                         const recipeSection = document.createElement("div");
-                        recipeSection.innerHTML = `<h3 class="section-header">Recommended Recipes</h3>`;
+                        recipeSection.className = "recipe-section";
+                        
                         data.recipes.forEach(recipe => {
                             recipeSection.innerHTML += recipeTemplate(recipe);
                         });
-                        resultsContainer.appendChild(recipeSection);
+                        
+                        recipeMain.appendChild(recipeSection);
+                        resultsContainer.appendChild(recipeMain);
                     }
-
-                    // Add food section
-                    // if (data.foods && data.foods.length > 0) {
-                    //     const foodSection = document.createElement("div");
-                    //     foodSection.innerHTML = `<h3 class="section-header">Food Mentions</h3>`;
-                    //     data.foods.forEach(food => {
-                    //         foodSection.innerHTML += foodItemTemplate(food);  // Pass the whole food object
-                    //     });
-                    //     resultsContainer.appendChild(foodSection);
-                    // }
 
                     if (resultsContainer.children.length > 1) { // 1 is the initial h2
                         answerBox.appendChild(resultsContainer);

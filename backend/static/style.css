@@ -1,5 +1,5 @@
 .full-body-container {
-    position: absolute;
+    /* position: absolute;
     top: 0;
     left: 0;
     right: 0;
@@ -7,55 +7,41 @@
     width: 100%;
     height: 100%;
     display: flex;
-    justify-content: start;
-    align-items: center;
+    justify-content: flex-start;
     flex-direction: column;
-}
-
-#google-c {
-    color: #4285F4;
-}
-
-#google-s {
-    color: #DB4437;
-}
-
-#google-4 {
-    color: #F4B400;
-}
-
-#google-3 {
-    color: #4285F4;
-}
-
-#google-0-1 {
-    color: #0F9D58;
-}
-
-#google-0-2 {
-    color: #DB4437;
-}
-
-.google-colors {
+    font-family: 'Montserrat', sans-serif;
+    overflow-x: hidden; */
+    position: relative; 
+    width: 100%;
+    min-height: 100vh; 
     display: flex;
-    align-items: center;
-    font-size: 48px;
-    font-family: 'Open Sans', sans-serif;
+    justify-content: flex-start;
+    flex-direction: column;
+    font-family: 'Montserrat', sans-serif;
+    overflow-x: hidden;
 }
 
-.google-colors h1 {
-    margin-bottom: 0;
-    margin-right: 3px;
+.navbar {
+    display: flex;
+    width: 100%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-text{
+    margin-left: 20px;
 }
 
 .input-box {
-    border-radius: 50px;
-    border: 1px solid black;
+    /* border-radius: 30px; */
+    border-radius: 10px;
+    /* border: 1px solid black; */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: center;
     margin-top: 10px;
     padding: 12px;
     width: 600px;
+    
 }
 
 .input-box img {
@@ -67,6 +53,22 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    /* background: lightblue; */
+    width: 100%;
+    padding: 50px;
+}
+
+.header-text {
+    text-align: center;
+}
+
+.top-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 50px 20px; 
+    box-sizing: border-box; 
 }
 
 .input-box input {
@@ -75,22 +77,23 @@
     font-size: 16px;
     border: none;
     outline: 0;
-}
-
-#answer-box {
-    width: 700px;
-    margin-top: 50px;
-}
-
-.episode-title {
-    font-family: 'Kanit', sans-serif;
-}
-
-.episode-desc {
     font-family: 'Montserrat', sans-serif;
 }
 
-.food-count {
+.answer-box {
+    width: 100%;
+    padding: 50px;
+    box-sizing: border-box;
+}
+
+.results-container {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+/* .food-count {
     color: #3498db;
     font-size: 0.9em;
     font-weight: normal;
@@ -102,13 +105,102 @@
     padding: 1rem;
     background: #f8f9fa;
     border-radius: 8px;
-}
+} */
 
 .section-header {
-    color: #2c3e50;
+    /* color: #2c3e50;
     border-bottom: 2px solid #3498db;
     padding-bottom: 0.5rem;
     margin: 1.5rem 0;
-    width: 80%;
+    width: 100%; */
+    width: 100%;
+    text-align: left;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+    font-family: 'Kanit', sans-serif;
+    /* text-align: center; */
+}
+
+.cocktail-main {
+    width: 100%;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+.cocktail-section {
+    display: grid;
+    /* grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); */
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    width: 100%;
+    box-sizing: border-box; 
+}
+
+.cocktail-card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+}
+
+.cocktail-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+.ingredients-list {
+    width: 100%;
+    padding-left: 20px;
+    margin: 10px 0;
+    text-align: left;
+}
+
+.ingredients-list li {
+    margin-bottom: 5px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.recipe-link {
+    margin-top: 15px;
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #4b6584;
+    color: white;
+    text-decoration: none;
+    border-radius: 20px;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+
+.recipe-link:hover {
+    background-color: #3867d6;
+}
+
+.recipe-card {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+@media (max-width: 900px) {
+    .cocktail-section {
+        grid-template-columns: repeat(2, 1fr); 
+    }
+}
+
+@media (max-width: 600px) {
+    .cocktail-section {
+        grid-template-columns: 1fr; 
+    }
 }
