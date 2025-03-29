@@ -31,28 +31,31 @@ def find_foods():
     if not movie_title:
         return jsonify({"error": "Please enter a movie title"})
     
+    additional_description = None
+    if 'description' in request.args:
+        additional_description = request.args.get('description').strip()
+    
     script = helper_functions.get_movie_script(movie_title, SCRIPT_FOLDER)
     if not script:
         return jsonify({"error": "Script not found"})
     
-    # vectorizer = TfidfVectorizer(stop_words='english', max_df=0.7, min_df=5)
     script_tfidf = cocktail_vectorizer.transform([script])
     script_projected = script_tfidf.dot(vt.T)
     script_projected = normalize(script_projected)
     
     script_words = set(script.split())
     
-    # cocktail SVD
+    # Cocktail SVD
     similarities = script_projected.dot(cocktail_vectors.T)
     
-    # jaccard similairty for cocktails
+    # Jaccard similairty for cocktails
     cocktail_jaccard_scores = []
     for cocktail in cocktails:
         cocktail_ingredients = set(cocktail.get('ingredients', []))  # Ensure ingredients are a list
         jaccard_score = helper_functions.jaccard_similarity(script_words, cocktail_ingredients)
         cocktail_jaccard_scores.append(jaccard_score)
     
-    # combine jaccard similarity for cocktails
+    # Combine jaccard similarity for cocktails
     combined_cocktail_scores = []
     for i, cocktail in enumerate(cocktails):
         svd_score = similarities[0][i]
@@ -62,7 +65,7 @@ def find_foods():
     
     # Sort and Get Top Cocktails
     combined_cocktail_scores = sorted(combined_cocktail_scores, key=lambda x: -x[1])
-    top_cocktails = [clean_cocktail_data(cocktail) for cocktail, score in combined_cocktail_scores[:3]]
+    top_cocktails = [clean_cocktail_data(cocktail) for cocktail, score in combined_cocktail_scores[:6]]
 
 
     # if not svd_results:
@@ -78,13 +81,16 @@ def find_foods():
     # print(cleaned_results)
 
     # Recipe SVD
-    # TODO: script_projected probably needs to be redone here
     rec_script_tfidf = recipe_vectorizer.transform([script])
     rec_script_projected = rec_script_tfidf.dot(rec_vt.T)
     rec_similarities = rec_script_projected.dot(recipe_vectors.T)
-    # rec_top_indices = np.argsort(-rec_similarities[0])[:3]
-    # rec_svd_results = [recipes[i] for i in rec_top_indices]
-    # recipe_results = [clean_recipe_data(recipe) for recipe in rec_svd_results]
+
+    # Additional SVD with additional description users put in
+    desc_similarities = None
+    if additional_description:
+        additional_tfidf = recipe_vectorizer.transform([additional_description])
+        additional_projected = additional_tfidf.dot(rec_vt.T)
+        desc_similarities = additional_projected.dot(recipe_vectors.T)
 
     recipe_jaccard_scores = []
     for recipe in recipes:
@@ -95,16 +101,28 @@ def find_foods():
     # cosine similarity for 
     # cosine_scores = helperfunctions.cosine_similarity(script, recipes, recipe_vectorizer)
 
+    beta = 0.3
+
     combined_scores = []
     for i, recipe in enumerate(recipes):
-        svd_score = rec_similarities[0][i]
+        # Get SVD-based scores
+        svd_script_score = rec_similarities[0][i]
+        
+        if desc_similarities is not None:
+            svd_desc_score = desc_similarities[0][i]
+
+            # Weighted sum of script and description SVD scores
+            combined_svd_score = (1 - beta) * svd_script_score + beta * svd_desc_score
+        else:
+            combined_svd_score = svd_script_score
+
         jaccard_score = recipe_jaccard_scores[i]
         # cosine_score = cosine_scores[i]
-        combined_score = helper_functions.combine_scores(jaccard_score, svd_score, alpha=0.5)  # Adjust alpha as needed
-        combined_scores.append((recipe, combined_score))
+        final_score = helper_functions.combine_scores(jaccard_score, combined_svd_score, alpha=0.5)  # Adjust alpha as needed
+        combined_scores.append((recipe, final_score))
 
     combined_scores = sorted(combined_scores, key=lambda x: -x[1])
-    top_recipes = [clean_recipe_data(recipe) for recipe, score in combined_scores[:3]]
+    top_recipes = [clean_recipe_data(recipe) for recipe, score in combined_scores[:6]]
 
     # result = movie_preprocessing.get_movie_foods(movie_title, SCRIPT_FOLDER, FOOD_DATABASE)
     return jsonify({

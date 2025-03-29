@@ -1,5 +1,5 @@
 <!doctype html>
-<title>Foodtastic</title>
+<title>FoodTastic</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,14 +14,23 @@
         </nav>
         <div class="top-text">
             <div class="header-text">
-                <h1>Foodtastic</h1>
+                <h1>FoodTastic</h1>
                 <p>Discover food and drink suggestions for your movie night!</p>
             </div>
-            <div class="input-box" onclick="sendFocus()">
-                <img src="{{ url_for('static', filename='images/mag.png') }}" />
-                <input placeholder="Search for a movie (e.g., Star Wars, Avengers)" id="movie-search"
-                    onkeyup="handleKeyUp(event)">
-                <!-- <button onclick="searchMovie()">Search</button> -->
+            <div class="search-container">
+                <div class="input-box" onclick="sendFocus()">
+                  <img src="{{ url_for('static', filename='images/mag.png') }}" />
+                  <input placeholder="Search for a movie (e.g., Star Wars, Avengers)" id="movie-search" required>
+                </div>
+                <div class="input-box" onclick="descriptionFocus()">
+                  <input placeholder="Additional Description (e.g., Recipe that reminds me of homecook food)" id="description-search">
+                </div>
+                
+                <div class="submit-container">
+                  <button id="search-button" onclick="searchMovie()">
+                    Search Recommendations
+                  </button>
+                </div>
             </div>
         </div>
         <div id="loading-indicator" style="display: none;">
@@ -49,6 +58,10 @@
 
         function sendFocus() {
             document.getElementById('movie-search').focus();
+        }
+
+        function descriptionFocus() {
+            document.getElementById('description-search').focus();
         }
 
         function handleKeyUp(event) {
@@ -87,84 +100,11 @@
         </div>`;
         }
 
-        // function searchMovie() {
-        //     const movieTitle = document.getElementById("movie-search").value.trim();
-        //     if (!movieTitle) return;
-
-        //     const answerBox = document.getElementById("answer-box");
-        //     const loadingIndicator = document.getElementById("loading-indicator");
-
-        //     loadingIndicator.style.display = "block";
-        //     answerBox.innerHTML = "";
-
-        //     fetch(`/find-foods?movie=${encodeURIComponent(movieTitle)}`)
-        //         .then(response => {
-        //             if (!response.ok) throw new Error('Network error');
-        //             return response.json();
-        //         })
-        //         .then(data => {
-        //             loadingIndicator.style.display = "none";
-        //             answerBox.innerHTML = "";
-
-        //             if (data.error) {
-        //                 answerBox.innerHTML = errorTemplate(data.error);
-        //                 return;
-        //             }
-
-        //             const resultsContainer = document.createElement("div");
-        //             resultsContainer.className = "results-container";
-        //             resultsContainer.innerHTML = `<h2>Results for "${movieTitle}"</h2>`;
-
-        //             // Add cocktails section
-        //             if (data.cocktails?.length > 0) {
-        //                 const cocktailMain = document.createElement("div");
-        //                 cocktailMain.className = "cocktail-main";
-        //                 cocktailMain.innerHTML = `<h3 class="section-header">Recommended Drinks</h3>`;
-        //                 const cocktailSection = document.createElement("div");
-        //                 cocktailMain.appendChild(cocktailSection);
-        //                 cocktailSection.className = "cocktail-section"
-        //                 data.cocktails.forEach(cocktail => {
-        //                     cocktailSection.innerHTML += cocktailTemplate(cocktail);
-        //                 });
-        //                 resultsContainer.appendChild(cocktailMain);
-        //             }
-
-        //             // Add recipes section
-        //             if (data.recipes?.length > 0) {
-        //                 const recipeSection = document.createElement("div");
-        //                 recipeSection.innerHTML = `<h3 class="section-header">Recommended Recipes</h3>`;
-        //                 data.recipes.forEach(recipe => {
-        //                     recipeSection.innerHTML += recipeTemplate(recipe);
-        //                 });
-        //                 resultsContainer.appendChild(recipeSection);
-        //             }
-
-        //             // Add food section
-        //             // if (data.foods && data.foods.length > 0) {
-        //             //     const foodSection = document.createElement("div");
-        //             //     foodSection.innerHTML = `<h3 class="section-header">Food Mentions</h3>`;
-        //             //     data.foods.forEach(food => {
-        //             //         foodSection.innerHTML += foodItemTemplate(food);  // Pass the whole food object
-        //             //     });
-        //             //     resultsContainer.appendChild(foodSection);
-        //             // }
-
-        //             if (resultsContainer.children.length > 1) { // 1 is the initial h2
-        //                 answerBox.appendChild(resultsContainer);
-        //             } else {
-        //                 answerBox.innerHTML = noResultsTemplate(movieTitle);
-        //             }
-        //         })
-        //         .catch(error => {
-        //             loadingIndicator.style.display = "none";
-        //             answerBox.innerHTML = errorTemplate("Failed to get results. Please try again.");
-        //             console.error('Error:', error);
-        //         });
-        // }
-
         function searchMovie() {
             const movieTitle = document.getElementById("movie-search").value.trim();
             if (!movieTitle) return;
+
+            const additionalDesc = document.getElementById("description-search").value.trim();
 
             const answerBox = document.getElementById("answer-box");
             const loadingIndicator = document.getElementById("loading-indicator");
@@ -172,7 +112,13 @@
             loadingIndicator.style.display = "block";
             answerBox.innerHTML = "";
 
-            fetch(`/find-foods?movie=${encodeURIComponent(movieTitle)}`)
+            let fetchUrl = `/find-foods?movie=${encodeURIComponent(movieTitle)}`;
+    
+            if (additionalDesc) {
+                fetchUrl += `&description=${encodeURIComponent(additionalDesc)}`;
+            }
+
+            fetch(fetchUrl)
                 .then(response => {
                     if (!response.ok) throw new Error('Network error');
                     return response.json();
