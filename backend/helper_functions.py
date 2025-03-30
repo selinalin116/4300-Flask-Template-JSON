@@ -137,6 +137,9 @@ def cosine_similarity(script, recipes, recipe_vectorizer):
     return similarities
 
 def description_svd(vectorizer, additional_description, vt, vectors):
+    """
+    Calculate similarity scores between an additional text description and a set of vectors using SVD
+    """
     desc_similarities = None
     if additional_description:
         additional_tfidf = vectorizer.transform([additional_description])
