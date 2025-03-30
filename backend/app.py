@@ -47,6 +47,11 @@ def find_foods():
     
     # Cocktail SVD
     similarities = script_projected.dot(cocktail_vectors.T)
+
+    beta = 0.3
+
+    # SVD with descriptions
+    cocktail_desc_similarities = helper_functions.description_svd(cocktail_vectorizer, additional_description, vt, cocktail_vectors)
     
     # Jaccard similairty for cocktails
     cocktail_jaccard_scores = []
@@ -58,9 +63,18 @@ def find_foods():
     # Combine jaccard similarity for cocktails
     combined_cocktail_scores = []
     for i, cocktail in enumerate(cocktails):
-        svd_score = similarities[0][i]
+        svd_text_score = similarities[0][i]
+
+        if cocktail_desc_similarities is not None:
+            svd_desc_score = cocktail_desc_similarities[0][i]
+
+            # Weighted sum of script and description SVD scores
+            combined_svd_score = (1 - beta) * svd_text_score + beta * svd_desc_score
+        else:
+            combined_svd_score = svd_text_score
+
         jaccard_score = cocktail_jaccard_scores[i]
-        combined_score = helper_functions.combine_scores(jaccard_score, svd_score, alpha=0.5)  # Adjust alpha as needed
+        combined_score = helper_functions.combine_scores(jaccard_score, combined_svd_score, alpha=0.5)  # Adjust alpha as needed
         combined_cocktail_scores.append((cocktail, combined_score))
     
     # Sort and Get Top Cocktails
@@ -86,11 +100,11 @@ def find_foods():
     rec_similarities = rec_script_projected.dot(recipe_vectors.T)
 
     # Additional SVD with additional description users put in
-    desc_similarities = None
-    if additional_description:
-        additional_tfidf = recipe_vectorizer.transform([additional_description])
-        additional_projected = additional_tfidf.dot(rec_vt.T)
-        desc_similarities = additional_projected.dot(recipe_vectors.T)
+    recipe_desc_similarities = helper_functions.description_svd(recipe_vectorizer, additional_description, rec_vt, recipe_vectors)
+    # if additional_description:
+    #     additional_tfidf = recipe_vectorizer.transform([additional_description])
+    #     additional_projected = additional_tfidf.dot(rec_vt.T)
+    #     desc_similarities = additional_projected.dot(recipe_vectors.T)
 
     recipe_jaccard_scores = []
     for recipe in recipes:
@@ -101,15 +115,13 @@ def find_foods():
     # cosine similarity for 
     # cosine_scores = helperfunctions.cosine_similarity(script, recipes, recipe_vectorizer)
 
-    beta = 0.3
-
     combined_scores = []
     for i, recipe in enumerate(recipes):
         # Get SVD-based scores
         svd_script_score = rec_similarities[0][i]
         
-        if desc_similarities is not None:
-            svd_desc_score = desc_similarities[0][i]
+        if recipe_desc_similarities is not None:
+            svd_desc_score = recipe_desc_similarities[0][i]
 
             # Weighted sum of script and description SVD scores
             combined_svd_score = (1 - beta) * svd_script_score + beta * svd_desc_score

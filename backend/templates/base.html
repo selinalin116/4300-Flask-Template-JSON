@@ -82,7 +82,8 @@
                 <ul class="ingredients-list">
                     ${cocktail.ingredients.map(ing => `<li>${ing}</li>`).join('')}
                 </ul>
-                <a href="${cocktail.recipe_link}" target="_blank" class="recipe-link">View Recipe</a>
+                <p class = "cocktail-instruction">${cocktail.instructions}</p>
+                <a href="${cocktail.recipe_link}" target="_blank" class="recipe-link">View Recipe Online</a>
             </div>`;
         }
 
@@ -96,6 +97,7 @@
                 <ul class="ingredients-list">
                     ${recipe.ingredients.map(ing => `<li>${ing}</li>`).join('')}
                 </ul>
+                <p>${recipe.rating === 'NA' || recipe.rating == null ? 'no rating' : recipe.rating}</p>
             </div>
         </div>`;
         }

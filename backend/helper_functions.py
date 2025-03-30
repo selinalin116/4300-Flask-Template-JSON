@@ -4,6 +4,7 @@ import string
 import nltk
 import ssl
 from sklearn.metrics.pairwise import cosine_similarity as sklearn_cosine_similarity
+from recipe import recipe_vectors, recipe_vectorizer
 
 # Fix for SSL certificate verification issues
 try:
@@ -134,3 +135,12 @@ def cosine_similarity(script, recipes, recipe_vectorizer):
     similarities = sklearn_cosine_similarity(script_tfidf, recipe_tfidf)[0]
     
     return similarities
+
+def description_svd(vectorizer, additional_description, vt, vectors):
+    desc_similarities = None
+    if additional_description:
+        additional_tfidf = vectorizer.transform([additional_description])
+        additional_projected = additional_tfidf.dot(vt.T)
+        desc_similarities = additional_projected.dot(vectors.T)
+
+    return desc_similarities

@@ -31,5 +31,6 @@ def clean_recipe_data(recipe):
     return {
         'name': recipe['name'],
         'description': recipe['description'],
-        'ingredients': ast.literal_eval(recipe['ingredients'])
+        'ingredients': ast.literal_eval(recipe['ingredients']),
+        'rating': recipe['average_rating']
     }
