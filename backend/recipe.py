@@ -27,12 +27,6 @@ recipe_vectors = normalize(u, axis=1)
 def parse_steps_to_paragraph(steps_string):
     """
     Converts a string representation of a list of steps into a paragraph.
-    
-    Args:
-        steps_string: A string that looks like a Python list of steps
-        
-    Returns:
-        A string with all steps joined into a paragraph format
     """
     try:
         # Remove the outer quotes if present
