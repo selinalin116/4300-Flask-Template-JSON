@@ -24,13 +24,44 @@ k = 40  # recipesvd has a graph that explains this choice
 u, s, rec_vt = svds(recipe_tfidf, k=k)
 recipe_vectors = normalize(u, axis=1)
 
+def parse_steps_to_paragraph(steps_string):
+    """
+    Converts a string representation of a list of steps into a paragraph.
+    
+    Args:
+        steps_string: A string that looks like a Python list of steps
+        
+    Returns:
+        A string with all steps joined into a paragraph format
+    """
+    try:
+        # Remove the outer quotes if present
+        if steps_string.startswith('"') and steps_string.endswith('"'):
+            steps_string = steps_string[1:-1]
+            
+        steps_list = ast.literal_eval(steps_string)
+        
+        paragraph = " ".join(steps_list)
+        
+        paragraph = paragraph.replace("&amp;", "&")
+        
+        return paragraph
+    except (SyntaxError, ValueError):
+        cleaned = steps_string.strip("[]'\"")
+        steps = [step.strip(" '\"") for step in cleaned.split("', '")]
+        return " ".join(steps)
+
 def clean_recipe_data(recipe):
     """
     Extracts and formats key details from a recipe dictionary.
     """
+    instructions = parse_steps_to_paragraph(recipe["steps"])
+
     return {
         'name': recipe['name'],
         'description': recipe['description'],
-        'ingredients': ast.literal_eval(recipe['ingredients']),
-        'rating': recipe['average_rating']
+        'ingredients': ast.literal_eval(recipe['ingredients_raw_str']),
+        'rating': recipe['average_rating'],
+        'instructions': instructions
+        
     }

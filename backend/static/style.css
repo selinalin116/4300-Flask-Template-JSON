@@ -282,12 +282,12 @@ img {
 
 
 .recipe-left {
-  flex: 60%; 
+  flex: 50%; 
   padding-right: 30px; 
 }
 
 .recipe-right {
-  flex: 40%; 
+  flex: 50%; 
 }
 
 .recipe-info {
@@ -310,7 +310,7 @@ img {
     .answer-box {
         padding: 10px;
     }
-    
+
     .cocktail-section {
         grid-template-columns: 1fr; 
     }
