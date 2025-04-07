@@ -206,7 +206,6 @@
 
 .cocktail-main {
     width: 100%;
-    padding: 0 20px;
     box-sizing: border-box;
 }
 
@@ -273,6 +272,32 @@ img {
 .recipe-card {
     width: 100%;
     box-sizing: border-box;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+.recipe-left {
+  flex: 60%; 
+  padding-right: 30px; 
+}
+
+.recipe-right {
+  flex: 40%; 
+}
+
+.recipe-info {
+    display: flex;
+    flex-direction: row;
+}
+
+.recipe-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 @media (max-width: 900px) {
@@ -282,7 +307,15 @@ img {
 }
 
 @media (max-width: 600px) {
+    .answer-box {
+        padding: 10px;
+    }
+    
     .cocktail-section {
         grid-template-columns: 1fr; 
     }
+    .recipe-info {
+        flex-direction: column;
+    }
+
 }
