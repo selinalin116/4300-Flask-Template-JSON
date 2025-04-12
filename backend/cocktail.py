@@ -1,13 +1,14 @@
 import requests
+import json
 from scipy.sparse.linalg import svds
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import normalize
 
-ingredient_drink_index = {}
+# ingredient_drink_index = {}
 
-ingredient_url = "https://www.thecocktaildb.com/api/json/v1/1/list.php?i=list"
-ingredient_response = requests.get(ingredient_url)
-ingredients = ingredient_response.json().get("drinks", [])
+# ingredient_url = "https://www.thecocktaildb.com/api/json/v1/1/list.php?i=list"
+# ingredient_response = requests.get(ingredient_url)
+# ingredients = ingredient_response.json().get("drinks", [])
 
 # format of the ingredient_url website
 # "drinks":[{"strIngredient1":"Light rum"},{"strIngredient1":"Bourbon"},
@@ -32,18 +33,21 @@ ingredients = ingredient_response.json().get("drinks", [])
 # with open("ingredient_drink_index.json", "w") as f:
 #     json.dump(ingredient_drink_index, f, indent=4)
 
-def fetch_cocktails():
-    """
-    Fetch cocktails from cocktaildb API.
-    """
-    cocktails = []
-    for letter in 'abcdefghijklmnopqrstuvwxyz':
-        response = requests.get(f'https://www.thecocktaildb.com/api/json/v1/1/search.php?f={letter}')
-        if response.ok and response.json().get('drinks'):
-            cocktails.extend(response.json()['drinks'])
-    return cocktails
+# def fetch_cocktails():
+#     """
+#     Fetch cocktails from cocktaildb API.
+#     """
+#     cocktails = []
+#     for letter in 'abcdefghijklmnopqrstuvwxyz':
+#         response = requests.get(f'https://www.thecocktaildb.com/api/json/v1/1/search.php?f={letter}')
+#         if response.ok and response.json().get('drinks'):
+#             cocktails.extend(response.json()['drinks'])
+#     return cocktails
 
-cocktails = fetch_cocktails()
+# cocktails = fetch_cocktails()
+
+with open('data/cocktails.json', 'r') as f:
+    cocktails = json.load(f)
 
 cocktail_texts = [
     " ".join([
