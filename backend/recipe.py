@@ -15,15 +15,6 @@ with zipfile.ZipFile(zip_filename, 'r') as zipf:
 
 recipes = json.loads(data)
 
-recipe_descriptions = [i['description'] for i in recipes]
-
-recipe_vectorizer = TfidfVectorizer(stop_words='english', max_df=0.7, min_df=5)
-recipe_tfidf = recipe_vectorizer.fit_transform(recipe_descriptions)
-
-k = 40  # recipesvd has a graph that explains this choice
-u, s, rec_vt = svds(recipe_tfidf, k=k)
-recipe_vectors = normalize(u, axis=1)
-
 def parse_steps_to_paragraph(steps_string):
     """
     Converts a string representation of a list of steps into a paragraph.
@@ -44,6 +35,28 @@ def parse_steps_to_paragraph(steps_string):
         cleaned = steps_string.strip("[]'\"")
         steps = [step.strip(" '\"") for step in cleaned.split("', '")]
         return " ".join(steps)
+    
+recipe_instructions = [parse_steps_to_paragraph(i['steps']) for i in recipes]
+
+recipe_descriptions = [i['description'] for i in recipes]
+
+recipe_vectorizer = TfidfVectorizer(stop_words='english', max_df=0.7, min_df=5)
+recipe_tfidf = recipe_vectorizer.fit_transform(recipe_descriptions)
+
+k = 40  # recipesvd has a graph that explains this choice
+u, s, rec_vt = svds(recipe_tfidf, k=k)
+recipe_vectors = normalize(u, axis=1)
+
+combined_texts = [
+    f"{desc} {instr}"
+    for desc, instr in zip(recipe_descriptions, recipe_instructions)
+]
+
+recipe_vectorizer_instructions = TfidfVectorizer(stop_words='english', max_df=0.7, min_df=5)
+recipe_tfidf_instructions = recipe_vectorizer_instructions.fit_transform(combined_texts)
+
+i_u, i_s, i_rec_vt = svds(recipe_tfidf_instructions, k=k)
+i_recipe_vectors = normalize(i_u, axis=1)
 
 def clean_recipe_data(recipe):
     """

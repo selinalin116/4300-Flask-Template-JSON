@@ -1,5 +1,5 @@
 from cocktail import *
-from recipe import recipe_vectors, recipes, clean_recipe_data, rec_vt, recipe_vectorizer
+from recipe import recipe_vectors, recipes, clean_recipe_data, rec_vt, recipe_vectorizer, i_rec_vt, i_recipe_vectors, recipe_vectorizer_instructions
 import os
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
@@ -100,11 +100,8 @@ def find_foods():
     rec_similarities = rec_script_projected.dot(recipe_vectors.T)
 
     # Additional SVD with additional description users put in
-    recipe_desc_similarities = helper_functions.description_svd(recipe_vectorizer, additional_description, rec_vt, recipe_vectors)
-    # if additional_description:
-    #     additional_tfidf = recipe_vectorizer.transform([additional_description])
-    #     additional_projected = additional_tfidf.dot(rec_vt.T)
-    #     desc_similarities = additional_projected.dot(recipe_vectors.T)
+    # recipe_desc_similarities = helper_functions.description_svd(recipe_vectorizer, additional_description, rec_vt, recipe_vectors)
+    recipe_desc_similarities = helper_functions.description_svd(recipe_vectorizer_instructions, additional_description, i_rec_vt, i_recipe_vectors)
 
     recipe_jaccard_scores = []
     for recipe in recipes:
