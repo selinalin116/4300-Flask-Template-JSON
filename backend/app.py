@@ -79,8 +79,13 @@ def find_foods():
     
     # Sort and Get Top Cocktails
     combined_cocktail_scores = sorted(combined_cocktail_scores, key=lambda x: -x[1])
-    top_cocktails = [clean_cocktail_data(cocktail) for cocktail, score in combined_cocktail_scores[:6]]
-
+    top_cocktails = [
+    {
+        "data": clean_cocktail_data(cocktail),
+        "score": score
+    }
+    for cocktail, score in combined_cocktail_scores[:6]
+]
 
     # if not svd_results:
     #     jaccard_scores = [
@@ -131,7 +136,13 @@ def find_foods():
         combined_scores.append((recipe, final_score))
 
     combined_scores = sorted(combined_scores, key=lambda x: -x[1])
-    top_recipes = [clean_recipe_data(recipe) for recipe, score in combined_scores[:6]]
+    top_recipes = [
+    {
+        "data": clean_recipe_data(recipe),
+        "score": score
+    }
+    for recipe, score in combined_scores[:6]
+]
 
     # result = movie_preprocessing.get_movie_foods(movie_title, SCRIPT_FOLDER, FOOD_DATABASE)
     return jsonify({

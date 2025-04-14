@@ -9,8 +9,8 @@
 
 <body>
     <div class="full-body-container">
-        <nav class = "navbar">
-            <h2 class = "navbar-text">FoodTastic</h2>
+        <nav class="navbar">
+            <h2 class="navbar-text">FoodTastic</h2>
         </nav>
         <div class="top-text">
             <div class="header-text">
@@ -19,24 +19,25 @@
             </div>
             <div class="search-container">
                 <div class="input-box" onclick="sendFocus()">
-                  <img src="{{ url_for('static', filename='images/mag.png') }}" />
-                  <input placeholder="Search for a movie (e.g., Star Wars, Avengers)" id="movie-search" required>
+                    <img src="{{ url_for('static', filename='images/mag.png') }}" />
+                    <input placeholder="Search for a movie (e.g., Star Wars, Avengers)" id="movie-search" required>
                 </div>
                 <div class="input-box" onclick="descriptionFocus()">
-                  <input placeholder="Additional Description (e.g., Recipe that reminds me of homecook food)" id="description-search">
+                    <input placeholder="Additional Description (e.g., Recipe that reminds me of homecook food)"
+                        id="description-search">
                 </div>
-                
+
                 <div class="submit-container">
-                  <button id="search-button" onclick="searchMovie()">
-                    Search Recommendations
-                  </button>
+                    <button id="search-button" onclick="searchMovie()">
+                        Search Recommendations
+                    </button>
                 </div>
             </div>
         </div>
         <div id="loading-indicator" style="display: none;">
-            <p>Retrieving recommendations...</p>
+            <div id="loading-message">Retrieving recommendations...</div>
         </div>
-        <div id="answer-box" class = "answer-box">
+        <div id="answer-box" class="answer-box">
             <!-- Results will appear here -->
         </div>
     </div>
@@ -78,6 +79,7 @@
         function cocktailTemplate(cocktail) {
             return `<div class='cocktail-card'>
                 <h3 class="cocktail-name">${cocktail.name}</h3>
+                <h3 class="score">${(cocktail.score * 100).toFixed(1)}% match</h3>
                 <img src="${cocktail.image}" alt="${cocktail.name}" class="cocktail-image">
                 <ul class="ingredients-list">
                     ${cocktail.ingredients.map(ing => `<li>${ing}</li>`).join('')}
@@ -89,6 +91,15 @@
 
         function recipeTemplate(recipe) {
             console.log(recipe)
+            const maxLength = 300;
+            const desc = recipe.description || "";
+
+            const isLong = desc.length > maxLength;
+            const shortDesc = desc.slice(0, maxLength) + (isLong ? "..." : "");
+
+            const fullDesc = `<span class="short-text">${shortDesc}</span> 
+            <span class="full-text hidden">${desc}</span>
+            ${isLong ? `<a href="#" class="see-more">See more</a>` : ""}`;
 
             // return `<div class='recipe-card'>
             // <div class="recipe-info">
@@ -103,8 +114,9 @@
             <div class="recipe-info">
                 <div class = "recipe-left">
                     <h3>${recipe.name}</h3>
-                    <p>User Rating: ${recipe.rating === 'NA' || recipe.rating == null || recipe.rating === 0? 'N/A' : recipe.rating}</p>
-                    <h4>${recipe.description}</h4>
+                    <h3>Similarity Score: ${(recipe.score * 100).toFixed(1)}%</h3>
+                    <p>User Rating: ${recipe.rating === 'NA' || recipe.rating == null || recipe.rating === 0 ? 'N/A' : recipe.rating}</p>
+                    <p>${fullDesc}</p>
                 </div>
                 <div class = "recipe-right">
                     <h4>Instruction</h4>
@@ -112,14 +124,27 @@
                     <h4>Ingredients</h4>
                     <ul class="ingredients-list">
                         ${recipe.ingredients
-                            .filter(ing => ing.trim() !== '')
-                            .map(ing => `<li>${ing}</li>`)
-                            .join('')}
+                    .filter(ing => ing.trim() !== '')
+                    .map(ing => `<li>${ing}</li>`)
+                    .join('')}
                     </ul>
                 </div>
             </div>
         </div>`;
         }
+
+        document.addEventListener('click', function (e) {
+            if (e.target && e.target.matches('.see-more')) {
+                e.preventDefault();
+                const card = e.target.closest('.recipe-card');
+                const shortText = card.querySelector('.short-text');
+                const fullText = card.querySelector('.full-text');
+
+                shortText.classList.toggle('hidden');
+                fullText.classList.toggle('hidden');
+                e.target.textContent = fullText.classList.contains('hidden') ? 'See more' : 'See less';
+            }
+        });
 
         function searchMovie() {
             const movieTitle = document.getElementById("movie-search").value.trim();
@@ -134,7 +159,7 @@
             answerBox.innerHTML = "";
 
             let fetchUrl = `/find-foods?movie=${encodeURIComponent(movieTitle)}`;
-    
+
             if (additionalDesc) {
                 fetchUrl += `&description=${encodeURIComponent(additionalDesc)}`;
             }
@@ -162,14 +187,16 @@
                         const cocktailMain = document.createElement("div");
                         cocktailMain.className = "cocktail-main";
                         cocktailMain.innerHTML = `<h3 class="section-header">Recommended Drinks</h3>`;
-                        
+
                         const cocktailSection = document.createElement("div");
                         cocktailSection.className = "cocktail-section";
-                        
-                        data.cocktails.forEach(cocktail => {
+
+                        data.cocktails.forEach(c => {
+                            const cocktail = c.data;
+                            cocktail.score = c.score;
                             cocktailSection.innerHTML += cocktailTemplate(cocktail);
                         });
-                        
+
                         cocktailMain.appendChild(cocktailSection);
                         resultsContainer.appendChild(cocktailMain);
                     }
@@ -179,14 +206,16 @@
                         const recipeMain = document.createElement("div");
                         recipeMain.className = "recipe-main";
                         recipeMain.innerHTML = `<h3 class="section-header">Recommended Recipes</h3>`;
-                        
+
                         const recipeSection = document.createElement("div");
                         recipeSection.className = "recipe-section";
-                        
-                        data.recipes.forEach(recipe => {
+
+                        data.recipes.forEach(r => {
+                            const recipe = r.data;
+                            recipe.score = r.score;
                             recipeSection.innerHTML += recipeTemplate(recipe);
                         });
-                        
+
                         recipeMain.appendChild(recipeSection);
                         resultsContainer.appendChild(recipeMain);
                     }
