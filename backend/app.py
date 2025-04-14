@@ -4,6 +4,7 @@ import os
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 import helper_functions
+from collections import defaultdict
 
 os.environ['ROOT_PATH'] = os.path.abspath(os.path.join("..",os.curdir))
 
