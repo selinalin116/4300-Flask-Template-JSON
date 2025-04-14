@@ -106,7 +106,7 @@
                 <div class = "recipe-left">
                     <h3>${recipe.name}</h3>
                     <h4>Similarity Score: ${(recipe.score * 100).toFixed(1)}%</h4>
-                    <p>User Rating: ${recipe.rating === 'NA' || recipe.rating == null || recipe.rating === 0 ? 'N/A' : recipe.rating}</p>
+                    <p>User Rating: ${recipe.rating === 'NA' || recipe.rating == null || recipe.rating === 0 ? 'N/A' : (Math.round(Number(recipe.rating) * 100) / 100).toString().replace(/\.00$/, '')}</p>
                     <p>${fullDesc}</p>
                 </div>
                 <div class = "recipe-right">

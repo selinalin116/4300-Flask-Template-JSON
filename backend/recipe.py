@@ -4,37 +4,60 @@ from sklearn.preprocessing import normalize
 import json
 import zipfile
 import ast
+import helper_functions
 
-zip_filename = 'data/recipes_cleaned.zip'
-file_inside_zip = 'recipes_cleaned.json'
+
+# zip_filename = 'data/recipes_cleaned.zip'
+# file_inside_zip = 'recipes_cleaned.json'
 
 # Open the ZIP file and read the file inside it
-with zipfile.ZipFile(zip_filename, 'r') as zipf:
-    with zipf.open(file_inside_zip) as file:
-        data = file.read().decode('utf-8')
+# with zipfile.ZipFile(zip_filename, 'r') as zipf:
+#     with zipf.open(file_inside_zip) as file:
+#         data = file.read().decode('utf-8')
 
-recipes = json.loads(data)
+with open('data/recipes_cleaned.json', 'r') as f:
+    recipes = json.load(f)
+
+import ast
 
 def parse_steps_to_paragraph(steps_string):
     """
-    Converts a string representation of a list of steps into a paragraph.
+    Converts a string representation of a list of steps into a readable paragraph.
     """
     try:
-        # Remove the outer quotes if present
+        # Remove outer quotes if needed
         if steps_string.startswith('"') and steps_string.endswith('"'):
             steps_string = steps_string[1:-1]
-            
+
+        # Safely parse string to list
         steps_list = ast.literal_eval(steps_string)
-        
-        paragraph = " ".join(steps_list)
-        
-        paragraph = paragraph.replace("&amp;", "&")
-        
+
+        # Clean and format each step
+        cleaned_steps = []
+        for step in steps_list:
+            step = step.strip().capitalize()
+            if not step.endswith('.'):
+                step += '.'
+            cleaned_steps.append(step)
+
+        # Combine into a single paragraph
+        paragraph = " ".join(cleaned_steps)
         return paragraph
+
     except (SyntaxError, ValueError):
+        # Fallback in case of bad formatting
         cleaned = steps_string.strip("[]'\"")
-        steps = [step.strip(" '\"") for step in cleaned.split("', '")]
-        return " ".join(steps)
+        rough_steps = [step.strip(" '\"") for step in cleaned.split("', '")]
+
+        cleaned_steps = []
+        for step in rough_steps:
+            step = step.strip().capitalize()
+            if not step.endswith('.'):
+                step += '.'
+            cleaned_steps.append(step)
+
+        return " ".join(cleaned_steps)
+
     
 recipe_instructions = [parse_steps_to_paragraph(i['steps']) for i in recipes]
 
@@ -65,10 +88,9 @@ def clean_recipe_data(recipe):
     instructions = parse_steps_to_paragraph(recipe["steps"])
 
     return {
-        'name': recipe['name'],
-        'description': recipe['description'],
-        'ingredients': ast.literal_eval(recipe['ingredients_raw_str']),
+        'name': recipe['name'].title(),
+        'description': helper_functions.capitalize_sentences(recipe['description']),
+        'ingredients': ast.literal_eval(recipe['ingredients'].title()),
         'rating': recipe['average_rating'],
-        'instructions': instructions
-        
+        'instructions': instructions 
     }

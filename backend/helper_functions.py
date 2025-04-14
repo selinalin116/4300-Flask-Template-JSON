@@ -4,7 +4,6 @@ import string
 import nltk
 import ssl
 from sklearn.metrics.pairwise import cosine_similarity as sklearn_cosine_similarity
-from recipe import recipe_vectors, recipe_vectorizer
 
 # Fix for SSL certificate verification issues
 try:
@@ -22,6 +21,12 @@ nltk.download('wordnet')
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
+from nltk.tokenize import sent_tokenize
+
+def capitalize_sentences(text):
+    sentences = sent_tokenize(text)
+    capitalized = [s.strip().capitalize() for s in sentences]
+    return " ".join(capitalized)
 
 def tokenize_script(script_text, min_word_length=3):
     """
@@ -111,6 +116,17 @@ def jaccard_similarity(set1, set2):
     intersection = len(set1 & set2)
     union = len(set1 | set2)
     return intersection / union if union != 0 else 0
+
+def weighted_jaccard(set1, set2, idf_dict):
+    intersection = set1.intersection(set2)
+    union = set1.union(set2)
+
+    intersection_weight = sum(idf_dict.get(item, 0.0) for item in intersection)
+    union_weight = sum(idf_dict.get(item, 0.0) for item in union)
+
+    if union_weight == 0:
+        return 0.0
+    return intersection_weight / union_weight
 
 def combine_scores(jaccard_score, svd_score, alpha = .5):
     """
