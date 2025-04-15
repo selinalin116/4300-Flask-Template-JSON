@@ -56,7 +56,8 @@ def find_foods():
     # Jaccard similairty for cocktails
     cocktail_jaccard_scores = []
     for cocktail in cocktails:
-        cocktail_ingredients = set(cocktail.get('ingredients', []))  # Ensure ingredients are a list
+        cocktail_ingredients = set(" ".join(cocktail.get('ingredients', [])).lower().split())
+        # cocktail_ingredients = set(cocktail.get('ingredients', [])) 
         jaccard_score = helper_functions.jaccard_similarity(script_words, cocktail_ingredients)
         cocktail_jaccard_scores.append(jaccard_score)
     
@@ -67,24 +68,26 @@ def find_foods():
 
         if cocktail_desc_similarities is not None:
             svd_desc_score = cocktail_desc_similarities[0][i]
-
-            # Weighted sum of script and description SVD scores
             combined_svd_score = (1 - beta) * svd_text_score + beta * svd_desc_score
         else:
             combined_svd_score = svd_text_score
 
         jaccard_score = cocktail_jaccard_scores[i]
         combined_score = helper_functions.combine_scores(jaccard_score, combined_svd_score, alpha=0.5)  # Adjust alpha as needed
-        combined_cocktail_scores.append((cocktail, combined_score))
-    
-    # Sort and Get Top Cocktails
+        combined_cocktail_scores.append((cocktail, combined_score, jaccard_score, combined_svd_score))
+
     combined_cocktail_scores = sorted(combined_cocktail_scores, key=lambda x: -x[1])
+
+    # Sort and Get Top Cocktails
     top_cocktails = [
     {
         "data": clean_cocktail_data(cocktail),
-        "score": score
+        "score": round(score * 100, 1),
+        "jaccard_score": round(jaccard_score * 100, 1),
+        "svd_score": round(combined_svd_score * 100, 1)
     }
-    for cocktail, score in combined_cocktail_scores[:6]
+    
+    for cocktail, score, jaccard_score, combined_svd_score in combined_cocktail_scores[:6]
 ]
 
     # if not svd_results:
@@ -110,7 +113,8 @@ def find_foods():
 
     recipe_jaccard_scores = []
     for recipe in recipes:
-        recipe_ingredients = set(recipe['ingredients'])
+        # recipe_ingredients = set(recipe['ingredients'])
+        recipe_ingredients = set(" ".join(recipe['ingredients']).lower().split())
         jaccard_score = helper_functions.jaccard_similarity(script_words, recipe_ingredients)
         recipe_jaccard_scores.append(jaccard_score)
 
@@ -123,26 +127,28 @@ def find_foods():
         svd_script_score = rec_similarities[0][i]
         
         if recipe_desc_similarities is not None:
-            svd_desc_score = recipe_desc_similarities[0][i]
-
-            # Weighted sum of script and description SVD scores
+            svd_desc_score = recipe_desc_similarities[0][i]            
             combined_svd_score = (1 - beta) * svd_script_score + beta * svd_desc_score
         else:
             combined_svd_score = svd_script_score
 
         jaccard_score = recipe_jaccard_scores[i]
-        # cosine_score = cosine_scores[i]
         final_score = helper_functions.combine_scores(jaccard_score, combined_svd_score, alpha=0.5)  # Adjust alpha as needed
-        combined_scores.append((recipe, final_score))
+        combined_scores.append((recipe, final_score, jaccard_score, combined_svd_score))
 
     combined_scores = sorted(combined_scores, key=lambda x: -x[1])
     top_recipes = [
     {
         "data": clean_recipe_data(recipe),
-        "score": score
+        "score": round(score * 100, 1),
+        "jaccard_score": round(jaccard_score * 100, 1),
+        "svd_score": round(combined_svd_score * 100, 1)
     }
-    for recipe, score in combined_scores[:6]
+    for recipe, score, jaccard_score, combined_svd_score in combined_scores[:6]
 ]
+    # print top recipe jaccard and svd
+    for recipe, score, jaccard_score, combined_svd_score in combined_scores[:6]:
+        print(f"Recipe: {recipe['name']}, Jaccard Score: {jaccard_score:.2f}, SVD Score: {combined_svd_score:.2f}")
 
     # result = movie_preprocessing.get_movie_foods(movie_title, SCRIPT_FOLDER, FOOD_DATABASE)
     return jsonify({
