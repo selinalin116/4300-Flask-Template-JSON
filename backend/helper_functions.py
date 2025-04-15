@@ -117,6 +117,7 @@ def jaccard_similarity(set1, set2):
     union = len(set1 | set2)
     return intersection / union if union != 0 else 0
 
+
 def weighted_jaccard(set1, set2, idf_dict):
     intersection = set1.intersection(set2)
     union = set1.union(set2)
@@ -134,23 +135,23 @@ def combine_scores(jaccard_score, svd_score, alpha = .5):
     """
     return alpha * jaccard_score + (1 - alpha) * svd_score
 
-def cosine_similarity(script, recipes, recipe_vectorizer):
-    """
-    Calculate cosine similarity between script and recipes using existing TF-IDF vectorizer
-    """
-    # Transform script using existing recipe vectorizer
-    script_tfidf = recipe_vectorizer.transform([script])
+# def cosine_similarity(script, recipes, recipe_vectorizer):
+#     """
+#     Calculate cosine similarity between script and recipes using existing TF-IDF vectorizer
+#     """
+#     # Transform script using existing recipe vectorizer
+#     script_tfidf = recipe_vectorizer.transform([script])
     
-    # Get recipe ingredients as text for vectorization
-    recipe_texts = [" ".join(recipe['ingredients']) for recipe in recipes]
+#     # Get recipe ingredients as text for vectorization
+#     recipe_texts = [" ".join(recipe['ingredients']) for recipe in recipes]
     
-    # Transform recipes using the same vectorizer
-    recipe_tfidf = recipe_vectorizer.transform(recipe_texts)
+#     # Transform recipes using the same vectorizer
+#     recipe_tfidf = recipe_vectorizer.transform(recipe_texts)
     
-    # Calculate cosine similarity directly between script and each recipe
-    similarities = sklearn_cosine_similarity(script_tfidf, recipe_tfidf)[0]
+#     # Calculate cosine similarity directly between script and each recipe
+#     similarities = sklearn_cosine_similarity(script_tfidf, recipe_tfidf)[0]
     
-    return similarities
+#     return similarities
 
 def description_svd(vectorizer, additional_description, vt, vectors):
     """

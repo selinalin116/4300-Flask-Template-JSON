@@ -4,6 +4,8 @@ import os
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 import helper_functions
+import ast
+from cocktail import extract_ingredients
 
 os.environ['ROOT_PATH'] = os.path.abspath(os.path.join("..",os.curdir))
 
@@ -45,20 +47,19 @@ def find_foods():
     
     script_words = set(script.split())
     
-    # Cocktail SVD
     similarities = script_projected.dot(cocktail_vectors.T)
 
     beta = 0.3
 
-    # SVD with descriptions
     cocktail_desc_similarities = helper_functions.description_svd(cocktail_vectorizer, additional_description, vt, cocktail_vectors)
     
-    # Jaccard similairty for cocktails
     cocktail_jaccard_scores = []
     for cocktail in cocktails:
-        cocktail_ingredients = set(" ".join(cocktail.get('ingredients', [])).lower().split())
-        # cocktail_ingredients = set(cocktail.get('ingredients', [])) 
-        jaccard_score = helper_functions.jaccard_similarity(script_words, cocktail_ingredients)
+        cocktail_ingredients = extract_ingredients(cocktail)
+        cocktail['ingredients'] = cocktail_ingredients
+
+        cocktail_ingredients_set = set(" ".join(cocktail_ingredients).lower().split())
+        jaccard_score = helper_functions.jaccard_similarity(script_words, cocktail_ingredients_set)
         cocktail_jaccard_scores.append(jaccard_score)
     
     # Combine jaccard similarity for cocktails
@@ -89,6 +90,7 @@ def find_foods():
     
     for cocktail, score, jaccard_score, combined_svd_score in combined_cocktail_scores[:6]
 ]
+    print(cocktail_ingredients)
 
     # if not svd_results:
     #     jaccard_scores = [
@@ -113,11 +115,25 @@ def find_foods():
 
     recipe_jaccard_scores = []
     for recipe in recipes:
-        # recipe_ingredients = set(recipe['ingredients'])
-        recipe_ingredients = set(" ".join(recipe['ingredients']).lower().split())
-        jaccard_score = helper_functions.jaccard_similarity(script_words, recipe_ingredients)
-        recipe_jaccard_scores.append(jaccard_score)
+        try:
+            ingredients_list = ast.literal_eval(recipe['ingredients'])
+            ingredients = set(ing.lower().strip() for ing in ingredients_list)
+        except (SyntaxError, ValueError):
+            ingredients = set()
 
+        jaccard_score = helper_functions.jaccard_similarity(script_words, ingredients)
+        recipe_jaccard_scores.append(jaccard_score)
+    for recipe in recipes:
+        try:
+            ingredients_list = ast.literal_eval(recipe['ingredients'])
+            ingredients = set(ing.lower().strip() for ing in ingredients_list)
+        except (SyntaxError, ValueError):
+            ingredients = set()
+
+        jaccard_score = helper_functions.jaccard_similarity(script_words, ingredients)
+        recipe_jaccard_scores.append(jaccard_score)
+        jaccard_score = helper_functions.jaccard_similarity(script_words, ingredients)
+        recipe_jaccard_scores.append(jaccard_score)
     # cosine similarity for 
     # cosine_scores = helperfunctions.cosine_similarity(script, recipes, recipe_vectorizer)
 

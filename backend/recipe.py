@@ -25,14 +25,11 @@ def parse_steps_to_paragraph(steps_string):
     Converts a string representation of a list of steps into a readable paragraph.
     """
     try:
-        # Remove outer quotes if needed
         if steps_string.startswith('"') and steps_string.endswith('"'):
             steps_string = steps_string[1:-1]
 
-        # Safely parse string to list
         steps_list = ast.literal_eval(steps_string)
 
-        # Clean and format each step
         cleaned_steps = []
         for step in steps_list:
             step = step.strip().capitalize()
@@ -40,7 +37,6 @@ def parse_steps_to_paragraph(steps_string):
                 step += '.'
             cleaned_steps.append(step)
 
-        # Combine into a single paragraph
         paragraph = " ".join(cleaned_steps)
         return paragraph
 
@@ -81,6 +77,17 @@ recipe_tfidf_instructions = recipe_vectorizer_instructions.fit_transform(combine
 i_u, i_s, i_rec_vt = svds(recipe_tfidf_instructions, k=k)
 i_recipe_vectors = normalize(i_u, axis=1)
 
+recipe_ingredients = set()
+
+for r in recipes:
+    try:
+        # Parse the 'ingredients' field as a list
+        ingredients_list = ast.literal_eval(r['ingredients'])
+        if isinstance(ingredients_list, list):
+            recipe_ingredients.update(ingredient.strip().lower() for ingredient in ingredients_list)
+    except (ValueError, SyntaxError):
+        continue
+
 def clean_recipe_data(recipe):
     """
     Extracts and formats key details from a recipe dictionary.
@@ -90,7 +97,10 @@ def clean_recipe_data(recipe):
     return {
         'name': recipe['name'].title(),
         'description': helper_functions.capitalize_sentences(recipe['description']),
-        'ingredients': ast.literal_eval(recipe['ingredients'].title()),
+        'ingredients': [ingredient.strip().lower() for ingredient in ast.literal_eval(recipe['ingredients'])],
         'rating': recipe['average_rating'],
         'instructions': instructions 
     }
+
+# Print the unique ingredients for verification
+print(recipe_ingredients)

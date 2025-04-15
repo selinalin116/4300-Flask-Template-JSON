@@ -65,41 +65,49 @@ k = 40  # Same as class demo
 U, s, vt = svds(cocktail_tfidf, k=k)
 cocktail_vectors = normalize(U, axis=1)
 
-def jaccard_similarity(script, ingredients):
-    """
-    Calculate jaccard similarity between a movie script and a recipe's ingredients.
-    """
+def jaccard_similarity(script, raw_ingredients):
     script_words = set(script.lower().split())
-    ingredient_words = set(ingredients.lower().split())
+    ingredient_words = set(raw_ingredients)
     intersection = script_words & ingredient_words
     return len(intersection) / (len(script_words | ingredient_words) + 1e-8)
 
 def clean_cocktail_data(cocktail):
-    """
-    Extract only name, ingredients, image, recipe, and link from cocktail data.
-    """
     ingredients = []
+    raw_ingredients = []
     for i in range(1, 16):
         ingredient = cocktail.get(f'strIngredient{i}')
         measure = cocktail.get(f'strMeasure{i}', '') or ''
         measure = str(measure).strip()
-        
-        if ingredient:
+
+        if ingredient and ingredient.strip():
+            raw_ingredients.append(ingredient.strip().lower())
             ingredients.append(
-                f"{ingredient} ({measure})" if measure 
-                else ingredient
+                f"{ingredient.strip()} ({measure})" if measure 
+                else ingredient.strip()
             )
 
-        instructions = cocktail.get('strInstructions', '')
-    
+    instructions = cocktail.get('strInstructions', '').strip()
+
     drink_id = cocktail.get('idDrink', '')
     drink_name = cocktail.get('strDrink', '').replace(" ", "-").lower()
     cocktail_url = f"https://www.thecocktaildb.com/drink/{drink_id}-{drink_name}"
-    
+
     return {
-        'name': cocktail.get('strDrink', 'Unnamed Cocktail'),
-        'image': cocktail.get('strDrinkThumb', ''),
+        'name': cocktail.get('strDrink', 'Unnamed Cocktail').strip(),
+        'image': cocktail.get('strDrinkThumb', '').strip(),
         'ingredients': ingredients,
+        'raw_ingredients': raw_ingredients,
         'instructions': instructions,
         'recipe_link': cocktail_url
     }
+
+def extract_ingredients(cocktail):
+    """
+    Extract all non-null strIngredient[x] values from a cocktail entry.
+    """
+    ingredients = []
+    for i in range(1, 16):
+        ingredient = cocktail.get(f'strIngredient{i}')
+        if ingredient:
+            ingredients.append(ingredient.strip())
+    return ingredients
