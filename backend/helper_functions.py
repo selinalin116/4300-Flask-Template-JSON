@@ -114,7 +114,9 @@ def jaccard_similarity(set1, set2):
     Calculate jaccard similarity between two sets.
     """
     intersection = len(set1 & set2)
+    print(intersection)
     union = len(set1 | set2)
+    print(union)
     return intersection / union if union != 0 else 0
 
 
