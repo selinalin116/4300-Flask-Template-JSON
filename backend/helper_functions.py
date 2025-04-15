@@ -117,6 +117,14 @@ def jaccard_similarity(set1, set2):
     union = len(set1 | set2)
     return intersection / union if union != 0 else 0
 
+def weighted_jaccard_similarity(script_words, ingredient_set, weight_dict):
+    intersection = script_words & ingredient_set
+
+    # Focus on the percentage of ingredients shared
+    intersection_weight = sum(weight_dict.get(word, 1.0) for word in intersection)
+    ingredient_weight = sum(weight_dict.get(word, 1.0) for word in ingredient_set)
+
+    return intersection_weight / ingredient_weight if ingredient_weight != 0 else 0.0
 
 def weighted_jaccard(set1, set2, idf_dict):
     intersection = set1.intersection(set2)
@@ -129,10 +137,7 @@ def weighted_jaccard(set1, set2, idf_dict):
         return 0.0
     return intersection_weight / union_weight
 
-def combine_scores(jaccard_score, svd_score, alpha = .5):
-    """
-    Combines two similarity scores (Jaccard and SVD-based) using a weighted sum.
-    """
+def combine_scores(jaccard_score, svd_score, alpha = .25):
     return alpha * jaccard_score + (1 - alpha) * svd_score
 
 # def cosine_similarity(script, recipes, recipe_vectorizer):

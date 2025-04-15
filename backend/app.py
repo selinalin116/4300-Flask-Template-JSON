@@ -6,6 +6,7 @@ from flask_cors import CORS
 import helper_functions
 import ast
 from cocktail import extract_ingredients
+from helper_functions import weighted_jaccard_similarity
 
 os.environ['ROOT_PATH'] = os.path.abspath(os.path.join("..",os.curdir))
 
@@ -46,23 +47,38 @@ def find_foods():
     script_projected = normalize(script_projected)
     
     script_words = set(script.split())
-    
+
+    # Extract cocktail ingredients
+    cocktail_ingredients_set = set()
+    for cocktail in cocktails:
+        cocktail_ingredients = extract_ingredients(cocktail)
+        cocktail_ingredients_set.update(ingredient.lower() for ingredient in cocktail_ingredients)
+
+    # Extract recipe ingredients
+    recipe_ingredients_set = set()
+    for recipe in recipes:
+        try:
+            ingredients_list = ast.literal_eval(recipe['ingredients'])
+            recipe_ingredients_set.update(ing.lower().strip() for ing in ingredients_list)
+        except (SyntaxError, ValueError):
+            pass
+
     similarities = script_projected.dot(cocktail_vectors.T)
 
     beta = 0.3
 
     cocktail_desc_similarities = helper_functions.description_svd(cocktail_vectorizer, additional_description, vt, cocktail_vectors)
     
+    weight_dict = {word: 1.5 for word in script_words}
+
     cocktail_jaccard_scores = []
     for cocktail in cocktails:
         cocktail_ingredients = extract_ingredients(cocktail)
-        cocktail['ingredients'] = cocktail_ingredients
-
         cocktail_ingredients_set = set(" ".join(cocktail_ingredients).lower().split())
-        jaccard_score = helper_functions.jaccard_similarity(script_words, cocktail_ingredients_set)
+        jaccard_score = weighted_jaccard_similarity(script_words, cocktail_ingredients_set, weight_dict)
         cocktail_jaccard_scores.append(jaccard_score)
     
-    # Combine jaccard similarity for cocktails
+    # combine jaccard similarity for cocktails
     combined_cocktail_scores = []
     for i, cocktail in enumerate(cocktails):
         svd_text_score = similarities[0][i]
@@ -74,7 +90,7 @@ def find_foods():
             combined_svd_score = svd_text_score
 
         jaccard_score = cocktail_jaccard_scores[i]
-        combined_score = helper_functions.combine_scores(jaccard_score, combined_svd_score, alpha=0.5)  # Adjust alpha as needed
+        combined_score = helper_functions.combine_scores(jaccard_score, combined_svd_score, alpha=0.5)
         combined_cocktail_scores.append((cocktail, combined_score, jaccard_score, combined_svd_score))
 
     combined_cocktail_scores = sorted(combined_cocktail_scores, key=lambda x: -x[1])
@@ -90,7 +106,6 @@ def find_foods():
     
     for cocktail, score, jaccard_score, combined_svd_score in combined_cocktail_scores[:6]
 ]
-    print(cocktail_ingredients)
 
     # if not svd_results:
     #     jaccard_scores = [
@@ -121,19 +136,9 @@ def find_foods():
         except (SyntaxError, ValueError):
             ingredients = set()
 
-        jaccard_score = helper_functions.jaccard_similarity(script_words, ingredients)
+        jaccard_score = weighted_jaccard_similarity(script_words, ingredients, weight_dict)
         recipe_jaccard_scores.append(jaccard_score)
-    for recipe in recipes:
-        try:
-            ingredients_list = ast.literal_eval(recipe['ingredients'])
-            ingredients = set(ing.lower().strip() for ing in ingredients_list)
-        except (SyntaxError, ValueError):
-            ingredients = set()
 
-        jaccard_score = helper_functions.jaccard_similarity(script_words, ingredients)
-        recipe_jaccard_scores.append(jaccard_score)
-        jaccard_score = helper_functions.jaccard_similarity(script_words, ingredients)
-        recipe_jaccard_scores.append(jaccard_score)
     # cosine similarity for 
     # cosine_scores = helperfunctions.cosine_similarity(script, recipes, recipe_vectorizer)
 
@@ -162,10 +167,7 @@ def find_foods():
     }
     for recipe, score, jaccard_score, combined_svd_score in combined_scores[:6]
 ]
-    # print top recipe jaccard and svd
-    for recipe, score, jaccard_score, combined_svd_score in combined_scores[:6]:
-        print(f"Recipe: {recipe['name']}, Jaccard Score: {jaccard_score:.2f}, SVD Score: {combined_svd_score:.2f}")
-
+    
     # result = movie_preprocessing.get_movie_foods(movie_title, SCRIPT_FOLDER, FOOD_DATABASE)
     return jsonify({
         "cocktails": top_cocktails,

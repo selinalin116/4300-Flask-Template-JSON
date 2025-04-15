@@ -81,10 +81,8 @@ recipe_ingredients = set()
 
 for r in recipes:
     try:
-        # Parse the 'ingredients' field as a list
         ingredients_list = ast.literal_eval(r['ingredients'])
-        if isinstance(ingredients_list, list):
-            recipe_ingredients.update(ingredient.strip().lower() for ingredient in ingredients_list)
+        recipe_ingredients.update(ingredient.strip().lower() for ingredient in ingredients_list)
     except (ValueError, SyntaxError):
         continue
 
@@ -101,6 +99,3 @@ def clean_recipe_data(recipe):
         'rating': recipe['average_rating'],
         'instructions': instructions 
     }
-
-# Print the unique ingredients for verification
-print(recipe_ingredients)

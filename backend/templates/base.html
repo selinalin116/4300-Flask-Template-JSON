@@ -87,7 +87,7 @@
                 <p class = "cocktail-instruction">${cocktail.instructions}</p>
                 <a href="${cocktail.recipe_link}" target="_blank" class="recipe-link">View Recipe Online</a>
                 <div class="explanation">
-                    <h5>Why this drink?</h5>
+                    <h4>Why this drink?</h4>
                       <p> This drink was recommended because it shares ${cocktail.jaccard_score}% of its ingredients with the movie script keywords 
                         and has a script similarity score of ${cocktail.svd_score}% based on thematic content.</p>
                 </div>
@@ -95,20 +95,42 @@
         }
 
         function recipeTemplate(recipe) {
+            const maxLength = 300;
+            const inst = recipe.instructions || "";
+
+            const isLong = inst.length > maxLength;
+            console.log(inst.length);
+            const shortInst = inst.slice(0, maxLength) + (isLong ? "..." : "");
+
+            const fullInst = `<span class="short-text">${shortInst}</span> 
+            <span class="full-text hidden">${inst}</span>
+            ${isLong ? `<a href="#" class="see-more">See more</a>` : ""}`;
+
             return `<div class='recipe-card'>
-                <h3 class="recipe-name">${recipe.name}</h3>
-                <h4 class="score">${recipe.score}% match</h4>
-                <ul class="ingredients-list">
-                    ${recipe.ingredients.map(ing => `<li>${ing}</li>`).join('')}
-                </ul>
-                <p class = "recipe-instruction">${recipe.instructions}</p>
-                <a href="${recipe.recipe_link}" target="_blank" class="recipe-link">View Recipe Online</a>
-                <div class="explanation">
-                    <h5>Why this recipe?</h5>
-                      <p> This recipe was recommended because it shares ${recipe.jaccard_score}% of its ingredients with the movie script keywords 
-                        and has a script similarity score of ${recipe.svd_score}% based on thematic content.</p>
+            <div class="recipe-info">
+                <div class = "recipe-left">
+                    <h3>${recipe.name}</h3>
+                    <h4>Similarity Score: ${recipe.score}%</h4>
+                    <p>User Rating: ${recipe.rating === 'NA' || recipe.rating == null || recipe.rating === 0 ? 'N/A' : (Math.round(Number(recipe.rating) * 100) / 100).toString().replace(/\.00$/, '')}</p>
+                    <div class="explanation">
+                        <h4>Why this recipe?</h4>
+                        <p> This recipe was recommended because it shares ${recipe.jaccard_score}% of its ingredients with the movie script keywords 
+                            and has a script similarity score of ${recipe.svd_score}% based on thematic content.</p>
+                    </div>
                 </div>
-            </div>`;
+                <div class = "recipe-right">
+                    <h4>Instruction</h4>
+                    <p>${fullInst}</p>
+                    <h4>Ingredients</h4>
+                    <ul class="ingredients-list">
+                        ${recipe.ingredients
+                    .filter(ing => ing.trim() !== '')
+                    .map(ing => `<li>${ing}</li>`)
+                    .join('')}
+                    </ul>
+                </div>
+            </div>
+        </div>`;
         }
 
         document.addEventListener('click', function (e) {
