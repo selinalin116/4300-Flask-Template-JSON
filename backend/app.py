@@ -31,7 +31,7 @@ def find_foods():
     """
     API endpoint to find foods in a movie script
     """
-    model = model = KeyedVectors.load("model/glove.kv")  # Loads way faster
+    model = model = KeyedVectors.load("model/glove-wiki.kv")  # Loads way faster
 
     movie_title = request.args.get('movie', '').strip()
     
