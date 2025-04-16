@@ -1,4 +1,3 @@
-import requests
 import json
 from scipy.sparse.linalg import svds
 from sklearn.feature_extraction.text import TfidfVectorizer

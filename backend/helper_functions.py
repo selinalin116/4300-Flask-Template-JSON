@@ -180,3 +180,20 @@ def description_svd(vectorizer, additional_description, vt, vectors):
         desc_similarities = additional_projected.dot(vectors.T)
 
     return desc_similarities
+
+def embed_ingredient_list(ingredients, model):
+    """
+    Takes a list of ingredients like ["lime juice", "simple syrup"]
+    and returns the averaged embedding vector using pretrained model.
+    """
+    all_vectors = []
+    
+    for ingredient in ingredients:
+        words = ingredient.lower().split() 
+        for word in words:
+            if word in model:
+                all_vectors.append(model[word])
+    
+    if not all_vectors:
+        return None
+    return sum(all_vectors) / len(all_vectors)
