@@ -34,9 +34,13 @@ def find_foods():
     if not movie_title:
         return jsonify({"error": "Please enter a movie title"})
     
-    additional_description = None
-    if 'description' in request.args:
-        additional_description = request.args.get('description').strip()
+    drink_description = None
+    food_description = None
+    if 'drinkdescription' in request.args:
+        drink_description = request.args.get('drinkdescription').strip()
+
+    if 'fooddescription' in request.args:
+        food_description = request.args.get('fooddescription').strip()
     
     script = helper_functions.get_movie_script(movie_title, SCRIPT_FOLDER)
     if not script:
@@ -65,9 +69,9 @@ def find_foods():
 
     similarities = script_projected.dot(cocktail_vectors.T)
 
-    beta = 0.3
+    beta = 0.7
 
-    cocktail_desc_similarities = helper_functions.description_svd(cocktail_vectorizer, additional_description, vt, cocktail_vectors)
+    cocktail_desc_similarities = helper_functions.description_svd(cocktail_vectorizer, drink_description, vt, cocktail_vectors)
     
     weight_dict = {word: 1.5 for word in script_words}
 
@@ -77,12 +81,15 @@ def find_foods():
         cocktail_ingredients_set = set(" ".join(cocktail_ingredients).lower().split())
         jaccard_score = weighted_jaccard_similarity(script_words, cocktail_ingredients_set, weight_dict)
         cocktail_jaccard_scores.append(jaccard_score)
+        # cosine_score = helper_functions.cosine_similarity(cocktail_ingredients_tfidf, drink_description, cocktail_ingredients_vectorizer)
+        # print(cosine_score)
+
     
     # combine jaccard similarity for cocktails
     combined_cocktail_scores = []
     for i, cocktail in enumerate(cocktails):
         svd_text_score = similarities[0][i]
-
+        svd_desc_score = None
         if cocktail_desc_similarities is not None:
             svd_desc_score = cocktail_desc_similarities[0][i]
             combined_svd_score = (1 - beta) * svd_text_score + beta * svd_desc_score
@@ -91,7 +98,7 @@ def find_foods():
 
         jaccard_score = cocktail_jaccard_scores[i]
         combined_score = helper_functions.combine_scores(jaccard_score, combined_svd_score, alpha=0.5)
-        combined_cocktail_scores.append((cocktail, combined_score, jaccard_score, combined_svd_score))
+        combined_cocktail_scores.append((cocktail, combined_score, jaccard_score, svd_text_score, svd_desc_score))
 
     combined_cocktail_scores = sorted(combined_cocktail_scores, key=lambda x: -x[1])
 
@@ -101,10 +108,11 @@ def find_foods():
         "data": clean_cocktail_data(cocktail),
         "score": round(score * 100, 1),
         "jaccard_score": round(jaccard_score * 100, 1),
-        "svd_score": round(combined_svd_score * 100, 1)
+        "svd_text_score": round(svd_text_score * 100, 1),
+        "svd_desc_score": round(svd_desc_score * 100, 1) if svd_desc_score is not None else None
     }
     
-    for cocktail, score, jaccard_score, combined_svd_score in combined_cocktail_scores[:6]
+    for cocktail, score, jaccard_score, svd_text_score, svd_desc_score in combined_cocktail_scores[:6]
 ]
 
     # if not svd_results:
@@ -126,7 +134,7 @@ def find_foods():
 
     # Additional SVD with additional description users put in
     # recipe_desc_similarities = helper_functions.description_svd(recipe_vectorizer, additional_description, rec_vt, recipe_vectors)
-    recipe_desc_similarities = helper_functions.description_svd(recipe_vectorizer_instructions, additional_description, i_rec_vt, i_recipe_vectors)
+    recipe_desc_similarities = helper_functions.description_svd(recipe_vectorizer_instructions, food_description, i_rec_vt, i_recipe_vectors)
 
     recipe_jaccard_scores = []
     for recipe in recipes:
@@ -146,7 +154,8 @@ def find_foods():
     for i, recipe in enumerate(recipes):
         # Get SVD-based scores
         svd_script_score = rec_similarities[0][i]
-        
+        svd_desc_score = None
+
         if recipe_desc_similarities is not None:
             svd_desc_score = recipe_desc_similarities[0][i]            
             combined_svd_score = (1 - beta) * svd_script_score + beta * svd_desc_score
@@ -155,7 +164,7 @@ def find_foods():
 
         jaccard_score = recipe_jaccard_scores[i]
         final_score = helper_functions.combine_scores(jaccard_score, combined_svd_score, alpha=0.5)  # Adjust alpha as needed
-        combined_scores.append((recipe, final_score, jaccard_score, combined_svd_score))
+        combined_scores.append((recipe, final_score, jaccard_score, svd_script_score, svd_desc_score))
 
     combined_scores = sorted(combined_scores, key=lambda x: -x[1])
     top_recipes = [
@@ -163,9 +172,10 @@ def find_foods():
         "data": clean_recipe_data(recipe),
         "score": round(score * 100, 1),
         "jaccard_score": round(jaccard_score * 100, 1),
-        "svd_score": round(combined_svd_score * 100, 1)
+        "svd_text_score": round(svd_script_score * 100, 1),
+        "svd_desc_score": round(svd_desc_score * 100, 1) if svd_desc_score is not None else None
     }
-    for recipe, score, jaccard_score, combined_svd_score in combined_scores[:6]
+    for recipe, score, jaccard_score, svd_script_score, svd_desc_score in combined_scores[:6]
 ]
     
     # result = movie_preprocessing.get_movie_foods(movie_title, SCRIPT_FOLDER, FOOD_DATABASE)
