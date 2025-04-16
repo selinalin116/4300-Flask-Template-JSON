@@ -1,7 +1,7 @@
 .full-body-container {
-    position: relative; 
+    position: relative;
     width: 100%;
-    min-height: 100vh; 
+    min-height: 100vh;
     display: flex;
     justify-content: flex-start;
     flex-direction: column;
@@ -15,7 +15,7 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.navbar-text{
+.navbar-text {
     margin-left: 20px;
 }
 
@@ -31,7 +31,8 @@
     font-size: 1.2rem;
     font-weight: 500;
     color: #333;
-  }
+}
+
 /* .input-box {
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -82,7 +83,7 @@
     margin: 0 auto;
     padding: 10px;
 }
-  
+
 
 .input-box {
     border: none;
@@ -103,7 +104,7 @@
     margin-right: 5px;
     flex-shrink: 0;
 }
-  
+
 .input-box input {
     flex: 1;
     border: none;
@@ -113,14 +114,14 @@
     width: 100%;
     box-sizing: border-box;
 }
-  
+
 .submit-container {
     display: flex;
     justify-content: center;
     margin-top: 15px;
     width: 100%;
 }
-  
+
 #search-button {
     background-color: #e50914;
     color: white;
@@ -135,11 +136,11 @@
     width: 100%;
     max-width: 300px;
 }
-  
+
 #search-button:hover {
     background-color: #f40612;
 }
-  
+
 #search-button:active {
     transform: translateY(1px);
 }
@@ -162,8 +163,8 @@
     flex-direction: column;
     align-items: center;
     width: 100%;
-    padding: 50px 20px; 
-    box-sizing: border-box; 
+    padding: 50px 20px;
+    box-sizing: border-box;
 }
 
 .input-box input {
@@ -203,18 +204,11 @@
 } */
 
 .section-header {
-    /* color: #2c3e50;
-    border-bottom: 2px solid #3498db;
-    padding-bottom: 0.5rem;
-    margin: 1.5rem 0;
-    width: 100%; */
     width: 100%;
     text-align: left;
     margin-bottom: 20px;
     padding-bottom: 10px;
-    border-bottom: 1px solid #ddd;
     font-family: 'Kanit', sans-serif;
-    /* text-align: center; */
 }
 
 .cocktail-main {
@@ -228,7 +222,7 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 25px;
     width: 100%;
-    box-sizing: border-box; 
+    box-sizing: border-box;
 }
 
 .cocktail-card {
@@ -295,12 +289,12 @@ img {
 
 
 .recipe-left {
-  flex: 50%; 
-  padding-right: 30px; 
+    flex: 50%;
+    padding-right: 30px;
 }
 
 .recipe-right {
-  flex: 50%; 
+    flex: 50%;
 }
 
 .recipe-info {
@@ -313,9 +307,29 @@ img {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.suggestions-dropdown {
+    position: absolute;
+    max-height: 150px;
+    overflow-y: auto;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.suggestions-dropdown li {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.suggestions-dropdown li:hover {
+    background-color: #f0f0f0;
+}
+
 @media (max-width: 900px) {
     .cocktail-section {
-        grid-template-columns: repeat(2, 1fr); 
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
@@ -325,8 +339,9 @@ img {
     }
 
     .cocktail-section {
-        grid-template-columns: 1fr; 
+        grid-template-columns: 1fr;
     }
+
     .recipe-info {
         flex-direction: column;
     }

@@ -15,7 +15,7 @@ current_directory = os.path.dirname(os.path.abspath(__file__))
 SCRIPT_FOLDER = os.path.join(current_directory, 'data/scripts')  
 # FOOD_DATABASE = os.path.join(current_directory, 'data/recipes_names.csv')  
 FOOD_DATABASE = os.path.join(current_directory, 'database.txt')  
-
+MOVIE_DATABASE = os.path.join(current_directory, 'data/movies.txt')  # A file containing a list of movie titles
 
 app = Flask(__name__)
 CORS(app)
@@ -184,6 +184,20 @@ def find_foods():
         # "foods": result["foods"],
         "recipes": top_recipes
     })
+
+@app.route("/movie-suggestions")
+def movie_suggestions():
+    query = request.args.get('query', '').strip().lower()
+    if not query:
+        return jsonify([])
+
+    try:
+        movie_files = [f[:-4] for f in os.listdir(SCRIPT_FOLDER) if f.endswith('.txt')]
+    except FileNotFoundError:
+        return jsonify([])
+
+    suggestions = [movie for movie in movie_files if query in movie.lower()]
+    return jsonify(suggestions)
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=5000)

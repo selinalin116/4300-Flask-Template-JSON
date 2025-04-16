@@ -20,7 +20,9 @@
             <div class="search-container">
                 <div class="input-box" onclick="sendFocus()">
                     <img src="{{ url_for('static', filename='images/mag.png') }}" />
-                    <input placeholder="Search for a movie (e.g., Star Wars, Avengers)" id="movie-search" required>
+                    <input placeholder="Search for a movie (e.g., Star Wars, Avengers)" id="movie-search" required
+                        oninput="fetchMovieSuggestions()">
+                    <ul id="movie-suggestions" class="suggestions-dropdown"></ul>
                 </div>
                 <div class="input-box" onclick="descriptionFocusDrink()">
                     <input placeholder="Additional Description (e.g., Drinks that contain no alcohol)"
@@ -154,6 +156,28 @@
             }
         });
 
+        function fetchMovieSuggestions() {
+            const query = document.getElementById('movie-search').value.trim();
+            const suggestionsDropdown = document.getElementById('movie-suggestions');
+
+            if (!query) {
+                suggestionsDropdown.innerHTML = '';
+                return;
+            }
+
+            fetch(`/movie-suggestions?query=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    suggestionsDropdown.innerHTML = data.map(movie => `<li onclick="selectMovie('${movie}')">${movie}</li>`).join('');
+                })
+                .catch(error => console.error('Error fetching movie suggestions:', error));
+        }
+
+        function selectMovie(movie) {
+            document.getElementById('movie-search').value = movie;
+            document.getElementById('movie-suggestions').innerHTML = '';
+        }
+
         function searchMovie() {
             const movieTitle = document.getElementById("movie-search").value.trim();
             if (!movieTitle) return;
@@ -176,7 +200,7 @@
                 fetchUrl += `&drinkdescription=${encodeURIComponent(additionalDrinkDesc)}`;
             } else if (additionalFoodDesc) {
                 fetchUrl += `&fooddescription=${encodeURIComponent(additionalFoodDesc)}`;
-            } 
+            }
 
             fetch(fetchUrl)
                 .then(response => {
