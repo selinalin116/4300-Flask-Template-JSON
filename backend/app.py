@@ -75,7 +75,7 @@ def find_foods():
 
     beta = 0.9
 
-    # cocktail_desc_similarities = helper_functions.description_svd(cocktail_vectorizer, drink_description, vt, cocktail_vectors)
+    cocktail_desc_similarities = helper_functions.description_svd(cocktail_vectorizer, drink_description, vt, cocktail_vectors)
     
     weight_dict = {word: 1.5 for word in script_words}
 
@@ -105,17 +105,21 @@ def find_foods():
     combined_cocktail_scores = []
     for i, cocktail in enumerate(cocktails):
         svd_text_score = similarities[0][i]
-        cosine_score = None
+        # svd_desc_score = None
+        # cosine_score = None
+        combined_desc_score = None
         if drink_description is not None:
-            # svd_desc_score = cocktail_desc_similarities[0][i]
+            svd_desc_score = cocktail_desc_similarities[0][i]
             cosine_score = cocktail_cosine_scores[i]
-            combined_svd_score = (1 - beta) * svd_text_score + beta * cosine_score
+            alpha = 0.8
+            combined_desc_score = (1 - alpha) * svd_desc_score + alpha * cosine_score
+            combined_svd_score = (1 - beta) * svd_text_score + beta * combined_desc_score
         else:
             combined_svd_score = svd_text_score
 
         jaccard_score = cocktail_jaccard_scores[i]
         combined_score = helper_functions.combine_scores(jaccard_score, combined_svd_score, alpha=0.5)
-        combined_cocktail_scores.append((cocktail, combined_score, jaccard_score, svd_text_score, cosine_score))
+        combined_cocktail_scores.append((cocktail, combined_score, jaccard_score, svd_text_score, combined_desc_score))
 
     combined_cocktail_scores = sorted(combined_cocktail_scores, key=lambda x: -x[1])
 
@@ -126,10 +130,10 @@ def find_foods():
         "score": round(score * 100, 1),
         "jaccard_score": round(jaccard_score * 100, 1),
         "svd_text_score": round(svd_text_score * 100, 1),
-        "svd_desc_score": round(cosine_score * 100, 1) if cosine_score is not None else None
+        "svd_desc_score": round(combined_desc_score * 100, 1) if combined_desc_score is not None else None
     }
     
-    for cocktail, score, jaccard_score, svd_text_score, cosine_score in combined_cocktail_scores[:6]
+    for cocktail, score, jaccard_score, svd_text_score, combined_desc_score in combined_cocktail_scores[:6]
 ]
 
     # if not svd_results:
@@ -151,7 +155,7 @@ def find_foods():
 
     # Additional SVD with additional description users put in
     # recipe_desc_similarities = helper_functions.description_svd(recipe_vectorizer, additional_description, rec_vt, recipe_vectors)
-    # recipe_desc_similarities = helper_functions.description_svd(recipe_vectorizer_instructions, food_description, i_rec_vt, i_recipe_vectors)
+    recipe_desc_similarities = helper_functions.description_svd(recipe_vectorizer_instructions, food_description, i_rec_vt, i_recipe_vectors)
 
     recipe_jaccard_scores = []
     food_cosine_scores = []
@@ -172,7 +176,6 @@ def find_foods():
             if query_vec is not None and food_vec is not None:
                 sim = np.dot(query_vec, food_vec) / (np.linalg.norm(query_vec) * np.linalg.norm(food_vec))
                 food_cosine_scores.append(sim)
-                print("Similarity:", sim)
             else:
                 print("Could not compute similarity")
 
@@ -181,20 +184,22 @@ def find_foods():
 
     combined_scores = []
     for i, recipe in enumerate(recipes):
-        # Get SVD-based scores
         svd_script_score = rec_similarities[0][i]
         # svd_desc_score = None
-        cosine_score = None
+        # cosine_score = None
+        combined_desc_score = None
         if food_description is not None:
-            # svd_desc_score = recipe_desc_similarities[0][i]   
-            cosine_score = food_cosine_scores[i]         
-            combined_svd_score = (1 - beta) * svd_script_score + beta * cosine_score
+            svd_desc_score = recipe_desc_similarities[0][i]   
+            cosine_score = food_cosine_scores[i]   
+            alpha = 0.8 
+            combined_desc_score = (1 - alpha) * svd_desc_score + alpha * cosine_score     
+            combined_svd_score = (1 - beta) * svd_script_score + beta * combined_desc_score
         else:
             combined_svd_score = svd_script_score
 
         jaccard_score = recipe_jaccard_scores[i]
         final_score = helper_functions.combine_scores(jaccard_score, combined_svd_score, alpha=0.5)  # Adjust alpha as needed
-        combined_scores.append((recipe, final_score, jaccard_score, svd_script_score, cosine_score))
+        combined_scores.append((recipe, final_score, jaccard_score, svd_script_score, combined_desc_score))
 
     combined_scores = sorted(combined_scores, key=lambda x: -x[1])
     top_recipes = [
@@ -203,9 +208,9 @@ def find_foods():
         "score": round(score * 100, 1),
         "jaccard_score": round(jaccard_score * 100, 1),
         "svd_text_score": round(svd_script_score * 100, 1),
-        "svd_desc_score": round(cosine_score * 100, 1) if cosine_score is not None else None
+        "svd_desc_score": round(combined_desc_score * 100, 1) if combined_desc_score is not None else None
     }
-    for recipe, score, jaccard_score, svd_script_score, cosine_score in combined_scores[:6]
+    for recipe, score, jaccard_score, svd_script_score, combined_desc_score in combined_scores[:6]
 ]
     
     # result = movie_preprocessing.get_movie_foods(movie_title, SCRIPT_FOLDER, FOOD_DATABASE)
