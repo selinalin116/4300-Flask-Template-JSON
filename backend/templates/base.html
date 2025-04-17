@@ -20,11 +20,17 @@
             <div class="search-container">
                 <div class="input-box" onclick="sendFocus()">
                     <img src="{{ url_for('static', filename='images/mag.png') }}" />
-                    <input placeholder="Search for a movie (e.g., Star Wars, Avengers)" id="movie-search" required>
+                    <input placeholder="Search for a movie (e.g., Star Wars, Avengers)" id="movie-search" required
+                        oninput="fetchMovieSuggestions()">
+                    <ul id="movie-suggestions" class="suggestions-dropdown"></ul>
                 </div>
-                <div class="input-box" onclick="descriptionFocus()">
+                <div class="input-box" onclick="descriptionFocusDrink()">
+                    <input placeholder="Additional Description (e.g., Drinks that are tangy)"
+                        id="description-drink-search">
+                </div>
+                <div class="input-box" onclick="descriptionFocusFood()">
                     <input placeholder="Additional Description (e.g., Recipe that reminds me of homecook food)"
-                        id="description-search">
+                        id="description-food-search">
                 </div>
 
                 <div class="submit-container">
@@ -61,8 +67,12 @@
             document.getElementById('movie-search').focus();
         }
 
-        function descriptionFocus() {
-            document.getElementById('description-search').focus();
+        function descriptionFocusDrink() {
+            document.getElementById('description-drink-search').focus();
+        }
+
+        function descriptionFocusFood() {
+            document.getElementById('description-food-search').focus();
         }
 
         function handleKeyUp(event) {
@@ -89,7 +99,7 @@
                 <div class="explanation">
                     <h4>Why this drink?</h4>
                       <p> This drink was recommended because it shares ${cocktail.jaccard_score}% of its ingredients with the movie script keywords 
-                        and has a script similarity score of ${cocktail.svd_score}% based on thematic content.</p>
+                        and has a script similarity score of ${cocktail.svd_text_score}% based on thematic content${cocktail.svd_desc_score !== null ? ` and also has a similarity score of ${cocktail.svd_desc_score}% based on additional description provided` : ''}.</p>
                 </div>
             </div>`;
         }
@@ -115,7 +125,7 @@
                     <div class="explanation">
                         <h4>Why this recipe?</h4>
                         <p> This recipe was recommended because it shares ${recipe.jaccard_score}% of its ingredients with the movie script keywords 
-                            and has a script similarity score of ${recipe.svd_score}% based on thematic content.</p>
+                            and has a script similarity score of ${recipe.svd_text_score}% based on thematic content${recipe.svd_desc_score !== null ? ` and also has a similarity score of ${recipe.svd_desc_score}% based on additional description provided` : ''}.</p>
                     </div>
                 </div>
                 <div class = "recipe-right">
@@ -146,11 +156,35 @@
             }
         });
 
+        function fetchMovieSuggestions() {
+            const query = document.getElementById('movie-search').value.trim();
+            const suggestionsDropdown = document.getElementById('movie-suggestions');
+
+            if (!query) {
+                suggestionsDropdown.innerHTML = '';
+                return;
+            }
+
+            fetch(`/movie-suggestions?query=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    suggestionsDropdown.innerHTML = data.map(movie => `<li onclick="selectMovie('${movie}')">${movie}</li>`).join('');
+                })
+                .catch(error => console.error('Error fetching movie suggestions:', error));
+        }
+
+        function selectMovie(movie) {
+            document.getElementById('movie-search').value = movie;
+            document.getElementById('movie-suggestions').innerHTML = '';
+        }
+
         function searchMovie() {
             const movieTitle = document.getElementById("movie-search").value.trim();
             if (!movieTitle) return;
 
-            const additionalDesc = document.getElementById("description-search").value.trim();
+            const additionalFoodDesc = document.getElementById("description-food-search").value.trim();
+
+            const additionalDrinkDesc = document.getElementById("description-drink-search").value.trim();
 
             const answerBox = document.getElementById("answer-box");
             const loadingIndicator = document.getElementById("loading-indicator");
@@ -160,8 +194,12 @@
 
             let fetchUrl = `/find-foods?movie=${encodeURIComponent(movieTitle)}`;
 
-            if (additionalDesc) {
-                fetchUrl += `&description=${encodeURIComponent(additionalDesc)}`;
+            if (additionalFoodDesc && additionalDrinkDesc) {
+                fetchUrl += `&drinkdescription=${encodeURIComponent(additionalDrinkDesc)}&fooddescription=${encodeURIComponent(additionalFoodDesc)}`;
+            } else if (additionalDrinkDesc) {
+                fetchUrl += `&drinkdescription=${encodeURIComponent(additionalDrinkDesc)}`;
+            } else if (additionalFoodDesc) {
+                fetchUrl += `&fooddescription=${encodeURIComponent(additionalFoodDesc)}`;
             }
 
             fetch(fetchUrl)
@@ -195,7 +233,8 @@
                             const cocktail = c.data;
                             cocktail.score = c.score;
                             cocktail.jaccard_score = c.jaccard_score; // Ensure jaccard_score is passed
-                            cocktail.svd_score = c.svd_score; // Ensure svd_score is passed
+                            cocktail.svd_text_score = c.svd_text_score; // Ensure svd_score is passed
+                            cocktail.svd_desc_score = c.svd_desc_score;
                             cocktailSection.innerHTML += cocktailTemplate(cocktail);
                         });
 
@@ -216,7 +255,8 @@
                             const recipe = r.data;
                             recipe.score = r.score;
                             recipe.jaccard_score = r.jaccard_score; // Ensure jaccard_score is passed
-                            recipe.svd_score = r.svd_score; // Ensure svd_score is passed
+                            recipe.svd_text_score = r.svd_text_score; // Ensure svd_score is passed
+                            recipe.svd_desc_score = r.svd_desc_score;
                             recipeSection.innerHTML += recipeTemplate(recipe);
                         });
 

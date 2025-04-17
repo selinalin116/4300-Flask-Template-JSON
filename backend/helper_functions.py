@@ -4,6 +4,7 @@ import string
 import nltk
 import ssl
 from sklearn.metrics.pairwise import cosine_similarity as sklearn_cosine_similarity
+import numpy as np
 
 # Fix for SSL certificate verification issues
 try:
@@ -114,9 +115,7 @@ def jaccard_similarity(set1, set2):
     Calculate jaccard similarity between two sets.
     """
     intersection = len(set1 & set2)
-    print(intersection)
     union = len(set1 | set2)
-    print(union)
     return intersection / union if union != 0 else 0
 
 def weighted_jaccard_similarity(script_words, ingredient_set, weight_dict):
@@ -160,6 +159,16 @@ def combine_scores(jaccard_score, svd_score, alpha = .25):
     
 #     return similarities
 
+def cosine_similarity(ingredients_tfidf, description, vectorizer):
+    description_tfidf = vectorizer.transform([description])
+    
+    # Calculate similarity (0-1 score)
+    similarity = sklearn_cosine_similarity(ingredients_tfidf, description_tfidf)[0]
+    
+    # Convert to percentage
+    return similarity
+
+
 def description_svd(vectorizer, additional_description, vt, vectors):
     """
     Calculate similarity scores between an additional text description and a set of vectors using SVD
@@ -171,3 +180,20 @@ def description_svd(vectorizer, additional_description, vt, vectors):
         desc_similarities = additional_projected.dot(vectors.T)
 
     return desc_similarities
+
+def embed_ingredient_list(ingredients, model):
+    """
+    Takes a list of ingredients like ["lime juice", "simple syrup"]
+    and returns the averaged embedding vector using pretrained model.
+    """
+    all_vectors = []
+    
+    for ingredient in ingredients:
+        words = ingredient.lower().split() 
+        for word in words:
+            if word in model:
+                all_vectors.append(model[word])
+    
+    if not all_vectors:
+        return None
+    return sum(all_vectors) / len(all_vectors)
