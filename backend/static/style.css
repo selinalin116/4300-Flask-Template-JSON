@@ -86,6 +86,8 @@
 
 
 .input-box {
+    position: relative;
+    /* Ensure the dropdown is positioned relative to this container */
     border: none;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     display: flex;
@@ -309,14 +311,18 @@ img {
 
 .suggestions-dropdown {
     position: absolute;
+    top: 100%;
+    /* Align directly below the input box */
+    left: 0;
     max-height: 150px;
     overflow-y: auto;
     list-style: none;
     padding: 0;
-    margin: 0;
+    margin: 5px 0 0;
+    /* Add a small margin for spacing */
     width: 100%;
     z-index: 1000;
-    color: white;
+    background-color: white;
 }
 
 .suggestions-dropdown li {

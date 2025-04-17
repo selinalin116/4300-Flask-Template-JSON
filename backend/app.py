@@ -218,9 +218,8 @@ def find_foods():
 @app.route("/movie-suggestions")
 def movie_suggestions():
     query = request.args.get('query', '').strip().lower()
-    if not query:
+    if len(query) < 3: 
         return jsonify([])
-
     try:
         movie_files = [f[:-4] for f in os.listdir(SCRIPT_FOLDER) if f.endswith('.txt')]
     except FileNotFoundError:
