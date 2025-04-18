@@ -227,6 +227,7 @@ def movie_suggestions():
         return jsonify([])
     try:
         movie_files = [f[:-4] for f in os.listdir(SCRIPT_FOLDER) if f.endswith('.txt')]
+
     except FileNotFoundError:
         return jsonify([])
 

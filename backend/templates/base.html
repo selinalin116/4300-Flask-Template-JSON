@@ -133,11 +133,15 @@
                     <p>${fullInst}</p>
                     <h4>Ingredients</h4>
                     <ul class="ingredients-list">
-                        ${recipe.ingredients
-                    .filter(ing => ing.trim() !== '')
-                    .map(ing => `<li>${ing}</li>`)
-                    .join('')}
+                    ${recipe.ingredients
+                        .filter(ing => ing.trim() !== '')
+                        .map(ing => {
+                        const capitalized = ing.charAt(0).toUpperCase() + ing.slice(1);
+                        return `<li>${capitalized}</li>`;
+                        })
+                        .join('')}
                     </ul>
+
                 </div>
             </div>
         </div>`;
