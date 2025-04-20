@@ -172,3 +172,16 @@ div#description {
     padding: 50px;
     box-sizing: border-box;
 }
+
+@media (max-width: 1600px) {
+    #hero {
+        width: 100%;
+        height: 700px;
+    
+        background-image: url("images/hero.gif");
+        background-repeat: no-repeat;
+    
+        display: flex;
+        align-items: center;
+    }
+}
