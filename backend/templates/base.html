@@ -119,22 +119,59 @@
         </div>`;
         }
 
-        function cocktailTemplate(cocktail) {
-            return `<div class='cocktail-card'>
-                <h3 class="cocktail-name">${cocktail.name}</h3>
+        // if mostRelevant is true, then we make a div for the most recommended cocktail
+        function cocktailTemplate(cocktail, mostRelevant=false) {
+            if (mostRelevant) {
+                return `
+                <div id="relevant-cocktail-card">
+                    <img src="${cocktail.image}" alt="${cocktail.name}" class="relevant-cocktail-image">
+                    <div id="relevant-cocktail-details">
+                        <h4>We'd Recommend...</h4>
+                        <div id="relevant-cocktail-header">
+                            <a href="${cocktail.recipe_link}" target="_blank">
+                                <h3>${cocktail.name}   </h3>
+                            </a>
+                            <p>(${cocktail.score}% match)</p>
+                        </div>
+
+                        <ul>
+                            ${cocktail.ingredients.map(ing => `<li>${ing}</li>`).join('')}
+                        </ul>
+
+                        <div id="relevant-cocktail-instructions">
+                            <p>${cocktail.instructions}</p>
+                        </div>
+
+                        <div id="relevant-cocktail-explanation">
+                            <p>
+                                This drink was recommended because it shares ${cocktail.jaccard_score}% of its ingredients with the movie script keywords 
+                            and has a script similarity score of ${cocktail.svd_text_score}% based on thematic content${cocktail.svd_desc_score !== null ? ` and also has a similarity score of ${cocktail.svd_desc_score}% based on additional description provided` : ''}.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                `
+            }
+            else {
+                return `
+                <div class='cocktail-card'>
+                <a href="${cocktail.recipe_link}" target="_blank">
+                    <h3 class="cocktail-name">${cocktail.name}</h3>
+                </a>
                 <h4 class="score">${cocktail.score}% match</h4>
                 <img src="${cocktail.image}" alt="${cocktail.name}" class="cocktail-image">
                 <ul class="ingredients-list">
                     ${cocktail.ingredients.map(ing => `<li>${ing}</li>`).join('')}
                 </ul>
                 <p class = "cocktail-instruction">${cocktail.instructions}</p>
-                <a href="${cocktail.recipe_link}" target="_blank" class="recipe-link">View Recipe Online</a>
+                
                 <div class="explanation">
                     <h4>Why this drink?</h4>
                       <p> This drink was recommended because it shares ${cocktail.jaccard_score}% of its ingredients with the movie script keywords 
                         and has a script similarity score of ${cocktail.svd_text_score}% based on thematic content${cocktail.svd_desc_score !== null ? ` and also has a similarity score of ${cocktail.svd_desc_score}% based on additional description provided` : ''}.</p>
                 </div>
             </div>`;
+            }
         }
 
         function recipeTemplate(recipe) {
@@ -255,26 +292,36 @@
 
                     const resultsContainer = document.createElement("div");
                     resultsContainer.className = "results-container";
-                    resultsContainer.innerHTML = `<h2>Results for "${movieTitle}"</h2>`;
+                    // resultsContainer.innerHTML = `<h2>Results for "${movieTitle}"</h2>`;
 
                     // Add cocktails section
                     if (data.cocktails?.length > 0) {
                         const cocktailMain = document.createElement("div");
                         cocktailMain.className = "cocktail-main";
-                        cocktailMain.innerHTML = `<h3 class="section-header">Recommended Drinks</h3>`;
+
+                        const cocktailRecommended = document.createElement("div");
+                        cocktailRecommended.className = "relevant-cocktail";
 
                         const cocktailSection = document.createElement("div");
                         cocktailSection.className = "cocktail-section";
 
+                        let i = 0;
                         data.cocktails.forEach(c => {
                             const cocktail = c.data;
                             cocktail.score = c.score;
                             cocktail.jaccard_score = c.jaccard_score; // Ensure jaccard_score is passed
                             cocktail.svd_text_score = c.svd_text_score; // Ensure svd_score is passed
                             cocktail.svd_desc_score = c.svd_desc_score;
-                            cocktailSection.innerHTML += cocktailTemplate(cocktail);
-                        });
 
+                            if (i == 0) {
+                                cocktailRecommended.innerHTML += cocktailTemplate(cocktail, true);
+                            }
+                            else {
+                                cocktailSection.innerHTML += cocktailTemplate(cocktail, false);
+                            }
+                            i += 1;
+                        });
+                        cocktailMain.appendChild(cocktailRecommended)
                         cocktailMain.appendChild(cocktailSection);
                         resultsContainer.appendChild(cocktailMain);
                     }
