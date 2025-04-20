@@ -1,4 +1,5 @@
 <!doctype html>
+<html lang="en">
 <title>FoodTastic</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
@@ -8,14 +9,38 @@
     rel="stylesheet">
 
 <body>
-    <div class="full-body-container">
-        <nav class="navbar">
-            <h2 class="navbar-text">FoodTastic</h2>
-        </nav>
-        <div class="top-text">
-            <div class="header-text">
+    <header>
+        <div id="logo-container">
+            <a href="">
+                <img src="{{ url_for('static', filename='images/logo.png') }}">
+            </a>
+            <h4>For All Your Movie Nights</h4>
+        </div>
+        <div>
+
+        </div>
+    </header>
+    <div id="name-bar">
+        <div id="authors-bar">
+            <h5>A Project By:</h5>
+            <ul id="name-list">
+                <li>Vivian Z.</li>
+                <li>Iris H.</li>
+                <li>Selina L.</li>
+                <li>Chris C.</li>
+            </ul>
+        </div>
+        <div>
+            With Help From Alina Y.
+        </div>
+    </div>
+
+    
+    <div id="hero">
+        <div id="intro-container" >
+            <div id="description">
                 <h1>FoodTastic</h1>
-                <p>Discover food and drink suggestions for your movie night!</p>
+                <p>Find the perfect food and cocktails for your movie night!</p>
             </div>
             <div class="search-container">
                 <div class="input-box" onclick="sendFocus()">
@@ -25,28 +50,34 @@
                     <ul id="movie-suggestions" class="suggestions-dropdown"></ul>
                 </div>
                 <div class="input-box" onclick="descriptionFocusDrink()">
-                    <input placeholder="Additional Description (e.g., Drinks that are tangy)"
+                    <input placeholder="Cocktail Preferences (e.g., Drinks that are tangy)"
                         id="description-drink-search">
                 </div>
                 <div class="input-box" onclick="descriptionFocusFood()">
-                    <input placeholder="Additional Description (e.g., Recipe that reminds me of homecook food)"
+                    <input placeholder="Recipes Preferences (e.g., Nostalgic homecooked meals)"
                         id="description-food-search">
                 </div>
-
+    
                 <div class="submit-container">
                     <button id="search-button" onclick="searchMovie()">
                         Search Recommendations
                     </button>
                 </div>
             </div>
-        </div>
-        <div id="loading-indicator" style="display: none;">
-            <div id="loading-message">Retrieving recommendations...</div>
-        </div>
-        <div id="answer-box" class="answer-box">
-            <!-- Results will appear here -->
-        </div>
+            <div id="loading-indicator" style="display: none;">
+                <div id="loading-message">Retrieving recommendations...</div>
+            </div>
+        </div>  
     </div>
+
+    <div id="answer-box" class="answer-box">
+        <!-- Results will appear here -->
+    </div>
+
+    <footer>
+
+    </footer>
+
 
     <script>
         function noResultsTemplate(movieTitle) {

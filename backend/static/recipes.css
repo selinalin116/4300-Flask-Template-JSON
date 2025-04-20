@@ -1,0 +1,165 @@
+
+.results-container {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+.section-header {
+    width: 100%;
+    text-align: left;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    font-family: 'Kanit', sans-serif;
+}
+
+.cocktail-main {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.cocktail-section {
+    display: grid;
+    /* grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); */
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.cocktail-card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+}
+
+.cocktail-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+.ingredients-list {
+    width: 100%;
+    padding-left: 20px;
+    margin: 10px 0;
+    text-align: left;
+}
+
+.ingredients-list li {
+    margin-bottom: 5px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.recipe-link {
+    margin-top: 15px;
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #4b6584;
+    color: white;
+    text-decoration: none;
+    border-radius: 20px;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+
+.recipe-link:hover {
+    background-color: #3867d6;
+}
+
+.recipe-card {
+    width: 100%;
+    box-sizing: border-box;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+.recipe-left {
+    flex: 50%;
+    padding-right: 30px;
+}
+
+.recipe-right {
+    flex: 50%;
+}
+
+.recipe-info {
+    display: flex;
+    flex-direction: row;
+}
+
+.recipe-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.suggestions-dropdown {
+    position: absolute;
+    top: 100%;
+    /* Align directly below the input box */
+    left: 0;
+    max-height: 150px;
+    overflow-y: auto;
+    list-style: none;
+    padding: 0;
+    margin: 5px 0 0;
+    /* Add a small margin for spacing */
+    width: 100%;
+    z-index: 1000;
+    background-color: white;
+}
+
+.suggestions-dropdown li {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.suggestions-dropdown li:hover {
+    background-color: #f0f0f0;
+}
+
+footer {
+    height: 150px;
+    width: 100%;
+    background-color: black;
+    color: white;
+    
+}
+
+@media (max-width: 900px) {
+    .cocktail-section {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .answer-box {
+        padding: 10px;
+    }
+
+    .cocktail-section {
+        grid-template-columns: 1fr;
+    }
+
+    .recipe-info {
+        flex-direction: column;
+    }
+
+}
