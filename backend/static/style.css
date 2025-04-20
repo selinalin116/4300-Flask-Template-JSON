@@ -59,7 +59,6 @@ div#name-bar {
     height: 790px;
 
     background-image: url("images/hero.gif");
-    background-size: contain;
     background-repeat: no-repeat;
 
     display: flex;
