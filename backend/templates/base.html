@@ -159,9 +159,7 @@
                 return `
                 <button class="cocktail-buttons" id="${i}">
                     <img src="${cocktail.image}" alt="${cocktail.name}">
-                    <a href="${cocktail.recipe_link}" target="_blank">
-                        <h3>${cocktail.name}</h3>
-                    </a>
+                    <h3>${cocktail.name}</h3>
                     <h4>${cocktail.score}% match</h4>
                 </button>
                 `;
@@ -418,14 +416,26 @@
                     });
                     document.querySelectorAll('.close-button').forEach(button => {
                         button.addEventListener('click', () => {
+                            closeModal();
 
-                            document.querySelectorAll('.cocktail-card').forEach(card => {
-                                card.classList.add('hidden');
-                            });
-
-                            document.querySelector(`.modal-shadow`).classList.add('hidden');
                         });
                     });
+
+                    // Detect any Escape buttons too
+                    document.onkeydown = function(e) {
+                        console.log("Pressed")
+                        if (e.keyCode == 27) {
+                            closeModal();
+                        }
+                    };
+
+                    function closeModal() {
+                        document.querySelectorAll('.cocktail-card').forEach(card => {
+                            card.classList.add('hidden');
+                        });
+
+                        document.querySelector(`.modal-shadow`).classList.add('hidden');
+                    };
                 
                 })
                 .catch(error => {
