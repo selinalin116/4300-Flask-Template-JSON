@@ -258,7 +258,7 @@ def find_foods():
 
         recipe["recommended_cocktails"] = sorted_pairings
     
-    print(top_recipes)
+    # print(top_recipes)
 
 
    
@@ -275,8 +275,7 @@ def movie_suggestions():
     if len(query) < 3: 
         return jsonify([])
     try:
-        movie_files = [f[:-4] for f in os.listdir(SCRIPT_FOLDER) if f.endswith('.txt')]
-
+        movie_files = [f[:-4].replace('-', ' ').replace('_', ' ') for f in os.listdir(SCRIPT_FOLDER) if f.endswith('.txt')]
     except FileNotFoundError:
         return jsonify([])
 

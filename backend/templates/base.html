@@ -37,9 +37,9 @@
         </div>
     </div>
 
-    
+
     <div id="hero">
-        <div id="intro-container" >
+        <div id="intro-container">
             <div id="description">
                 <h1>FoodTastic</h1>
                 <p>Find the perfect food and cocktails for your movie night!</p>
@@ -59,7 +59,7 @@
                     <input placeholder="Recipes Preferences (e.g., Nostalgic homecooked meals)"
                         id="description-food-search">
                 </div>
-    
+
                 <div class="submit-container">
                     <button id="search-button" onclick="searchMovie()">
                         Search Recommendations
@@ -69,7 +69,7 @@
             <div id="loading-indicator" style="display: none;">
                 <div id="loading-message">Retrieving recommendations...</div>
             </div>
-        </div>  
+        </div>
     </div>
 
     <div id="answer-box" class="answer-box">
@@ -232,12 +232,12 @@
                     <h4>Ingredients</h4>
                     <ul class="ingredients-list">
                     ${recipe.ingredients
-                        .filter(ing => ing.trim() !== '')
-                        .map(ing => {
+                    .filter(ing => ing.trim() !== '')
+                    .map(ing => {
                         const capitalized = ing.charAt(0).toUpperCase() + ing.slice(1);
                         return `<li>${capitalized}</li>`;
-                        })
-                        .join('')}
+                    })
+                    .join('')}
                     </ul>
 
                 </div>
@@ -359,7 +359,7 @@
                             }
                             else {
                                 cocktailRow.innerHTML += cocktailCard(cocktail, i);
-                                
+
                                 let cocktailModalContent = document.createElement("div");
                                 cocktailModalContent.className = 'cocktail-card hidden';
                                 cocktailModalContent.id = i;
@@ -402,7 +402,7 @@
                     } else {
                         answerBox.innerHTML = noResultsTemplate(movieTitle);
                     }
-                
+
                     document.querySelectorAll('.cocktail-buttons').forEach(button => {
                         button.addEventListener('click', () => {
                             const id = button.getAttribute('id');
@@ -422,7 +422,7 @@
                     });
 
                     // Detect any Escape buttons too
-                    document.onkeydown = function(e) {
+                    document.onkeydown = function (e) {
                         console.log("Pressed")
                         if (e.keyCode == 27) {
                             closeModal();
@@ -436,14 +436,14 @@
 
                         document.querySelector(`.modal-shadow`).classList.add('hidden');
                     };
-                
+
                 })
                 .catch(error => {
                     loadingIndicator.style.display = "none";
                     answerBox.innerHTML = errorTemplate("Failed to get results. Please try again.");
                     console.error('Error:', error);
 
-                    
+
                 });
         }
     </script>
