@@ -19,8 +19,12 @@ a {
     color: black;
 }
 
+h4 {
+    font-weight: normal;
+}
+
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 header {
@@ -176,6 +180,15 @@ div#description {
     width: 100%;
     padding: 50px;
     box-sizing: border-box;
+}
+
+
+footer {
+    height: 150px;
+    width: 100%;
+    background-color: black;
+    color: white;
+    
 }
 
 @media (max-width: 1600px) {

@@ -2,20 +2,19 @@
 .results-container {
     width: 100%;
     max-width: 100%;
-    padding: 0 20px;
     box-sizing: border-box;
     background-color: white;
 }
 
-.results-container ul {
+ul.dashed {
     margin: 0;    
     list-style-type: none;
 }
-.results-container ul > li {
+ul.dashed > li {
     text-indent: -5px;
     margin-bottom: 4px;
 }
-.results-container ul > li:before {
+ul.dashed > li:before {
     content: "- ";
     text-indent: -5px;
 }
@@ -34,7 +33,7 @@ MOST-RELEVANT COCKTAIL STUFF
 div#relevant-cocktail-card {
     display: flex;
     flex-direction: row;
-    padding: 70px;
+    padding: 70px 90px;
 }
 div#relevant-cocktail-card img {
     max-width: 700px;
@@ -44,75 +43,178 @@ div#relevant-cocktail-card img {
     border: 4px solid black;
 }
 /* We'd recommend... */
-div#relevant-cocktail-card h4 {
-    font-weight: normal;
+h4.accent-text {
     margin-bottom: 20px;
     color: #e50914;
 }
 /* Cocktail name */
-div#relevant-cocktail-card h3 {
+h3.cocktail-name {
     font-size: 40px;
     margin: 0;
 }
-div#relevant-cocktail-card h3:hover {
+h3.cocktail-name:hover {
     text-decoration: underline;
 }
-
-div#relevant-cocktail-card ul {
+ul.cocktail-list {
     margin-top: 0;
     margin-bottom: 30px;
 }
-div#relevant-cocktail-header {
+div.cocktail-header {
     margin-bottom: 30px;
 }
-div#relevant-cocktail-header > p {
+div.cocktail-header > p {
     margin: 0;
 }
-div#relevant-cocktail-instructions {
+div.cocktail-instructions {
     width: 75%;
 }
-div#relevant-cocktail-explanation {
+div.cocktail-explanation {
     border-left: 6px solid black;
     background-color: rgb(194, 194, 194);
     padding: 10px 40px;
     margin-top: 50px;
+    width: 90%;
 }
 
+/*
+CLICKABLE COCKTAIL ICONS
+*/
+div.hr {
+    margin: 20px auto;
+    margin-bottom: 40px;
+    height: 2px;
+    width: 125px;
+    background-color: #e50914;
+}
 .cocktail-main {
     width: 100%;
     box-sizing: border-box;
 }
-
+/* The gray horizontal area */
 .cocktail-section {
-    display: grid;
-    /* grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); */
-    grid-template-columns: repeat(3, 1fr);
-    gap: 25px;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.cocktail-card {
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    justify-content: center;
     text-align: center;
+    padding: 30px;
+
+    background-color: rgb(194, 194, 194);
+    box-shadow: 0 0 5px 1px rgba(0,0,0,0.9);
+}
+.cocktail-section > h4 {
+    margin: 0;
+    font-size: 20px;
+}
+.cocktail-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: top;
+
+    padding: 0 50px;
+}
+.cocktail-buttons {
+    width:auto;
+    max-width: 15%;
+    height: 300px;
+    padding: 8px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    text-align: center;
+    background-color: rgb(194, 194, 194);
+    font-family: 'Montserrat', sans-serif;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    overflow: hidden;
 }
-
-.cocktail-card:hover {
+.cocktail-buttons:hover {
+    cursor: pointer;
     transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); */
+}
+.cocktail-buttons img {
+    width: 95%;
+    height: auto;
+    margin: 0 auto;
+
+    border: 2px solid black;
+    margin-bottom: 15px;
+}
+/* Cocktail names */
+.cocktail-buttons h3 {
+    margin: 0;
+    font-weight: 600;
+}
+/* Match percentage */
+.cocktail-buttons h4 {
+    margin: 0;
 }
 
-img {
-    max-width: 100%;
+/*
+MODAL STUFF
+*/
+div.modal-shadow {
+    width: 100vw;
+    height: 100vh;
+    background-color: rgb(0,0,0, 0.6);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+div.cocktail-card {
+    width: 75%;
+    height: 75%;
+    padding: 30px;
+    
+    background-color: white;
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+div#cocktail-details {
+    width: 50%;
+    height: 100%;
+    padding: 30px;
+}
+div.modal-image {
+    width: 45%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 20px;
+}
+img.cocktail-image {
+    display: block;
+    width: 100%;
+    max-width: 700px;
     height: auto;
+
+    border: 4px solid black;
+}
+div.cocktail-card div.cocktail-explanation {
+    width: 80%;
+}
+button.close-button {
+    position: absolute;
+    right: 12%;
+    top: 12%;
+    width: 30px;
+    height: 30px;
+    text-align:center;
+
+    background-color: white;
+    border-radius: 100%;
+}
+button.close-button:hover {
+    cursor: pointer;
 }
 
 .ingredients-list {
@@ -199,13 +301,6 @@ img {
     background-color: #f0f0f0;
 }
 
-footer {
-    height: 150px;
-    width: 100%;
-    background-color: black;
-    color: white;
-    
-}
 
 @media (max-width: 1600px) {
     div#relevant-cocktail-card img {

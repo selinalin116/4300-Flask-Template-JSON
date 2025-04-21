@@ -76,6 +76,9 @@
         <!-- Results will appear here -->
     </div>
 
+    <div class="modal-shadow hidden" id="modal-shadow">
+        <!-- Div to cover the whole screen when a cocktail is clicked. -->
+    </div>
     <footer>
 
     </footer>
@@ -119,30 +122,30 @@
         </div>`;
         }
 
-        // if mostRelevant is true, then we make a div for the most recommended cocktail
-        function cocktailTemplate(cocktail, mostRelevant=false) {
-            if (mostRelevant) {
+        // i == 0 is the most relevant cocktail
+        function cocktailCard(cocktail, i) {
+            if (i == 0) {
                 return `
                 <div id="relevant-cocktail-card">
                     <img src="${cocktail.image}" alt="${cocktail.name}" class="relevant-cocktail-image">
                     <div id="relevant-cocktail-details">
-                        <h4>We'd Recommend...</h4>
-                        <div id="relevant-cocktail-header">
+                        <h4 class='accent-text'>We'd Recommend...</h4>
+                        <div class="cocktail-header">
                             <a href="${cocktail.recipe_link}" target="_blank">
-                                <h3>${cocktail.name}   </h3>
+                                <h3 class='cocktail-name'>${cocktail.name}   </h3>
                             </a>
                             <p>(${cocktail.score}% match)</p>
                         </div>
 
-                        <ul>
+                        <ul class='cocktail-list dashed'>
                             ${cocktail.ingredients.map(ing => `<li>${ing}</li>`).join('')}
                         </ul>
 
-                        <div id="relevant-cocktail-instructions">
+                        <div class="cocktail-instructions">
                             <p>${cocktail.instructions}</p>
                         </div>
 
-                        <div id="relevant-cocktail-explanation">
+                        <div class="cocktail-explanation">
                             <p>
                                 This drink was recommended because it shares ${cocktail.jaccard_score}% of its ingredients with the movie script keywords 
                             and has a script similarity score of ${cocktail.svd_text_score}% based on thematic content${cocktail.svd_desc_score !== null ? ` and also has a similarity score of ${cocktail.svd_desc_score}% based on additional description provided` : ''}.
@@ -154,24 +157,51 @@
             }
             else {
                 return `
-                <div class='cocktail-card'>
-                <a href="${cocktail.recipe_link}" target="_blank">
-                    <h3 class="cocktail-name">${cocktail.name}</h3>
-                </a>
-                <h4 class="score">${cocktail.score}% match</h4>
-                <img src="${cocktail.image}" alt="${cocktail.name}" class="cocktail-image">
-                <ul class="ingredients-list">
-                    ${cocktail.ingredients.map(ing => `<li>${ing}</li>`).join('')}
-                </ul>
-                <p class = "cocktail-instruction">${cocktail.instructions}</p>
-                
-                <div class="explanation">
-                    <h4>Why this drink?</h4>
-                      <p> This drink was recommended because it shares ${cocktail.jaccard_score}% of its ingredients with the movie script keywords 
-                        and has a script similarity score of ${cocktail.svd_text_score}% based on thematic content${cocktail.svd_desc_score !== null ? ` and also has a similarity score of ${cocktail.svd_desc_score}% based on additional description provided` : ''}.</p>
-                </div>
-            </div>`;
+                <button class="cocktail-buttons" id="${i}">
+                    <img src="${cocktail.image}" alt="${cocktail.name}">
+                    <a href="${cocktail.recipe_link}" target="_blank">
+                        <h3>${cocktail.name}</h3>
+                    </a>
+                    <h4>${cocktail.score}% match</h4>
+                </button>
+                `;
             }
+        }
+
+        function cocktailModal(cocktail, i) {
+            return `
+                <div id="cocktail-details">
+                    <h4 class='accent-text'>A Runner-Up...</h4>
+                    <div class="cocktail-header">
+                        <a href="${cocktail.recipe_link}" target="_blank">
+                            <h3 class='cocktail-name'>${cocktail.name}   </h3>
+                        </a>
+                        <p>(${cocktail.score}% match)</p>
+                    </div>
+
+                    <ul class='cocktail-list dashed'>
+                        ${cocktail.ingredients.map(ing => `<li>${ing}</li>`).join('')}
+                    </ul>
+
+                    <div class="cocktail-instructions">
+                        <p>${cocktail.instructions}</p>
+                    </div>
+
+                    <div class="cocktail-explanation">
+                        <p>
+                            This drink was recommended because it shares ${cocktail.jaccard_score}% of its ingredients with the movie script keywords 
+                        and has a script similarity score of ${cocktail.svd_text_score}% based on thematic content${cocktail.svd_desc_score !== null ? ` and also has a similarity score of ${cocktail.svd_desc_score}% based on additional description provided` : ''}.
+                        </p>
+                    </div>
+                </div>
+                <div class='modal-image'>
+                    <img src="${cocktail.image}" alt="${cocktail.name}" class="cocktail-image">
+                </div>
+
+                <button class='close-button'>
+                    x
+                </button>
+                `;
         }
 
         function recipeTemplate(recipe) {
@@ -218,6 +248,7 @@
         }
 
         document.addEventListener('click', function (e) {
+            // Recipe text shortening and lengthening
             if (e.target && e.target.matches('.see-more')) {
                 e.preventDefault();
                 const card = e.target.closest('.recipe-card');
@@ -276,6 +307,8 @@
                 fetchUrl += `&fooddescription=${encodeURIComponent(additionalFoodDesc)}`;
             }
 
+            const modalContainer = document.getElementById("modal-shadow");
+
             fetch(fetchUrl)
                 .then(response => {
                     if (!response.ok) throw new Error('Network error');
@@ -299,11 +332,21 @@
                         const cocktailMain = document.createElement("div");
                         cocktailMain.className = "cocktail-main";
 
+                        // Most relevant cocktail card
                         const cocktailRecommended = document.createElement("div");
                         cocktailRecommended.className = "relevant-cocktail";
 
+                        // The other cocktails
                         const cocktailSection = document.createElement("div");
                         cocktailSection.className = "cocktail-section";
+                        cocktailSection.innerHTML += `
+                            <h4>Some Other Recommendations...</h4>
+                            <div class="hr"></div>
+                        `
+
+                        const cocktailRow = document.createElement("div");
+                        cocktailRow.className = "cocktail-row";
+                        cocktailSection.appendChild(cocktailRow);
 
                         let i = 0;
                         data.cocktails.forEach(c => {
@@ -314,10 +357,18 @@
                             cocktail.svd_desc_score = c.svd_desc_score;
 
                             if (i == 0) {
-                                cocktailRecommended.innerHTML += cocktailTemplate(cocktail, true);
+                                cocktailRecommended.innerHTML += cocktailCard(cocktail, i);
                             }
                             else {
-                                cocktailSection.innerHTML += cocktailTemplate(cocktail, false);
+                                cocktailRow.innerHTML += cocktailCard(cocktail, i);
+                                
+                                let cocktailModalContent = document.createElement("div");
+                                cocktailModalContent.className = 'cocktail-card hidden';
+                                cocktailModalContent.id = i;
+
+                                cocktailModalContent.innerHTML += cocktailModal(cocktail, i);
+
+                                modalContainer.appendChild(cocktailModalContent);
                             }
                             i += 1;
                         });
@@ -353,11 +404,36 @@
                     } else {
                         answerBox.innerHTML = noResultsTemplate(movieTitle);
                     }
+                
+                    document.querySelectorAll('.cocktail-buttons').forEach(button => {
+                        button.addEventListener('click', () => {
+                            const id = button.getAttribute('id');
+                            const card = document.querySelector(`.cocktail-card[id='${id}']`);
+
+                            if (card) {
+                                modalContainer.classList.toggle('hidden')
+                                card.classList.toggle('hidden'); // toggle visibility
+                            }
+                        });
+                    });
+                    document.querySelectorAll('.close-button').forEach(button => {
+                        button.addEventListener('click', () => {
+
+                            document.querySelectorAll('.cocktail-card').forEach(card => {
+                                card.classList.add('hidden');
+                            });
+
+                            document.querySelector(`.modal-shadow`).classList.add('hidden');
+                        });
+                    });
+                
                 })
                 .catch(error => {
                     loadingIndicator.style.display = "none";
                     answerBox.innerHTML = errorTemplate("Failed to get results. Please try again.");
                     console.error('Error:', error);
+
+                    
                 });
         }
     </script>
