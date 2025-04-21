@@ -9,6 +9,8 @@ from cocktail import extract_ingredients
 from helper_functions import weighted_jaccard_similarity
 from gensim.models import KeyedVectors
 import numpy as np
+from pairings import get_pairing_score_ranked
+from collections import defaultdict
 
 os.environ['ROOT_PATH'] = os.path.abspath(os.path.join("..",os.curdir))
 
@@ -198,10 +200,23 @@ def find_foods():
             combined_svd_score = svd_script_score
 
         jaccard_score = recipe_jaccard_scores[i]
-        final_score = helper_functions.combine_scores(jaccard_score, combined_svd_score, alpha=0.5)  # Adjust alpha as needed
-        combined_scores.append((recipe, final_score, jaccard_score, svd_script_score, combined_desc_score))
+        base_score = helper_functions.combine_scores(jaccard_score, combined_svd_score, alpha=0.5)  # Adjust alpha as needed
 
-    combined_scores = sorted(combined_scores, key=lambda x: -x[1])
+        # Added some weight to higher ratings
+        rating = recipe.get("average_rating", 0) or 0
+        normalized_rating = rating / 5.0  # Normalize to 0–1
+        final_score = (0.95 * base_score) + (0.05 * normalized_rating)
+
+        combined_scores.append((recipe, final_score, jaccard_score, svd_script_score, combined_desc_score, base_score))
+
+    combined_scores = sorted(
+    combined_scores,
+        key=lambda x: (
+            -x[1],  # primary sorting: score
+            -(x[0].get("average_rating", 0) or 0)  # secondary sorting: rating from recipe
+        )
+    )
+
     top_recipes = [
     {
         "data": clean_recipe_data(recipe),
@@ -210,9 +225,43 @@ def find_foods():
         "svd_text_score": round(svd_script_score * 100, 1),
         "svd_desc_score": round(combined_desc_score * 100, 1) if combined_desc_score is not None else None
     }
-    for recipe, score, jaccard_score, svd_script_score, combined_desc_score in combined_scores[:6]
-]
+    for recipe, _, jaccard_score, svd_script_score, combined_desc_score, score in combined_scores[:6]
+    ]
+
+    # Step 1: Collect pairings grouped by recipe
+    pairings_by_recipe = defaultdict(list)
+
+    for cocktail in top_cocktails:
+        cocktail_ings = cocktail["data"]["ingredients"]
+
+        for recipe in top_recipes:
+            recipe_name = recipe["data"]["name"]
+            recipe_ings = recipe["data"]["ingredients"]
+            if isinstance(recipe_ings, str):
+                recipe_ings = ast.literal_eval(recipe_ings)
+
+            label, rank = get_pairing_score_ranked(cocktail_ings, recipe_ings, model)
+
+            if rank > 0:
+                pairings_by_recipe[recipe_name].append({
+                    "cocktail": cocktail["data"]["name"],
+                    "link": cocktail["data"]["recipe_link"],
+                    "compatibility": label,
+                    "rank": rank
+                })
+
+    for recipe in top_recipes:
+        recipe_name = recipe["data"]["name"]
+        pairings = pairings_by_recipe.get(recipe_name, [])
+
+        sorted_pairings = sorted(pairings, key=lambda x: -x["rank"])[:3]
+
+        recipe["recommended_cocktails"] = sorted_pairings
     
+    print(top_recipes)
+
+
+   
     # result = movie_preprocessing.get_movie_foods(movie_title, SCRIPT_FOLDER, FOOD_DATABASE)
     return jsonify({
         "cocktails": top_cocktails,
