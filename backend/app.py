@@ -34,21 +34,15 @@ def find_foods():
     """
     API endpoint to find foods in a movie script
     """
-    model = model = KeyedVectors.load("model/glove-wiki.kv")  # Loads way faster
+    model = KeyedVectors.load("model/glove-wiki.kv")  # Loads way faster
 
     movie_title = request.args.get('movie', '').strip()
-    
     if not movie_title:
         return jsonify({"error": "Please enter a movie title"})
-    
-    drink_description = None
-    food_description = None
-    if 'drinkdescription' in request.args:
-        drink_description = request.args.get('drinkdescription').strip()
 
-    if 'fooddescription' in request.args:
-        food_description = request.args.get('fooddescription').strip()
-    
+    drink_description = request.args.get('drinkdescription', '').strip().lower()
+    food_description = request.args.get('fooddescription', '').strip().lower()
+
     dietary_restrictions = request.args.get('dietary', '').strip()
     dietary_restrictions = [r.strip() for r in dietary_restrictions.split(',')] if dietary_restrictions else []
 
@@ -131,7 +125,13 @@ def find_foods():
             combined_svd_score = svd_text_score
 
         jaccard_score = cocktail_jaccard_scores[i]
-        combined_score = helper_functions.combine_scores(jaccard_score, combined_svd_score, alpha=0.5)
+
+        # boost score if user preference matches cocktail ingredients
+        preference_boost = 0
+        if drink_description:
+            preference_boost = sum(1 for word in drink_description.split() if word in cocktail_ingredients) * 0.1
+
+        combined_score = helper_functions.combine_scores(jaccard_score, combined_svd_score, alpha=0.5) + preference_boost
         combined_cocktail_scores.append((cocktail, combined_score, jaccard_score, svd_text_score, combined_desc_score, intersecting_words, top_svd_terms))
 
     combined_cocktail_scores = sorted(combined_cocktail_scores, key=lambda x: -x[1])
@@ -207,7 +207,13 @@ def find_foods():
             combined_svd_score = svd_script_score
 
         jaccard_score = recipe_jaccard_scores[i]
-        base_score = helper_functions.combine_scores(jaccard_score, combined_svd_score, alpha=0.5)  # Adjust alpha as needed
+
+        # boost score if user preference matches recipe ingredients
+        preference_boost = 0
+        if food_description:
+            preference_boost = sum(1 for word in food_description.split() if word in ingredients) * 0.1
+
+        base_score = helper_functions.combine_scores(jaccard_score, combined_svd_score, alpha=0.5) + preference_boost
 
         rating = recipe.get("average_rating", 0) or 0
         normalized_rating = rating / 5.0  # Normalize to 0–1
