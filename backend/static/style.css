@@ -209,6 +209,79 @@ footer {
 
 }
 
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 100%;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 2;
+    top: 100%;
+    left: 0;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 5px;
+}
+
+.dropdown-options {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px; 
+}
+
+.dropdown-options label {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 12px; 
+    padding: 8px 12px;
+    cursor: pointer;
+    margin: 0;
+}
+
+.dropdown-options input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin: 0; 
+}
+
+.dropdown-options span {
+    text-align: left;
+    padding-right: 8px;
+}
+
+.done-button-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 12px;
+    padding-top: 8px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.done-button {
+    background: #ff4444;
+    color: white;
+    border: none;
+    padding: 8px 24px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+.done-button:hover {
+    background: #cc0000;
+}
+.dropdown-content label:hover {
+    background-color: #f1f1f1;
+}
+
+.dropdown-content input[type="checkbox"] {
+    margin-right: 10px;
+}
+
 @media (max-width: 1600px) {
     #hero {
         width: 100%;

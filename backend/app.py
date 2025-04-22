@@ -6,11 +6,12 @@ from flask_cors import CORS
 import helper_functions
 import ast
 from cocktail import extract_ingredients
-from helper_functions import weighted_jaccard_similarity
+from helper_functions import weighted_jaccard_similarity, dietary_res, drinks_filtered
 from gensim.models import KeyedVectors
 import numpy as np
 from pairings import get_pairing_score_ranked
 from collections import defaultdict
+import ast
 
 os.environ['ROOT_PATH'] = os.path.abspath(os.path.join("..",os.curdir))
 
@@ -48,6 +49,12 @@ def find_foods():
     if 'fooddescription' in request.args:
         food_description = request.args.get('fooddescription').strip()
     
+    dietary_restrictions = request.args.get('dietary', '').strip()
+    dietary_restrictions = [r.strip() for r in dietary_restrictions.split(',')] if dietary_restrictions else []
+
+    alcohol_preference = request.args.get('alcohol', '').strip()
+    alcohol_preference = [a.strip().lower().replace('-', ' ') for a in alcohol_preference.split(',')] if alcohol_preference else []
+
     script = helper_functions.get_movie_script(movie_title, SCRIPT_FOLDER)
     if not script:
         return jsonify({"error": "Script not found"})
@@ -125,6 +132,10 @@ def find_foods():
 
     combined_cocktail_scores = sorted(combined_cocktail_scores, key=lambda x: -x[1])
 
+    # Filter based on user preferences
+    if (len(alcohol_preference)==1):
+        combined_cocktail_scores = drinks_filtered(combined_cocktail_scores, 6, alcohol_preference)
+    
     # Sort and Get Top Cocktails
     top_cocktails = [
     {
@@ -216,7 +227,8 @@ def find_foods():
             -(x[0].get("average_rating", 0) or 0)  # secondary sorting: rating from recipe
         )
     )
-
+    if (len(dietary_restrictions)>0):
+        combined_scores = dietary_res(combined_scores, 6, dietary_restrictions)
     top_recipes = [
     {
         "data": clean_recipe_data(recipe),
