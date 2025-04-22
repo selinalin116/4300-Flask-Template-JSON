@@ -132,7 +132,7 @@
                         <h4 class='accent-text'>We'd Recommend...</h4>
                         <div class="cocktail-header">
                             <a href="${cocktail.recipe_link}" target="_blank">
-                                <h3 class='cocktail-name'>${cocktail.name}   </h3>
+                                <h3 class='cocktail-name'>${cocktail.name}</h3>
                             </a>
                             <p>(${cocktail.score}% match)</p>
                         </div>
@@ -147,8 +147,13 @@
 
                         <div class="cocktail-explanation">
                             <p>
-                                This drink was recommended because it shares ${cocktail.jaccard_score}% of its ingredients with the movie script keywords 
-                            and has a script similarity score of ${cocktail.svd_text_score}% based on thematic content${cocktail.svd_desc_score !== null ? ` and also has a similarity score of ${cocktail.svd_desc_score}% based on additional description provided` : ''}.
+                                This drink was recommended because it shares ${cocktail.jaccard_score}% of its ingredients with the movie script keywords.
+                            </p>
+                            <p class="detail-text">
+                                <strong>Shared Ingredients/Words:</strong> ${cocktail.jaccard_intersection && cocktail.jaccard_intersection.length > 0 ? cocktail.jaccard_intersection.join(', ') : 'N/A'}
+                            </p>
+                            <p class="detail-text">
+                                <strong>Top SVD Themes:</strong> ${cocktail.top_svd_terms && cocktail.top_svd_terms.length > 0 ? cocktail.top_svd_terms.join(', ') : 'N/A'}
                             </p>
                         </div>
                     </div>
@@ -224,6 +229,12 @@
                         <h4>Why this recipe?</h4>
                         <p> This recipe was recommended because it shares ${recipe.jaccard_score}% of its ingredients with the movie script keywords 
                             and has a script similarity score of ${recipe.svd_text_score}% based on thematic content${recipe.svd_desc_score !== null ? ` and also has a similarity score of ${recipe.svd_desc_score}% based on additional description provided` : ''}.</p>
+                        <p class="detail-text">
+                            <strong>Shared Ingredients/Words:</strong> ${recipe.jaccard_intersection && recipe.jaccard_intersection.length > 0 ? recipe.jaccard_intersection.join(', ') : 'N/A'}
+                        </p>
+                        <p class="detail-text">
+                            <strong>Top SVD Themes:</strong> ${recipe.top_svd_terms && recipe.top_svd_terms.length > 0 ? recipe.top_svd_terms.join(', ') : 'N/A'}
+                        </p>
                     </div>
                 </div>
                 <div class = "recipe-right">
@@ -350,9 +361,11 @@
                         data.cocktails.forEach(c => {
                             const cocktail = c.data;
                             cocktail.score = c.score;
-                            cocktail.jaccard_score = c.jaccard_score; // Ensure jaccard_score is passed
-                            cocktail.svd_text_score = c.svd_text_score; // Ensure svd_score is passed
+                            cocktail.jaccard_score = c.jaccard_score;
+                            cocktail.svd_text_score = c.svd_text_score;
                             cocktail.svd_desc_score = c.svd_desc_score;
+                            cocktail.jaccard_intersection = c.jaccard_intersection;
+                            cocktail.top_svd_terms = c.top_svd_terms;
 
                             if (i == 0) {
                                 cocktailRecommended.innerHTML += cocktailCard(cocktail, i);
@@ -387,9 +400,11 @@
                         data.recipes.forEach(r => {
                             const recipe = r.data;
                             recipe.score = r.score;
-                            recipe.jaccard_score = r.jaccard_score; // Ensure jaccard_score is passed
-                            recipe.svd_text_score = r.svd_text_score; // Ensure svd_score is passed
+                            recipe.jaccard_score = r.jaccard_score;
+                            recipe.svd_text_score = r.svd_text_score;
                             recipe.svd_desc_score = r.svd_desc_score;
+                            recipe.jaccard_intersection = r.jaccard_intersection;
+                            recipe.top_svd_terms = r.top_svd_terms;
                             recipeSection.innerHTML += recipeTemplate(recipe);
                         });
 

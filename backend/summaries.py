@@ -1,33 +1,291 @@
+from cocktail import *
+from recipe import recipe_vectors, recipes, clean_recipe_data, rec_vt, recipe_vectorizer, i_rec_vt, i_recipe_vectors, recipe_vectorizer_instructions
 import os
-import csv
+from flask import Flask, render_template, request, jsonify
+from flask_cors import CORS
+import helper_functions
+import ast
+from cocktail import extract_ingredients
+from helper_functions import weighted_jaccard_similarity
+from gensim.models import KeyedVectors
+import numpy as np
+from pairings import get_pairing_score_ranked
+from collections import defaultdict
+
+os.environ['ROOT_PATH'] = os.path.abspath(os.path.join("..",os.curdir))
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
-csv_file_path = os.path.join(current_directory, 'data/movie_synopsis.csv')
-scripts_folder = os.path.join(current_directory, 'data/scripts')
 
-os.makedirs(scripts_folder, exist_ok=True)
+SCRIPT_FOLDER = os.path.join(current_directory, 'data/scripts')  
+# FOOD_DATABASE = os.path.join(current_directory, 'data/recipes_names.csv')  
+FOOD_DATABASE = os.path.join(current_directory, 'database.txt')  
+MOVIE_DATABASE = os.path.join(current_directory, 'data/movies.txt')  # A file containing a list of movie titles
 
-# with open(csv_file_path, mode='r', encoding='utf-8') as csv_file:
-#     reader = csv.DictReader(csv_file)
-#     for row in reader:
-#         movie_name = row['title'].replace(":", "").replace("/", "").replace("\\", "").replace("?", "").replace("*", "").replace("\"", "").replace("<", "").replace(">", "").replace("|", "").strip()
-#         synopsis = row['synopsis']
-#         file_path = os.path.join(scripts_folder, f"{movie_name}.txt")
+app = Flask(__name__)
+CORS(app)
+
+@app.route("/")
+def home():
+    return render_template('base.html', title="Movie Food Finder")
+
+@app.route("/find-foods")
+def find_foods():
+    """
+    API endpoint to find foods in a movie script
+    """
+    model = model = KeyedVectors.load("model/glove-wiki.kv")  # Loads way faster
+
+    movie_title = request.args.get('movie', '').strip()
+    
+    if not movie_title:
+        return jsonify({"error": "Please enter a movie title"})
+    
+    drink_description = None
+    food_description = None
+    if 'drinkdescription' in request.args:
+        drink_description = request.args.get('drinkdescription').strip()
+
+    if 'fooddescription' in request.args:
+        food_description = request.args.get('fooddescription').strip()
+    
+    script = helper_functions.get_movie_script(movie_title, SCRIPT_FOLDER)
+    if not script:
+        return jsonify({"error": "Script not found"})
+    
+    script_tfidf = cocktail_vectorizer.transform([script])
+    script_projected = script_tfidf.dot(vt.T)
+    script_projected = normalize(script_projected)
+    
+    script_words = set(script.split())
+
+    # Extract cocktail ingredients
+    cocktail_ingredients_set = set()
+    for cocktail in cocktails:
+        cocktail_ingredients = extract_ingredients(cocktail)
+        cocktail_ingredients_set.update(ingredient.lower() for ingredient in cocktail_ingredients)
+
+    # Extract recipe ingredients
+    recipe_ingredients_set = set()
+    for recipe in recipes:
+        try:
+            ingredients_list = ast.literal_eval(recipe['ingredients'])
+            recipe_ingredients_set.update(ing.lower().strip() for ing in ingredients_list)
+        except (SyntaxError, ValueError):
+            pass
+
+    similarities = script_projected.dot(cocktail_vectors.T)
+
+    beta = 0.9
+
+    cocktail_desc_similarities = helper_functions.description_svd(cocktail_vectorizer, drink_description, vt, cocktail_vectors)
+    
+    weight_dict = {word: 1.5 for word in script_words}
+
+    cocktail_jaccard_scores = []
+    cocktail_cosine_scores = []
+    intersection_set = []
+    for cocktail in cocktails:
+        cocktail_ingredients = extract_ingredients(cocktail)
+        cocktail_ingredients_set = set(" ".join(cocktail_ingredients).lower().split())
+        jaccard_score = weighted_jaccard_similarity(script_words, cocktail_ingredients_set, weight_dict)
+        intersection_set.append(cocktail_ingredients_set.intersection(script_words))
+        cocktail_jaccard_scores.append(jaccard_score)
+        # cosine_score = helper_functions.cosine_similarity(cocktail_ingredients_tfidf, drink_description, cocktail_ingredients_vectorizer)
+        # print(cosine_score)
+
+        if drink_description is not None:
+            query_vec = helper_functions.embed_ingredient_list([drink_description], model)
+            cocktail_vec = helper_functions.embed_ingredient_list(cocktail_ingredients, model)
+
+            if query_vec is not None and cocktail_vec is not None:
+                sim = np.dot(query_vec, cocktail_vec) / (np.linalg.norm(query_vec) * np.linalg.norm(cocktail_vec))
+                cocktail_cosine_scores.append(sim)
+                # print("Similarity:", sim)
+            else:
+                print("Could not compute similarity")
+
+    
+    # combine jaccard similarity for cocktails
+    combined_cocktail_scores = []
+    for i, cocktail in enumerate(cocktails):
+        svd_text_score = similarities[0][i]
+        combined_desc_score = None
+        if drink_description is not None:
+            svd_desc_score = cocktail_desc_similarities[0][i]
+            cosine_score = cocktail_cosine_scores[i]
+            alpha = 0.8
+            combined_desc_score = (1 - alpha) * svd_desc_score + alpha * cosine_score
+            combined_svd_score = (1 - beta) * svd_text_score + beta * combined_desc_score
+        else:
+            combined_svd_score = svd_text_score
+
+        jaccard_score = cocktail_jaccard_scores[i]
+        intersection = intersection_set[i]  # Add intersection
+        combined_score = helper_functions.combine_scores(jaccard_score, combined_svd_score, alpha=0.5)
+        combined_cocktail_scores.append((cocktail, combined_score, jaccard_score, svd_text_score, combined_desc_score, intersection))
+
+    combined_cocktail_scores = sorted(combined_cocktail_scores, key=lambda x: -x[1])
+
+    # Sort and Get Top Cocktails
+    top_cocktails = [
+    {
+        "data": clean_cocktail_data(cocktail),
+        "score": round(score * 100, 1),
+        "jaccard_score": round(jaccard_score * 100, 1),
+        "svd_text_score": round(svd_text_score * 100, 1),
+        "svd_desc_score": round(combined_desc_score * 100, 1) if combined_desc_score is not None else None,
+        "intersection": list(intersection)  # Include intersection in the response
+    }
+    
+    for cocktail, score, jaccard_score, svd_text_score, combined_desc_score, intersection in combined_cocktail_scores[:6]
+]
+
+    # if not svd_results:
+    #     jaccard_scores = [
+    #         (i, jaccard_similarity(script, " ".join(
+    #             [c['strIngredient1'], c['strIngredient2'] ] # Add more ingredients as needed
+    #         )))
+    #         for i, c in enumerate(cocktails)
+    #     ]
+    #     top_jaccard = sorted(jaccard_scores, key=lambda x: -x[1])[:5]
+    #     return jsonify([cocktails[i] for i, _ in top_jaccard])
+    # cleaned_results = [clean_cocktail_data(c) for c in svd_results]
+    # print(cleaned_results)
+
+    # Recipe SVD
+    rec_script_tfidf = recipe_vectorizer.transform([script])
+    rec_script_projected = rec_script_tfidf.dot(rec_vt.T)
+    rec_similarities = rec_script_projected.dot(recipe_vectors.T)
+
+    # Additional SVD with additional description users put in
+    # recipe_desc_similarities = helper_functions.description_svd(recipe_vectorizer, additional_description, rec_vt, recipe_vectors)
+    recipe_desc_similarities = helper_functions.description_svd(recipe_vectorizer_instructions, food_description, i_rec_vt, i_recipe_vectors)
+
+    recipe_jaccard_scores = []
+    food_cosine_scores = []
+    for recipe in recipes:
+        try:
+            ingredients_list = ast.literal_eval(recipe['ingredients'])
+            ingredients = set(ing.lower().strip() for ing in ingredients_list)
+        except (SyntaxError, ValueError):
+            ingredients = set()
+
+        jaccard_score = weighted_jaccard_similarity(script_words, ingredients, weight_dict)
+        recipe_jaccard_scores.append(jaccard_score)
         
-#         with open(file_path, mode='w', encoding='utf-8') as txt_file:
-#             txt_file.write(synopsis)
+        if food_description is not None:
+            query_vec = helper_functions.embed_ingredient_list([food_description], model)
+            food_vec = helper_functions.embed_ingredient_list(ingredients_list, model)
 
-# print(f"Movie summaries have been written to {scripts_folder}")
+            if query_vec is not None and food_vec is not None:
+                sim = np.dot(query_vec, food_vec) / (np.linalg.norm(query_vec) * np.linalg.norm(food_vec))
+                food_cosine_scores.append(sim)
+            else:
+                print("Could not compute similarity")
 
-def delete_short_movie_files(folder_path, min_word_count=200):
-    for file_name in os.listdir(folder_path):
-        if file_name.endswith('.txt'):
-            file_path = os.path.join(folder_path, file_name)
-            with open(file_path, 'r', encoding='utf-8') as file:
-                content = file.read().strip()
-                word_count = len(content.split())
-                if word_count < min_word_count:
-                    os.remove(file_path)
-                    print(f"Deleted {file_path} (word count: {word_count})")
+    # cosine similarity for 
+    # cosine_scores = helperfunctions.cosine_similarity(script, recipes, recipe_vectorizer)
 
-delete_short_movie_files(scripts_folder, min_word_count=200)
+    combined_scores = []
+    for i, recipe in enumerate(recipes):
+        svd_script_score = rec_similarities[0][i]
+        # svd_desc_score = None
+        # cosine_score = None
+        combined_desc_score = None
+        if food_description is not None:
+            svd_desc_score = recipe_desc_similarities[0][i]   
+            cosine_score = food_cosine_scores[i]   
+            alpha = 0.8 
+            combined_desc_score = (1 - alpha) * svd_desc_score + alpha * cosine_score     
+            combined_svd_score = (1 - beta) * svd_script_score + beta * combined_desc_score
+        else:
+            combined_svd_score = svd_script_score
+
+        jaccard_score = recipe_jaccard_scores[i]
+        base_score = helper_functions.combine_scores(jaccard_score, combined_svd_score, alpha=0.5)  # Adjust alpha as needed
+
+        # Added some weight to higher ratings
+        rating = recipe.get("average_rating", 0) or 0
+        normalized_rating = rating / 5.0  # Normalize to 0–1
+        final_score = (0.95 * base_score) + (0.05 * normalized_rating)
+
+        combined_scores.append((recipe, final_score, jaccard_score, svd_script_score, combined_desc_score, base_score))
+
+    combined_scores = sorted(
+    combined_scores,
+        key=lambda x: (
+            -x[1],  # primary sorting: score
+            -(x[0].get("average_rating", 0) or 0)  # secondary sorting: rating from recipe
+        )
+    )
+
+    top_recipes = [
+    {
+        "data": clean_recipe_data(recipe),
+        "score": round(score * 100, 1),
+        "jaccard_score": round(jaccard_score * 100, 1),
+        "svd_text_score": round(svd_script_score * 100, 1),
+        "svd_desc_score": round(combined_desc_score * 100, 1) if combined_desc_score is not None else None
+    }
+    for recipe, _, jaccard_score, svd_script_score, combined_desc_score, score in combined_scores[:6]
+    ]
+
+    # Step 1: Collect pairings grouped by recipe
+    pairings_by_recipe = defaultdict(list)
+
+    for cocktail in top_cocktails:
+        cocktail_ings = cocktail["data"]["ingredients"]
+
+        for recipe in top_recipes:
+            recipe_name = recipe["data"]["name"]
+            recipe_ings = recipe["data"]["ingredients"]
+            if isinstance(recipe_ings, str):
+                recipe_ings = ast.literal_eval(recipe_ings)
+
+            label, rank = get_pairing_score_ranked(cocktail_ings, recipe_ings, model)
+
+            if rank > 0:
+                pairings_by_recipe[recipe_name].append({
+                    "cocktail": cocktail["data"]["name"],
+                    "link": cocktail["data"]["recipe_link"],
+                    "compatibility": label,
+                    "rank": rank
+                })
+
+    for recipe in top_recipes:
+        recipe_name = recipe["data"]["name"]
+        pairings = pairings_by_recipe.get(recipe_name, [])
+
+        sorted_pairings = sorted(pairings, key=lambda x: -x["rank"])[:3]
+
+        recipe["recommended_cocktails"] = sorted_pairings
+    
+    # print(top_recipes)
+
+
+   
+    # result = movie_preprocessing.get_movie_foods(movie_title, SCRIPT_FOLDER, FOOD_DATABASE)
+    return jsonify({
+        "cocktails": top_cocktails,
+        # "foods": result["foods"],
+        "recipes": top_recipes
+    })
+
+@app.route("/movie-suggestions")
+def movie_suggestions():
+    query = request.args.get('query', '').strip().lower()
+    if len(query) < 3: 
+        return jsonify([])
+    try:
+        movie_files = [f[:-4].replace('-', ' ').replace('_', ' ') for f in os.listdir(SCRIPT_FOLDER) if f.endswith('.txt')]
+    except FileNotFoundError:
+        return jsonify([])
+
+    suggestions = [movie for movie in movie_files if query in movie.lower()]
+    return jsonify(suggestions)
+
+if __name__ == '__main__':
+    app.run(debug=True, host="0.0.0.0", port=5000)
+
+# if 'DB_NAME' not in os.environ:
+#     app.run(debug=True,host="0.0.0.0",port=5000)

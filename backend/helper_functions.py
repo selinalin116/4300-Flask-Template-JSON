@@ -111,9 +111,6 @@ def get_movie_script(movie_title, folder, min_word_length=3):
 
 
 def jaccard_similarity(set1, set2):
-    """
-    Calculate jaccard similarity between two sets.
-    """
     intersection = len(set1 & set2)
     union = len(set1 | set2)
     return intersection / union if union != 0 else 0
