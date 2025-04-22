@@ -5,7 +5,7 @@ import nltk
 import ssl
 from sklearn.metrics.pairwise import cosine_similarity as sklearn_cosine_similarity
 import numpy as np
-
+import ast
 # Fix for SSL certificate verification issues
 try:
     _create_unverified_https_context = ssl._create_unverified_context
@@ -194,3 +194,86 @@ def embed_ingredient_list(ingredients, model):
     if not all_vectors:
         return None
     return sum(all_vectors) / len(all_vectors)
+
+
+def dietary_res(items, top_k=6, restrictions=None):
+    """
+    Helper to filter and return top_k items based on dietary restrictions.
+
+    Parameters:
+    - items: list of food items
+    - top_k: number of top items to return.
+    - restrictions: list of restricted diets (ie. ['vegetarian', 'lactose'])
+
+    Returns:
+    - Filtered and sorted list of top_k items.
+    """
+    meat_no_fish = ['chicken','bacon','turkey','beef','pork','duck','steak','wings',
+                    'boneless skinless chicken breast halves','ham','veal','lamb', 'sausage',
+                    'ground chuck','suet','ox kidney']
+    fish = ['fish', 'salmon', 'sardines','trout', 'mackerel', 'cod', 'haddock', 'pollock',
+            'flounder', 'tilapia', 'shellfish', 'mussels', 'scallops', 'squid', 
+            'oysters', 'crab', 'shrimp', 'sea bass', 'halibut', 'tuna','clams',
+            'lobster','anchovy','marlin steaks','conch','caviar']
+    dairy = ['milk', 'ice cream', 'cheese', 'yogurt', 'cream', 'butter', 
+             'buttermilk', 'heavy cream', 'butter', 'egg','custard',
+             'half-and-half','marscarpone','eggs','heavy whipping cream']
+    gluten_food = ['bread', 'beer', 'cake', 'pie', 'candy', 'cereal', 'cookie', 'croutons', 'french fries',
+                   'gravy', 'seafood', 'malt', 'pasta', 'hot dog', 'salad dressing', 'soy sauce', 'rice seasoning', 
+                   'chips', 'chicken', 'soup','flour','wheat','pastry','couscous','semolina','bulgar','barley','rye','oats',
+                   'spelt','deitan','graham crackers','pretzel']
+    non_kosher = ['shellfish', 'crab', 'shrimp', 'lobster', 'pork']
+
+    restriction_map = {
+        "vegan": meat_no_fish + fish + dairy,
+        "vegetarian": meat_no_fish + fish,
+        "pescatarian": meat_no_fish,
+        "dairy-free": dairy,
+        "gluten-free": gluten_food,
+        "kosher": non_kosher,
+    }
+
+    filtered = []
+    for item in items:
+        ingredients = item[0]["ingredients"]
+        ingredients = ast.literal_eval(ingredients)
+        violates = False
+        for restriction in restrictions:
+            restricted_ings = restriction_map.get(restriction, [])
+            if any(restricted in ing.lower() for ing in ingredients for restricted in restricted_ings):
+                violates = True
+                break
+
+        if not violates:
+            filtered.append(item)
+
+        if len(filtered) >= top_k:
+            break
+
+    return filtered
+
+
+def drinks_filtered(items, top_k, preferences):
+    """
+    Helper to filter and return top_k items for user's drink preferences.
+
+    Parameters:
+    - items: list of drink items
+    - top_k: number of top items to return.
+    - restrictions: list of preference (ie. ['alcoholic'])
+
+    Returns:
+    - Filtered and sorted list of top_k items.
+    """
+    filtered = []
+    for item in items:
+        alc = [item[0]["strAlcoholic"].lower()]
+        # print("alc",alc)
+        # print("pref",preferences)
+        if (alc==preferences):
+            filtered.append(item)
+
+        if len(filtered) >= top_k:
+            break
+
+    return filtered

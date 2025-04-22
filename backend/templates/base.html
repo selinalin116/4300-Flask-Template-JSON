@@ -51,6 +51,64 @@
                         oninput="fetchMovieSuggestions()">
                     <ul id="movie-suggestions" class="suggestions-dropdown"></ul>
                 </div>
+
+                <!-- Dietary Restrictions Dropdown -->
+                <div class="input-box">
+                    <input placeholder="Dietary Restrictions" readonly id="dietary-input"
+                        onclick="openDropdown('dietary')">
+                    <div class="dropdown-content" id="dietary-dropdown">
+                        <div class="dropdown-options">
+                            <label>
+                                <input type="checkbox" name="dietary" value="Vegetarian">
+                                <span>Vegetarian</span>
+                            </label>
+                            <label>
+                                <input type="checkbox" name="dietary" value="Vegan">
+                                <span>Vegan</span>
+                            </label>
+                            <label>
+                                <input type="checkbox" name="dietary" value="Pescatarian">
+                                <span>Pescatarian</span>
+                            </label>
+                            <label>
+                                <input type="checkbox" name="dietary" value="Gluten-Free">
+                                <span>Gluten-Free</span>
+                            </label>
+                            <label>
+                                <input type="checkbox" name="dietary" value="Dairy-Free">
+                                <span>Dairy-Free</span>
+                            </label>
+                            <label>
+                                <input type="checkbox" name="dietary" value="Kosher">
+                                <span>Kosher</span>
+                            </label>
+                        </div>
+                        <div class="done-button-container">
+                            <button class="done-button" onclick="updateSelections('dietary')">Done</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Drink Preferences Dropdown -->
+                <div class="input-box">
+                    <input placeholder="Alcohol Preference" readonly id="alcohol-input"
+                        onclick="openDropdown('alcohol')">
+                    <div class="dropdown-content" id="alcohol-dropdown">
+                        <div class="dropdown-options">
+                            <label>
+                                <input type="checkbox" name="alcohol" value="Alcoholic">
+                                <span>Alcoholic</span>
+                            </label>
+                            <label>
+                                <input type="checkbox" name="alcohol" value="Non-Alcoholic">
+                                <span>Non-Alcoholic</span>
+                            </label>
+                        </div>
+                        <div class="done-button-container">
+                            <button class="done-button" onclick="updateSelections('alcohol')">Done</button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="input-box" onclick="descriptionFocusDrink()">
                     <input placeholder="Cocktail Preferences (e.g., Drinks that are tangy)"
                         id="description-drink-search">
@@ -292,9 +350,62 @@
             document.getElementById('movie-suggestions').innerHTML = '';
         }
 
+        let currentOpenDropdown = null;
+
+        function openDropdown(type) {
+            if (currentOpenDropdown === type) return;
+
+            if (currentOpenDropdown) {
+                closeDropdown(currentOpenDropdown);
+            }
+
+            const dropdown = document.getElementById(`${type}-dropdown`);
+            dropdown.style.display = 'block';
+            currentOpenDropdown = type;
+        }
+
+        function closeDropdown(type) {
+            document.getElementById(`${type}-dropdown`).style.display = 'none';
+            currentOpenDropdown = null;
+        }
+
+        function updateSelections(type) {
+            const checkboxes = document.querySelectorAll(`input[name="${type}"]:checked`);
+            const selectedValues = Array.from(checkboxes).map(cb => cb.value);
+            const inputField = document.getElementById(`${type}-input`);
+
+            if (selectedValues.length > 0) {
+                inputField.value = selectedValues.join(', ');
+            } else {
+                inputField.value = '';
+                inputField.placeholder = type === 'dietary'
+                    ? 'Dietary Restrictions'
+                    : 'Alcohol Preference';
+            }
+
+            closeDropdown(type);
+        }
+
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.input-box') &&
+                !e.target.closest('.dropdown-content') &&
+                !e.target.classList.contains('done-button')) {
+                if (currentOpenDropdown) {
+                    closeDropdown(currentOpenDropdown);
+                }
+            }
+        });
+
         function searchMovie() {
             const movieTitle = document.getElementById("movie-search").value.trim();
             if (!movieTitle) return;
+            // Get dietary restrictions
+            const dietary = Array.from(document.querySelectorAll('input[name="dietary"]:checked'))
+                .map(cb => cb.value.toLowerCase());
+
+            // Get alcohol preferences
+            const alcohol = Array.from(document.querySelectorAll('input[name="alcohol"]:checked'))
+                .map(cb => cb.value.toLowerCase());
 
             const additionalFoodDesc = document.getElementById("description-food-search").value.trim();
 
@@ -307,7 +418,12 @@
             answerBox.innerHTML = "";
 
             let fetchUrl = `/find-foods?movie=${encodeURIComponent(movieTitle)}`;
-
+            if (dietary.length > 0) {
+                fetchUrl += `&dietary=${dietary.join(',')}`;
+            }
+            if (alcohol.length > 0) {
+                fetchUrl += `&alcohol=${alcohol.join(',')}`;
+            }
             if (additionalFoodDesc && additionalDrinkDesc) {
                 fetchUrl += `&drinkdescription=${encodeURIComponent(additionalDrinkDesc)}&fooddescription=${encodeURIComponent(additionalFoodDesc)}`;
             } else if (additionalDrinkDesc) {
