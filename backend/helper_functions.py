@@ -23,6 +23,7 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import sent_tokenize
+from nltk import ngrams
 
 def capitalize_sentences(text):
     sentences = sent_tokenize(text)
@@ -68,6 +69,37 @@ def tokenize_script(script_text, min_word_length=3):
     ]
     
     return filtered_tokens
+
+def get_script_phrases(script_tokens):
+    unigrams = set(script_tokens)
+    print(unigrams)
+    bigrams = set(' '.join(g) for g in ngrams(script_tokens, 2))
+    return unigrams | bigrams
+
+def is_meaningful_match(ingredient, script_phrases):
+    ingredient_lower = ingredient.lower()
+
+    if ingredient_lower in script_phrases:
+        print("True")
+        return True
+
+    for phrase in script_phrases:
+        if phrase in ingredient_lower or ingredient_lower in phrase:
+            if phrase in {"hot", "cold", "damn", "sweet"}:
+                continue
+            if len(phrase.split()) == 1 and len(phrase) < 4:
+                continue
+            return True
+    return False
+
+def smart_weighted_jaccard(script_tokens, ingredient_set, weight_dict):
+    script_phrases = get_script_phrases(script_tokens)
+    matched = {ing for ing in ingredient_set if is_meaningful_match(ing, script_phrases)}
+    
+    intersection_weight = sum(weight_dict.get(word, 1.0) for word in matched)
+    ingredient_weight = sum(weight_dict.get(word, 1.0) for word in ingredient_set)
+    
+    return intersection_weight / ingredient_weight if ingredient_weight != 0 else 0.0
 
 def get_movie_script(movie_title, folder, min_word_length=3):
     """
@@ -124,16 +156,16 @@ def weighted_jaccard_similarity(script_words, ingredient_set, weight_dict):
 
     return intersection_weight / ingredient_weight if ingredient_weight != 0 else 0.0
 
-def weighted_jaccard(set1, set2, idf_dict):
-    intersection = set1.intersection(set2)
-    union = set1.union(set2)
+# def weighted_jaccard(set1, set2, idf_dict):
+#     intersection = set1.intersection(set2)
+#     union = set1.union(set2)
 
-    intersection_weight = sum(idf_dict.get(item, 0.0) for item in intersection)
-    union_weight = sum(idf_dict.get(item, 0.0) for item in union)
+#     intersection_weight = sum(idf_dict.get(item, 0.0) for item in intersection)
+#     union_weight = sum(idf_dict.get(item, 0.0) for item in union)
 
-    if union_weight == 0:
-        return 0.0
-    return intersection_weight / union_weight
+#     if union_weight == 0:
+#         return 0.0
+#     return intersection_weight / union_weight
 
 def combine_scores(jaccard_score, svd_score, alpha = .25):
     return alpha * jaccard_score + (1 - alpha) * svd_score

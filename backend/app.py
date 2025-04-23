@@ -6,7 +6,7 @@ from flask_cors import CORS
 import helper_functions
 import ast
 from cocktail import extract_ingredients
-from helper_functions import weighted_jaccard_similarity, dietary_res, drinks_filtered
+from helper_functions import weighted_jaccard_similarity, smart_weighted_jaccard, dietary_res, drinks_filtered
 from gensim.models import KeyedVectors
 import numpy as np
 from pairings import get_pairing_score_ranked
@@ -87,7 +87,7 @@ def find_foods():
     for cocktail in cocktails:
         cocktail_ingredients = extract_ingredients(cocktail)
         cocktail_ingredients_set = set(" ".join(cocktail_ingredients).lower().split())
-        jaccard_score = weighted_jaccard_similarity(script_words, cocktail_ingredients_set, weight_dict)
+        jaccard_score = smart_weighted_jaccard(script_words, cocktail_ingredients_set, weight_dict)
         cocktail_jaccard_scores.append(jaccard_score)
         # cosine_score = helper_functions.cosine_similarity(cocktail_ingredients_tfidf, drink_description, cocktail_ingredients_vectorizer)
         # print(cosine_score)
@@ -242,8 +242,8 @@ def find_foods():
         }
         for recipe, _, jaccard_score, svd_script_score, combined_desc_score, score, intersecting_words, top_svd_terms in combined_scores[:6]
     ]
-    
 
+    # Step 1: Collect pairings grouped by recipe
     pairings_by_recipe = defaultdict(list)
 
     for cocktail in top_cocktails:
