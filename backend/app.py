@@ -142,9 +142,12 @@ def find_foods():
 
     combined_cocktail_scores = sorted(combined_cocktail_scores, key=lambda x: -x[1])
 
+    print(len(combined_cocktail_scores))
+
     # Filter based on user preferences
     if (len(alcohol_preference)==1):
         combined_cocktail_scores = drinks_filtered(combined_cocktail_scores, 6, alcohol_preference)
+    
     
     # Sort and Get Top Cocktails
     top_cocktails = [
