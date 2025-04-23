@@ -34,14 +34,19 @@ def find_foods():
     """
     API endpoint to find foods in a movie script
     """
-    model = KeyedVectors.load("model/glove-wiki.kv")  # Loads way faster
+    model = KeyedVectors.load("model/glove-wiki.kv")  
 
     movie_title = request.args.get('movie', '').strip()
     if not movie_title:
         return jsonify({"error": "Please enter a movie title"})
 
-    drink_description = request.args.get('drinkdescription', '').strip().lower()
-    food_description = request.args.get('fooddescription', '').strip().lower()
+    drink_description = request.args.get('drinkdescription')
+    if drink_description is not None:
+        drink_description = drink_description.strip().lower()
+    
+    food_description = request.args.get('fooddescription')
+    if food_description is not None:
+        food_description = food_description.strip().lower()
 
     dietary_restrictions = request.args.get('dietary', '').strip()
     dietary_restrictions = [r.strip() for r in dietary_restrictions.split(',')] if dietary_restrictions else []
@@ -100,8 +105,8 @@ def find_foods():
                 sim = np.dot(query_vec, cocktail_vec) / (np.linalg.norm(query_vec) * np.linalg.norm(cocktail_vec))
                 cocktail_cosine_scores.append(sim)
                 # print("Similarity:", sim)
-            else:
-                print("Could not compute similarity")
+            # else:
+            #     print("Could not compute similarity")
 
     
     combined_cocktail_scores = []
@@ -116,6 +121,7 @@ def find_foods():
         svd_text_score = similarities[0][i]
         combined_desc_score = None
         if drink_description is not None:
+            print(drink_description is not None)
             svd_desc_score = cocktail_desc_similarities[0][i]
             cosine_score = cocktail_cosine_scores[i]
             alpha = 0.8
@@ -179,8 +185,8 @@ def find_foods():
             if query_vec is not None and food_vec is not None:
                 sim = np.dot(query_vec, food_vec) / (np.linalg.norm(query_vec) * np.linalg.norm(food_vec))
                 food_cosine_scores.append(sim)
-            else:
-                print("Could not compute similarity")
+            # else:
+            #     print("Could not compute similarity")
 
     combined_scores = []
     for i, recipe in enumerate(recipes):
