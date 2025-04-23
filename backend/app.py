@@ -242,8 +242,8 @@ def find_foods():
         }
         for recipe, _, jaccard_score, svd_script_score, combined_desc_score, score, intersecting_words, top_svd_terms in combined_scores[:6]
     ]
+    
 
-    # Step 1: Collect pairings grouped by recipe
     pairings_by_recipe = defaultdict(list)
 
     for cocktail in top_cocktails:
