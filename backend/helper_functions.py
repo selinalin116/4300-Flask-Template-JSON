@@ -70,37 +70,6 @@ def tokenize_script(script_text, min_word_length=3):
     
     return filtered_tokens
 
-def get_script_phrases(script_tokens):
-    unigrams = set(script_tokens)
-    print(unigrams)
-    bigrams = set(' '.join(g) for g in ngrams(script_tokens, 2))
-    return unigrams | bigrams
-
-def is_meaningful_match(ingredient, script_phrases):
-    ingredient_lower = ingredient.lower()
-
-    if ingredient_lower in script_phrases:
-        print("True")
-        return True
-
-    for phrase in script_phrases:
-        if phrase in ingredient_lower or ingredient_lower in phrase:
-            if phrase in {"hot", "cold", "damn", "sweet"}:
-                continue
-            if len(phrase.split()) == 1 and len(phrase) < 4:
-                continue
-            return True
-    return False
-
-def smart_weighted_jaccard(script_tokens, ingredient_set, weight_dict):
-    script_phrases = get_script_phrases(script_tokens)
-    matched = {ing for ing in ingredient_set if is_meaningful_match(ing, script_phrases)}
-    
-    intersection_weight = sum(weight_dict.get(word, 1.0) for word in matched)
-    ingredient_weight = sum(weight_dict.get(word, 1.0) for word in ingredient_set)
-    
-    return intersection_weight / ingredient_weight if ingredient_weight != 0 else 0.0
-
 def get_movie_script(movie_title, folder, min_word_length=3):
     """
     Load and return the content of a movie script.
