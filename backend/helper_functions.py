@@ -90,6 +90,7 @@ def get_movie_script(movie_title, folder, min_word_length=3):
         if os.path.exists(script_path):
             with open(script_path, 'r', encoding='utf-8') as f:
                 script_content = f.read()
+                break
 
     # Fallback: try partial match
     for file in os.listdir(folder):
