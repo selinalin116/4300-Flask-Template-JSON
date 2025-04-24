@@ -6,6 +6,7 @@ import ssl
 from sklearn.metrics.pairwise import cosine_similarity as sklearn_cosine_similarity
 import numpy as np
 import ast
+import Levenshtein
 # Fix for SSL certificate verification issues
 try:
     _create_unverified_https_context = ssl._create_unverified_context
@@ -193,16 +194,10 @@ def penalize_jaccard_similarity(script_words, ingredient_set, weight_dict, raw_w
 
     return penalized_score, raw_jaccard
 
-# def weighted_jaccard(set1, set2, idf_dict):
-#     intersection = set1.intersection(set2)
-#     union = set1.union(set2)
+def cosine_sim(vec1, vec2):
+    sim = np.dot(vec1, vec2) / (np.linalg.norm(vec1) * np.linalg.norm(vec2))
 
-#     intersection_weight = sum(idf_dict.get(item, 0.0) for item in intersection)
-#     union_weight = sum(idf_dict.get(item, 0.0) for item in union)
-
-#     if union_weight == 0:
-#         return 0.0
-#     return intersection_weight / union_weight
+    return sim
 
 def combine_scores(jaccard_score, svd_score, alpha = .25):
     return alpha * jaccard_score + (1 - alpha) * svd_score
@@ -247,19 +242,38 @@ def description_svd(vectorizer, additional_description, vt, vectors):
 
     return desc_similarities
 
+def is_edit_distance_match(word, target, max_dist=2):
+    return Levenshtein.distance(word.lower(), target.lower()) <= max_dist
+
+def normalize_ingredient(ingredient):
+    for canonical in synonym_map:
+        if is_edit_distance_match(ingredient, canonical):
+            return canonical
+    return ingredient
+
+synonym_map = {
+    "homecooked": ["homemade", "comfort", "family", "cooked", "traditional"]
+}
+
 def embed_ingredient_list(ingredients, model):
     """
     Takes a list of ingredients like ["lime juice", "simple syrup"]
     and returns the averaged embedding vector using pretrained model.
     """
     all_vectors = []
-    
+
     for ingredient in ingredients:
-        words = ingredient.lower().split() 
+        normalized = normalize_ingredient(ingredient)
+        words = normalized.lower().split()
+
+        # Inject synonyms for known concepts like "homecooked"
+        if normalized in synonym_map:
+            words += synonym_map[normalized]
+
         for word in words:
             if word in model:
                 all_vectors.append(model[word])
-    
+
     if not all_vectors:
         return None
     return sum(all_vectors) / len(all_vectors)

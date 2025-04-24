@@ -69,15 +69,6 @@ recipe_tfidf_instructions = recipe_vectorizer_instructions.fit_transform(combine
 i_u, i_s, i_rec_vt = svds(recipe_tfidf_instructions, k=k)
 i_recipe_vectors = normalize(i_u, axis=1)
 
-# recipe_ingredients = set()
-
-# for r in recipes:
-#     try:
-#         ingredients_list = ast.literal_eval(r['ingredients'])
-#         recipe_ingredients.update(ingredient.strip().lower() for ingredient in ingredients_list)
-#     except (ValueError, SyntaxError):
-#         continue
-
 recipe_ingredient_lists = []
 
 for r in recipes:
@@ -86,7 +77,7 @@ for r in recipes:
         tokens = set()
         for ing in ingredients_list:
             tokens.update(helper_functions.tokenize_ingredients(ing))
-        recipe_ingredient_lists.append(list(tokens))  # one tokenized set per recipe
+        recipe_ingredient_lists.append(list(tokens)) 
     except (ValueError, SyntaxError):
         continue
 
@@ -95,7 +86,7 @@ def recipe_compute_idf():
     doc_freq = Counter()
 
     for ingredients in recipe_ingredient_lists:
-        unique_tokens = set(ingredients)  # ensure uniqueness per recipe
+        unique_tokens = set(ingredients)
         doc_freq.update(unique_tokens)
 
     idf_lookup = {
