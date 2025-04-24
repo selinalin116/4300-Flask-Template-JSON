@@ -5,12 +5,6 @@ from helper_functions import cosine_sim
 with open("data/taste_trios.json", "r") as f:
     compatible_trios = json.load(f)
 
-# def cosine_sim(word1, word2, model):
-#     if word1 in model and word2 in model:
-#         v1, v2 = model[word1], model[word2]
-#         return np.dot(v1, v2) / (np.linalg.norm(v1) * np.linalg.norm(v2))
-#     return 0   
-
 def get_pairing_score_ranked(cocktail_ings, recipe_ings, model, sim_threshold=0.30):
     cocktail_ings = set(ing.lower().strip() for ing in cocktail_ings)
     recipe_ings = set(ing.lower().strip() for ing in recipe_ings)
@@ -29,9 +23,6 @@ def get_pairing_score_ranked(cocktail_ings, recipe_ings, model, sim_threshold=0.
                 if ing in trio_ing or trio_ing in ing:
                     matched_cocktail_ings.add(trio_ing)
                     break
-                # elif cosine_sim(ing, trio_ing, model) >= sim_threshold:
-                #     matched_cocktail_ings.add(trio_ing)
-                #     break
                 else:
                     if ing in model and trio_ing in model:
                         v1, v2 = model[ing], model[trio_ing]
@@ -45,9 +36,6 @@ def get_pairing_score_ranked(cocktail_ings, recipe_ings, model, sim_threshold=0.
                 if ing in trio_ing or trio_ing in ing:
                     matched_recipe_ings.add(trio_ing)
                     break
-                # elif cosine_sim(ing, trio_ing, model) >= sim_threshold:
-                #     matched_recipe_ings.add(trio_ing)
-                #     break
                 else:
                     if ing in model and trio_ing in model:
                         v1, v2 = model[ing], model[trio_ing]
