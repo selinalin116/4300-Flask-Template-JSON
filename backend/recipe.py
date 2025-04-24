@@ -2,18 +2,10 @@ from scipy.sparse.linalg import svds
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import normalize
 import json
-import zipfile
 import ast
 import helper_functions
-
-
-# zip_filename = 'data/recipes_cleaned.zip'
-# file_inside_zip = 'recipes_cleaned.json'
-
-# Open the ZIP file and read the file inside it
-# with zipfile.ZipFile(zip_filename, 'r') as zipf:
-#     with zipf.open(file_inside_zip) as file:
-#         data = file.read().decode('utf-8')
+import math
+from collections import Counter
 
 with open('data/recipes_cleaned.json', 'r') as f:
     recipes = json.load(f)
@@ -77,14 +69,41 @@ recipe_tfidf_instructions = recipe_vectorizer_instructions.fit_transform(combine
 i_u, i_s, i_rec_vt = svds(recipe_tfidf_instructions, k=k)
 i_recipe_vectors = normalize(i_u, axis=1)
 
-recipe_ingredients = set()
+# recipe_ingredients = set()
+
+# for r in recipes:
+#     try:
+#         ingredients_list = ast.literal_eval(r['ingredients'])
+#         recipe_ingredients.update(ingredient.strip().lower() for ingredient in ingredients_list)
+#     except (ValueError, SyntaxError):
+#         continue
+
+recipe_ingredient_lists = []
 
 for r in recipes:
     try:
         ingredients_list = ast.literal_eval(r['ingredients'])
-        recipe_ingredients.update(ingredient.strip().lower() for ingredient in ingredients_list)
+        tokens = set()
+        for ing in ingredients_list:
+            tokens.update(helper_functions.tokenize_ingredients(ing))
+        recipe_ingredient_lists.append(list(tokens))  # one tokenized set per recipe
     except (ValueError, SyntaxError):
         continue
+
+def recipe_compute_idf():
+    total_docs = len(recipe_ingredient_lists)
+    doc_freq = Counter()
+
+    for ingredients in recipe_ingredient_lists:
+        unique_tokens = set(ingredients)  # ensure uniqueness per recipe
+        doc_freq.update(unique_tokens)
+
+    idf_lookup = {
+        token: math.log((total_docs + 1) / (1 + doc_freq[token])) + 1
+        for token in doc_freq
+    }
+
+    return idf_lookup
 
 def clean_recipe_data(recipe):
     """

@@ -110,6 +110,24 @@ def get_movie_script(movie_title, folder, min_word_length=3):
 
     return ' '.join(tokens)
 
+COMMON_INGREDIENTS = {"water", "salt", "sugar", "hot", "damn"}
+
+def build_combined_weight_dict(script_words, idf_lookup, boost=1.5, common_penalty=0.2):
+    final_weights = {}
+
+    for word in idf_lookup:
+        idf_weight = idf_lookup.get(word, 1.0)
+        boost = boost if word in script_words else 1.0
+        penalty = common_penalty if word in COMMON_INGREDIENTS else 1.0
+
+        final_weight = idf_weight * boost * penalty
+        final_weights[word] = final_weight
+
+        print(f"{word}: {final_weight:.4f}")
+    return final_weights
+
+def tokenize_ingredients(ingredient):
+    return re.findall(r'\b[a-zA-Z]+\b', ingredient.lower())
 
 def jaccard_similarity(set1, set2):
     intersection = len(set1 & set2)
@@ -124,6 +142,41 @@ def weighted_jaccard_similarity(script_words, ingredient_set, weight_dict):
     ingredient_weight = sum(weight_dict.get(word, 1.0) for word in ingredient_set)
 
     return intersection_weight / ingredient_weight if ingredient_weight != 0 else 0.0
+
+def idf_jaccard_similarity(script_words, ingredient_set, weight_dict, raw_weight_dict):
+    intersection = script_words & ingredient_set
+    union = script_words | ingredient_set
+
+    # Focus on the percentage of ingredients shared
+    intersection_weight = sum(weight_dict.get(word, 1.0) for word in intersection)
+    ingredient_weight = sum(weight_dict.get(word, 1.0) for word in ingredient_set)
+
+    raw_intersection_weight = sum(raw_weight_dict.get(word, 1.0) for word in intersection)
+    raw_ingredient_weight = sum(raw_weight_dict.get(word, 1.0) for word in ingredient_set)
+
+    weighted_score = intersection_weight / ingredient_weight if ingredient_weight != 0 else 0.0
+    raw_jaccard = raw_intersection_weight / raw_ingredient_weight if union else 0.0
+
+    return weighted_score, raw_jaccard
+
+def penalize_jaccard_similarity(script_words, ingredient_set, weight_dict, raw_weight_dict):
+    intersection = script_words & ingredient_set
+    union = script_words | ingredient_set
+
+    intersection_weight = sum(weight_dict.get(word, 1.0) for word in intersection)
+    ingredient_weight = sum(weight_dict.get(word, 1.0) for word in ingredient_set)
+
+    raw_intersection_weight = sum(raw_weight_dict.get(word, 1.0) for word in intersection)
+    raw_ingredient_weight = sum(raw_weight_dict.get(word, 1.0) for word in ingredient_set)
+    
+    weighted_score = intersection_weight / ingredient_weight if ingredient_weight != 0 else 0.0
+    raw_jaccard = raw_intersection_weight / raw_ingredient_weight if union else 0.0
+
+    # Penalize short ingredient lists
+    penalty = len(ingredient_set) / (len(ingredient_set) + 2) 
+    penalized_score = weighted_score * penalty
+
+    return penalized_score, raw_jaccard
 
 # def weighted_jaccard(set1, set2, idf_dict):
 #     intersection = set1.intersection(set2)

@@ -2,60 +2,13 @@ import json
 from scipy.sparse.linalg import svds
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import normalize
-
-# ingredient_drink_index = {}
-
-# ingredient_url = "https://www.thecocktaildb.com/api/json/v1/1/list.php?i=list"
-# ingredient_response = requests.get(ingredient_url)
-# ingredients = ingredient_response.json().get("drinks", [])
-
-# format of the ingredient_url website
-# "drinks":[{"strIngredient1":"Light rum"},{"strIngredient1":"Bourbon"},
-# {"strIngredient1":"Vodka"},{"strIngredient1":"Gin"},{"strIngredient1":"Blended whiskey"},{"strIngredient1":"Tequila"}
-# for x in ingredients:
-#     ingredient = x["strIngredient1"]
-#     drinks_url = f"https://www.thecocktaildb.com/api/json/v1/1/filter.php?i={ingredient}"
-#     # here's what we get w/ ingredient = vodka
-#     # "drinks":[{"strDrink":"155 Belmont","strDrinkThumb":"https:\/\/www.thecocktaildb.com\/images\/media\/drink\/yqvvqs1475667388.jpg",
-#     # "idDrink":"15346"},{"strDrink":"501 Blue","strDrinkThumb":"https:\/\/www.thecocktaildb.com\/images\/media\/drink\/ywxwqs1461867097.jpg",
-#     # "idDrink":"17105"},{"strDrink":"57 Chevy with a White License 
-
-#     drinks_response = requests.get(drinks_url)
-#     # get drink names
-#     drink_list = []
-#     for y in drinks_response.json().get("drinks", []):
-#         drink = y["strDrink"]
-#         drink_list.append(drink)
-#     ingredient_drink_index[ingredient] = drink_list
-
-# # write to file
-# with open("ingredient_drink_index.json", "w") as f:
-#     json.dump(ingredient_drink_index, f, indent=4)
-
-# def fetch_cocktails():
-#     """
-#     Fetch cocktails from cocktaildb API.
-#     """
-#     cocktails = []
-#     for letter in 'abcdefghijklmnopqrstuvwxyz':
-#         response = requests.get(f'https://www.thecocktaildb.com/api/json/v1/1/search.php?f={letter}')
-#         if response.ok and response.json().get('drinks'):
-#             cocktails.extend(response.json()['drinks'])
-#     return cocktails
-
-# cocktails = fetch_cocktails()
+from collections import Counter
+import math
+import re
+from helper_functions import tokenize_ingredients
 
 with open('data/cocktails.json', 'r') as f:
     cocktails = json.load(f)
-
-# cocktail_texts = [
-#     " ".join([
-#         c['strDrink'], 
-#         c['strInstructions'],
-#         " ".join(str(c[f'strIngredient{i}']) for i in range(1, 16) if c.get(f'strIngredient{i}'))
-#     ])
-#     for c in cocktails
-# ]
 
 cocktail_texts = []
 cocktail_ingredients_list = [] 
@@ -92,6 +45,25 @@ cocktail_tfidf = cocktail_vectorizer.fit_transform(cocktail_texts)
 k = 40  # Same as class demo
 U, s, vt = svds(cocktail_tfidf, k=k)
 cocktail_vectors = normalize(U, axis=1)
+
+def compute_idf():
+    ing_list = [cocktail_ingredients_list]
+    total_docs = len(cocktail_ingredients_list)
+    ingredient_doc_freq = Counter()
+    
+    for ingredients in ing_list:
+        unique_tokens = set()
+        for ing in ingredients:
+            tokens = tokenize_ingredients(ing)
+            unique_tokens.update(tokens)
+        ingredient_doc_freq.update(unique_tokens)
+
+    idf = {
+        ing: math.log((total_docs + 1) / (1 + ingredient_doc_freq[ing])) + 1
+        for ing in ingredient_doc_freq
+    }
+
+    return idf
 
 def jaccard_similarity(script, raw_ingredients):
     script_words = set(script.lower().split())
