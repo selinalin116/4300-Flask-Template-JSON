@@ -26,21 +26,8 @@ for c in cocktails:
     
     cocktail_texts.append(cocktail_text)
 
-# cocktail_ingredients = []
-# for c in cocktails:
-#     for i in range(1, 16):
-#         if c.get(f'strIngredient{i}'):
-#             cocktail_ingredients.append(str(c[f'strIngredient{i}']))
-
 cocktail_vectorizer = TfidfVectorizer(stop_words='english', max_df=0.7, min_df=5)
 cocktail_tfidf = cocktail_vectorizer.fit_transform(cocktail_texts)
-
-# cocktail_ingredients_vectorizer = TfidfVectorizer(
-#     stop_words='english', 
-#     max_df=0.9,
-#     min_df=1
-# )
-# cocktail_ingredients_tfidf = cocktail_ingredients_vectorizer.fit_transform(cocktail_ingredients)
 
 k = 40  # Same as class demo
 U, s, vt = svds(cocktail_tfidf, k=k)

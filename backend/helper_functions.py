@@ -7,6 +7,7 @@ from sklearn.metrics.pairwise import cosine_similarity as sklearn_cosine_similar
 import numpy as np
 import ast
 import Levenshtein
+
 # Fix for SSL certificate verification issues
 try:
     _create_unverified_https_context = ssl._create_unverified_context
@@ -43,15 +44,14 @@ def tokenize_script(script_text, min_word_length=3):
 
     # Remove script formatting like scene headings, character names
     text = re.sub(r'\b(INT|EXT|FADE IN|FADE OUT|CUT TO|DISSOLVE TO)\..*', '', text)
-    text = re.sub(r'\(.*?\)', '', text)  # Remove parenthetical directions
 
-    # Tokenize
+    # Remove parenthetical directions
+    text = re.sub(r'\(.*?\)', '', text)  
+
     tokens = word_tokenize(text)
     
-    # Get stopwords
     stop_words = set(stopwords.words('english'))
 
-    # Add common script terms
     script_specific_stopwords = {
         'scene', 'cut', 'fade', 'dissolve', 'angle', 'shot', 'ext', 'int',
         'interior', 'exterior', 'day', 'night', 'continued', 'vo', 'os'
@@ -112,9 +112,88 @@ def get_movie_script(movie_title, folder, min_word_length=3):
 
     return ' '.join(tokens)
 
+def generate_ngrams(tokens, n):
+    return [' '.join(tokens[i:i+n]) for i in range(len(tokens) - n + 1)]
+
+def get_script_phrases(script_text, min_word_length=3):
+    """
+    Tokenize and return a set of unigrams, bigrams, and trigrams from the script.
+    """
+    tokens = tokenize_script(script_text, min_word_length)
+    phrases = set(tokens)  # unigrams
+
+    for n in [2, 3]:  # Add bigrams and trigrams
+        phrases.update(generate_ngrams(tokens, n))
+
+    return phrases
+
+
+import re
+
+def normalize_ingredient(ingredient):
+    """
+    Normalize ingredient phrase to remove common descriptors
+    Returns both compound ingredients and base ingredients except for special cases
+    """
+    phrase = ingredient.lower()
+    results = []
+
+    # Compounds where we don't want to extract the base ingredient
+    no_base_extraction = ['baking powder', 'baking soda']
+    
+    # Regular compound ingredients
+    compound_ingredients = [
+        'olive oil', 'vegetable oil', 'peanut butter', 'cream cheese', 
+        'sour cream', 'maple syrup', 'vanilla extract', 'almond extract', 
+        'coconut milk', 'heavy cream', 'red wine', 'white wine', 
+        'beef stock', 'chicken stock'
+    ]
+    
+    # All compounds to check (both types)
+    all_compounds = no_base_extraction + compound_ingredients
+
+    # Check if the phrase contains a compound ingredient
+    for compound in all_compounds:
+        if compound in phrase:
+            # Add the compound ingredient
+            results.append(compound)
+            
+            # Add the base ingredient only for regular compounds
+            if compound not in no_base_extraction:
+                base_ingredient = compound.split()[-1]  # Get the last word
+                if base_ingredient not in results:
+                    results.append(base_ingredient)
+
+    # Process the regular way too
+    phrase = ingredient.lower().strip()
+    
+    # Common descriptors in ingredients
+    modifiers = [
+        'fresh', 'chopped', 'diced', 'sliced', 'crushed', 'ground', 'minced',
+        'large', 'small', 'medium', 'extra', 'shredded', 'grated', 'whole', 'cups',
+        'plain', 'unsweetened', 'sweetened', 'semi-sweet', 'cooked', 'raw', 'all-purpose',
+        'brown', 'heavy', 'unsalted', 'light', 'dark',
+        'half', 'green', 'hot', 'red', 'warm', 'lean', 'sour', 'food', 'sweet', 'mixed'
+    ]
+
+    # Remove modifiers
+    words = phrase.split()
+    filtered_words = [word for word in words if word not in modifiers]
+
+    # Collapse to final phrase
+    normalized = ' '.join(filtered_words).strip()
+    if normalized and normalized not in results:
+        results.append(normalized)
+    
+    return results if results else None
+
+
 COMMON_INGREDIENTS = {"water", "salt", "sugar", "hot", "damn"}
 
 def build_combined_weight_dict(script_words, idf_lookup, boost=1.5, common_penalty=0.2):
+    """
+    Build a weight dictionary based on a idf lookup table and scripts
+    """
     final_weights = {}
 
     for word in idf_lookup:
@@ -128,12 +207,10 @@ def build_combined_weight_dict(script_words, idf_lookup, boost=1.5, common_penal
     return final_weights
 
 def tokenize_ingredients(ingredient):
+    """
+    Tokenize an individual ingredients
+    """
     return re.findall(r'\b[a-zA-Z]+\b', ingredient.lower())
-
-def jaccard_similarity(set1, set2):
-    intersection = len(set1 & set2)
-    union = len(set1 | set2)
-    return intersection / union if union != 0 else 0
 
 def weighted_jaccard_similarity(script_words, ingredient_set, weight_dict):
     """
@@ -244,9 +321,12 @@ def description_svd(vectorizer, additional_description, vt, vectors):
     return desc_similarities
 
 def is_edit_distance_match(word, target, max_dist=2):
+    """
+    Edit distance function to look for similar words
+    """
     return Levenshtein.distance(word.lower(), target.lower()) <= max_dist
 
-def normalize_ingredient(ingredient):
+def edit_normalize_ingredient(ingredient):
     for canonical in synonym_map:
         if is_edit_distance_match(ingredient, canonical):
             return canonical
@@ -264,7 +344,7 @@ def embed_ingredient_list(ingredients, model):
     all_vectors = []
 
     for ingredient in ingredients:
-        normalized = normalize_ingredient(ingredient)
+        normalized = edit_normalize_ingredient(ingredient)
         words = normalized.lower().split()
 
         # Inject synonyms for known concepts like "homecooked"

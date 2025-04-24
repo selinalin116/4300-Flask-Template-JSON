@@ -30,21 +30,6 @@
         "search_terms":"{'indian', 'dinner', 'low-sodium'}"
     },
     {
-        "name":"best lemonade",
-        "id":40,
-        "minutes":35,
-        "tags":"['60-minutes-or-less', 'time-to-make', 'course', 'preparation', 'occasion', 'low-protein', 'healthy', 'beverages', 'low-fat', 'summer', 'dietary', 'low-sodium', 'low-cholesterol', 'seasonal', 'low-saturated-fat', 'healthy-2', 'low-in-something', 'presentation', 'served-cold']",
-        "nutrition":"[311.1, 0.0, 308.0, 0.0, 0.0, 0.0, 27.0]",
-        "steps":"['into a 1 quart jar with tight fitting lid , put sugar and lemon peel , or zest', 'add 1 1 \/ 2 cups very hot water', 'with lid fitted firmly , shake jar until sugar is dissolved', 'add lemon juice', 'refrigerate until chilled', 'to serve: into each 12-ounce glass , over ice cubes , pour 1 \/ 4 cup of the lemon syrup', 'then add chilled club soda or , if you prefer , water', 'stir to mix well']",
-        "description":"this is from one of my  first good house keeping cookbooks.  you must use a *zester* in order to avoid getting any of that bitter rind, and when you zest the lemons, zest them onto some sugar from the recipe (the sugar will 'catch' all of the oils).  i also advise you from personal experience to use only the best skinned lemons for the best flavor.",
-        "ingredients":"['sugar', 'lemons, rind of', 'fresh water', 'fresh lemon juice', 'ice cube', 'club soda']",
-        "average_rating":4.3333333333,
-        "ingredients_raw_str":"[\"1 1\/2  cups    sugar\",\"1   tablespoon    lemons, rind of or 1   tablespoon    lemon, zest of, finely grated  (without any white rind)\",\"  to taste    fresh water\",\"1 1\/2  cups    fresh lemon juice, strained  (8 to 10 washed Lemons)\",\"  to taste    ice cube\",\"3\/4  cup    club soda (I never use it myself)\"]",
-        "serving_size":"1 (212 g)",
-        "servings":4.0,
-        "search_terms":"{'healthy', 'low-fat', 'low-sodium'}"
-    },
-    {
         "name":"carina s tofu vegetable kebabs",
         "id":41,
         "minutes":1460,
