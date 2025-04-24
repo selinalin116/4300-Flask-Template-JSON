@@ -422,6 +422,8 @@
             console.log(fetchUrl)
 
             const modalContainer = document.getElementById("modal-shadow");
+            // Clean away any previous modals
+            document.querySelectorAll(".cocktail-card").forEach(cocktail => cocktail.remove());
 
             fetch(fetchUrl)
                 .then(response => {
@@ -552,6 +554,11 @@
                             closeModal();
                         }
                     };
+
+                    // Detect any clicks outside the modal to close
+                    document.querySelector('.modal-shadow').addEventListender('click', () => {
+                        closeModal();
+                    });
 
                     function closeModal() {
                         document.querySelectorAll('.cocktail-card').forEach(card => {
