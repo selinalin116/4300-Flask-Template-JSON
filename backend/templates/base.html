@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="en">
 <title>FoodTastic</title>
+<link rel="icon" href="{{ url_for('static', filename='images/DNM.png') }}">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='recipes.css') }}">
@@ -50,63 +52,6 @@
                     <input placeholder="Search for a movie (e.g., Star Wars, Avengers)" id="movie-search" required
                         oninput="fetchMovieSuggestions()">
                     <ul id="movie-suggestions" class="suggestions-dropdown"></ul>
-                </div>
-
-                <!-- Dietary Restrictions Dropdown -->
-                <div class="input-box">
-                    <input placeholder="Dietary Restrictions" readonly id="dietary-input"
-                        onclick="openDropdown('dietary')">
-                    <div class="dropdown-content" id="dietary-dropdown">
-                        <div class="dropdown-options">
-                            <label>
-                                <input type="checkbox" name="dietary" value="Vegetarian">
-                                <span>Vegetarian</span>
-                            </label>
-                            <label>
-                                <input type="checkbox" name="dietary" value="Vegan">
-                                <span>Vegan</span>
-                            </label>
-                            <label>
-                                <input type="checkbox" name="dietary" value="Pescatarian">
-                                <span>Pescatarian</span>
-                            </label>
-                            <label>
-                                <input type="checkbox" name="dietary" value="Gluten-Free">
-                                <span>Gluten-Free</span>
-                            </label>
-                            <label>
-                                <input type="checkbox" name="dietary" value="Dairy-Free">
-                                <span>Dairy-Free</span>
-                            </label>
-                            <label>
-                                <input type="checkbox" name="dietary" value="Kosher">
-                                <span>Kosher</span>
-                            </label>
-                        </div>
-                        <div class="done-button-container">
-                            <button class="done-button" onclick="updateSelections('dietary')">Done</button>
-                        </div>
-                    </div>
-                </div>
-                <!-- Drink Preferences Dropdown -->
-                <div class="input-box">
-                    <input placeholder="Alcohol Preference" readonly id="alcohol-input"
-                        onclick="openDropdown('alcohol')">
-                    <div class="dropdown-content" id="alcohol-dropdown">
-                        <div class="dropdown-options">
-                            <label>
-                                <input type="checkbox" name="alcohol" value="Alcoholic">
-                                <span>Alcoholic</span>
-                            </label>
-                            <label>
-                                <input type="checkbox" name="alcohol" value="Non-Alcoholic">
-                                <span>Non-Alcoholic</span>
-                            </label>
-                        </div>
-                        <div class="done-button-container">
-                            <button class="done-button" onclick="updateSelections('alcohol')">Done</button>
-                        </div>
-                    </div>
                 </div>
 
                 <div class="input-box" onclick="descriptionFocusDrink()">
@@ -396,20 +341,62 @@
             }
         });
 
+        // List of dietary restrictions to go through when parsing ad-hoc
+        dietaryRestrictions = ['vegetarian', 'vegan', 'pescatarian', 'gluten-free','dairy-free','kosher'];
+        // List of drink restrictions to go through when parsing ad-hoc
+        alcRestrictions = ['alchoholic', 'non-alcoholic'];
+        
         function searchMovie() {
             const movieTitle = document.getElementById("movie-search").value.trim();
             if (!movieTitle) return;
-            // Get dietary restrictions
-            const dietary = Array.from(document.querySelectorAll('input[name="dietary"]:checked'))
-                .map(cb => cb.value.toLowerCase());
 
-            // Get alcohol preferences
-            const alcohol = Array.from(document.querySelectorAll('input[name="alcohol"]:checked'))
-                .map(cb => cb.value.toLowerCase());
+            var additionalFoodDesc = document.getElementById("description-food-search").value.trim();
 
-            const additionalFoodDesc = document.getElementById("description-food-search").value.trim();
+            var additionalDrinkDesc = document.getElementById("description-drink-search").value.trim();
+            
+            // Split the ad-hoc by spaces
+            // Find any restrictions
+            foodRestrictions = [];
+            if (additionalFoodDesc) {
+                splittedFoodDesc = additionalFoodDesc.toLowerCase().split(" ");
+                let indexesToRemove = [];
 
-            const additionalDrinkDesc = document.getElementById("description-drink-search").value.trim();
+                splittedFoodDesc.forEach( (word, i) => {
+                    if (dietaryRestrictions.includes(word)) {
+                        foodRestrictions.push(word);
+
+                        indexesToRemove.push(i);
+                    } 
+                });
+
+                indexesToRemove.forEach( (index) => {
+                    splittedFoodDesc.splice(index, 1);
+                });
+
+                additionalFoodDesc = splittedFoodDesc.join(" ");
+            };
+
+            drinkRestrictions = [];
+            if (additionalDrinkDesc) {
+                splittedDrinkDesc = additionalDrinkDesc.toLowerCase().split(" ");
+                console.log("split drink", splittedDrinkDesc)
+                let indexesToRemove = [];
+
+                splittedDrinkDesc.forEach( (word, i) => {
+                    if (alcRestrictions.includes(word)) {
+                        drinkRestrictions.push(word);
+
+                        indexesToRemove.push(i);
+                    } 
+                });
+                indexesToRemove.forEach( (index) => {
+                    splittedDrinkDesc.splice(index, 1);
+                });
+
+                additionalDrinkDesc = splittedDrinkDesc.join(" ");
+            };
+
+            // Splice together the splitted ad-hoc with the restrictions removed
 
             const answerBox = document.getElementById("answer-box");
             const loadingIndicator = document.getElementById("loading-indicator");
@@ -418,11 +405,11 @@
             answerBox.innerHTML = "";
 
             let fetchUrl = `/find-foods?movie=${encodeURIComponent(movieTitle)}`;
-            if (dietary.length > 0) {
-                fetchUrl += `&dietary=${dietary.join(',')}`;
+            if (foodRestrictions.length > 0) {
+                fetchUrl += `&dietary=${foodRestrictions.join(',')}`;
             }
-            if (alcohol.length > 0) {
-                fetchUrl += `&alcohol=${alcohol.join(',')}`;
+            if (drinkRestrictions.length > 0) {
+                fetchUrl += `&alcohol=${drinkRestrictions.join(',')}`;
             }
             if (additionalFoodDesc && additionalDrinkDesc) {
                 fetchUrl += `&drinkdescription=${encodeURIComponent(additionalDrinkDesc)}&fooddescription=${encodeURIComponent(additionalFoodDesc)}`;
@@ -431,6 +418,8 @@
             } else if (additionalFoodDesc) {
                 fetchUrl += `&fooddescription=${encodeURIComponent(additionalFoodDesc)}`;
             }
+
+            console.log(fetchUrl)
 
             const modalContainer = document.getElementById("modal-shadow");
 
