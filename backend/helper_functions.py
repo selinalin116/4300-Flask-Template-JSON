@@ -299,7 +299,7 @@ def get_cocktail_ingredients(cocktail):
     
     return raw_ingredients, ingredients
 
-def dietary_res(items, top_k=6, restrictions=None, item_type="food"):
+def dietary_res(items, top_k=6, restrictions=None):
     """
     Helper to filter and return top_k items based on dietary restrictions
     """
@@ -328,14 +328,11 @@ def dietary_res(items, top_k=6, restrictions=None, item_type="food"):
         "kosher": non_kosher,
     }
 
+    print(items)
     filtered = []
     for item in items:
-        ingredients = []
-        if item_type != "food":
-            ingredients, _ = get_cocktail_ingredients(item[0])
-        else:
-            ingredients = item[0]["ingredients"]
-            ingredients = ast.literal_eval(ingredients)
+        ingredients = item[0]["ingredients"]
+        ingredients = ast.literal_eval(ingredients)
         violates = False
         for restriction in restrictions:
             restricted_ings = restriction_map.get(restriction, [])

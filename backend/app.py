@@ -153,8 +153,8 @@ def find_foods():
 
     combined_cocktail_scores = sorted(combined_cocktail_scores, key=lambda x: -x[1])
 
-    if (len(dietary_restrictions)>0):
-        combined_cocktail_scores = dietary_res(combined_cocktail_scores, 6, dietary_restrictions, "drink")
+    # if (len(dietary_restrictions)>0):
+    #     combined_cocktail_scores = dietary_res(combined_cocktail_scores, 6, dietary_restrictions)
 
     # Filter based on user preferences
     if (len(alcohol_preference)==1):
