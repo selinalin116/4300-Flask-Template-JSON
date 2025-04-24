@@ -165,21 +165,6 @@
         "search_terms":"{'low-sodium', 'vegetarian', 'salad', 'healthy', 'gluten-free'}"
     },
     {
-        "name":"black coffee barbecue sauce",
-        "id":66,
-        "minutes":30,
-        "tags":"['lactose', '30-minutes-or-less', 'time-to-make', 'course', 'cuisine', 'preparation', 'occasion', 'north-american', 'low-protein', 'healthy', 'condiments-etc', 'american', 'southern-united-states', 'easy', 'low-fat', 'dietary', 'low-cholesterol', 'low-saturated-fat', 'low-calorie', 'healthy-2', 'free-of-something', 'low-in-something', 'equipment', 'number-of-servings', '3-steps-or-less']",
-        "nutrition":"[772.0, 6.0, 657.0, 93.0, 13.0, 2.0, 63.0]",
-        "steps":"['combine all ingredients in a saucepan and simmer over low heat for 20 minutes', 'cool , then puree in a blender or food processor until smooth', 'this can be stored in the refrigerator for up to 2 weeks in a covered container']",
-        "description":"it's great to know folks like this sauce so much! i wish i could take credit for it but it was adopted after the original member left. thank you, all, just the same.\r\ni have made the recipe with regular brewed coffee but highly recommend the espresso. in a pinch use strong instant if you have nothing else. the acid of the coffee balances the sweetness of the other ingredients.",
-        "ingredients":"['brewed coffee', 'ketchup', 'red wine vinegar', 'dark brown sugar', 'onion', 'garlic cloves', 'dark molasses', 'hot dry mustard', 'worcestershire sauce', 'cumin', 'chili powder']",
-        "average_rating":4.9473684211,
-        "ingredients_raw_str":"[\"1\/2  cup    brewed coffee, espresso preferred \",\"1   cup    ketchup\",\"1\/4  cup    red wine vinegar\",\"3\/4  cup    dark brown sugar, firmly packed \",\"1       onion, peeled and chopped, about 1 cup \",\"2       garlic cloves, peeled and crushed \",\"2   tablespoons    dark molasses\",\"2   tablespoons    hot dry mustard, mixed with 1 tablespoon water \",\"2   tablespoons    Worcestershire sauce\",\"2   tablespoons    cumin, ground \",\"2   tablespoons    chili powder\"]",
-        "serving_size":"1 (1401 g)",
-        "servings":1.0,
-        "search_terms":"{'low-calorie', 'low-fat', 'southern', 'lactose-free', 'barbecue'}"
-    },
-    {
         "name":"all purpose quick mix with 28 variations",
         "id":81,
         "minutes":40,
@@ -358,21 +343,6 @@
         "serving_size":"1 (67 g)",
         "servings":4.0,
         "search_terms":"{'low-sodium', 'healthy', 'dessert', 'low-fat', 'bread', 'pudding'}"
-    },
-    {
-        "name":"blueberry pancake syrup",
-        "id":133,
-        "minutes":86,
-        "tags":"['weeknight', 'time-to-make', 'course', 'main-ingredient', 'preparation', 'occasion', '5-ingredients-or-less', 'sauces', 'breakfast', 'desserts', 'condiments-etc', 'fruit', 'easy', 'vegan', 'vegetarian', 'cakes', 'dietary', 'gluten-free', 'sweet-sauces', 'free-of-something', 'berries', 'blueberries', 'taste-mood', 'sweet', 'number-of-servings', '4-hours-or-less']",
-        "nutrition":"[1329.7, 1.0, 1315.0, 0.0, 4.0, 0.0, 114.0]",
-        "steps":"['pour the blueberries into a saucepan and crush them with a potato masher or a wooden spoon until most of the skins are broken', 'add 1 cup of water and strips of lemon peel and bring to a simmer', 'turn heat down to low and cook the berries for 5 minutes at just under a simmer', 'pour the hot berries into a strainer lined with two layers of cheesecloth and let the blueberry juice drip through', 'twist the cloth to extract all the juice', 'there should be about 2 cups', 'discard the berry pulp', 'combine the remaining 2 cups water with the sugar in a small saucepan', 'bring the mixture to a boil , stirring , until the sugar is dissolved and the mixture is clear', 'wash down the sides of the pan with a wet pastry brush , then boil the syrup , without stirring , until it reaches 260 degrees on a candy thermometer', 'add the blueberry syrup to the sugar syrup and bring the mixture to boil', 'boil for 1 minute', 'let the syrup cool , then add lemon juice to taste', 'pour the syrup into two pint jars and refrigerate if you plan to use it in a month or two', 'to can pour into canning jars with 1 \/ 2 inch headspace', 'process in hot water bath for 30 minutes', 'cool']",
-        "description":"i've made this blueberry syrup several times, but i bet it would work well for raspberries.  it's worth a try!  ",
-        "ingredients":"['blueberries', 'water', 'lemons, rind of', 'sugar', 'lemon juice']",
-        "average_rating":4.75,
-        "ingredients_raw_str":"[\"4   cups    blueberries, stemmed, rinsed and drained \",\"3   cups    water\",\"2   strips    lemons, rind of\",\"3   cups    sugar\",\"  lemon juice\"]",
-        "serving_size":"1 (1951 g)",
-        "servings":1.0,
-        "search_terms":"{'vegetarian', 'dessert', 'gluten-free', 'breakfast', 'vegan'}"
     },
     {
         "name":"cherry sandwich maker snack",
@@ -1245,21 +1215,6 @@
         "search_terms":"{'appetizer', 'dinner'}"
     },
     {
-        "name":"basic habanero sauce",
-        "id":275,
-        "minutes":37,
-        "tags":"['60-minutes-or-less', 'time-to-make', 'course', 'preparation', 'occasion', 'low-protein', 'condiments-etc', 'dietary', 'low-sodium', 'gluten-free', 'low-cholesterol', 'low-saturated-fat', 'low-calorie', 'low-carb', 'healthy-2', 'free-of-something', 'low-in-something', 'number-of-servings']",
-        "nutrition":"[55.0, 3.0, 18.0, 0.0, 3.0, 1.0, 2.0]",
-        "steps":"['saute onion and garlic until soft', 'add carrots with a small amount of water', 'bring to a boil , reduce heat and simmer until carrots are soft', 'place in a blender with the peppers', 'puree until smooth', 'mix puree with vinegar and lime juice and simmer for 5 minutes', 'seal in sterilized bottles \/ jars', 'makes 2 cups', 'you can also try: my recipe', \"i'm allergic to onions , so i make mine somewhat differently\", '24-30 habenero peppers , stemmed and chopped , 2 tbsp olive oil , 1 pound shredded carrots , 2 heaping tbsp of chopped garlic , 1 cup apple cider vinegar , 1 \/ 2 to 3 \/ 4 cup key lime juice', 'saute garlic in oil until soft', 'add carrots and stir-fry for a minute or two to distribute the garlic well', 'add enough water to come just short of covering the carrots', 'bring to a boil , and simmer until carrots are soft , and liquid is reduced to about 1 \/ 2 of what you started with', 'put carrot mixture and peppers into food processor and process until relatively smooth , adding vinegar and lime juice', 'return to the stove and simmer 5 to 7 minutes', 'for smooth tabasco style sauce , strain through cheesecloth and bottle in sterilized bottles', 'for a thicker basting type sauce , bottle as is', 'makes 8 or 9 canning jars']",
-        "description":"warning, when handling habeneros, wear rubber gloves and glasses or goggles.  when cooking always cover, or use the stove's vent fan.       basic habenero sauce",
-        "ingredients":"['habanero peppers', 'vegetable oil', 'carrot', 'onion', 'distilled vinegar', 'garlic cloves', 'lime juice']",
-        "average_rating":5.0,
-        "ingredients_raw_str":"[\"12       habanero peppers, stemmed and chopped \",\"1   tablespoon    vegetable oil\",\"1\/2  cup    carrot, chopped \",\"1\/2  cup    onion, chopped \",\"1\/2  cup    distilled vinegar\",\"2       garlic cloves\",\"1\/4  cup    lime juice\"]",
-        "serving_size":"1 (883 g)",
-        "servings":1.0,
-        "search_terms":"{'low-calorie', 'gluten-free', 'low-sodium', 'low-carb'}"
-    },
-    {
         "name":"greek phyllo seafood rolls",
         "id":276,
         "minutes":134,
@@ -1543,21 +1498,6 @@
         "serving_size":"1 (164 g)",
         "servings":6.0,
         "search_terms":"{'low-calorie', 'low-sodium', 'dessert', 'healthy', 'side', 'low-fat'}"
-    },
-    {
-        "name":"homemade butter ii",
-        "id":311,
-        "minutes":8,
-        "tags":"['15-minutes-or-less', 'time-to-make', 'course', 'main-ingredient', 'preparation', 'occasion', 'low-protein', '5-ingredients-or-less', 'very-low-carbs', 'condiments-etc', 'eggs-dairy', 'easy', 'dietary', 'low-sodium', 'low-carb', 'low-in-something', 'number-of-servings']",
-        "nutrition":"[615.8, 101.0, 0.0, 2.0, 7.0, 205.0, 1.0]",
-        "steps":"['fit the steel knife blade into the work bowl of your food processor', 'process cream until whipped , about 30 seconds', 'add water and ice cubes', 'process 2-3 minutes until butter has formed and separated from the liquid', 'no harm will be done if you overwhip this mixture', 'pour butter and liquid into a fine strainer', 'with a rubber spatula , gently press butter against sieve to remove excess moisture', 'do not press too hard or butter will go through strainer', 'refrigerate butter in a covered container', 'this makes 1 \/ 3 cup butter', 'if you prefer salted butter , add 1 \/ 8 teaspoon or less of salt to cream before processing']",
-        "description":"try making your own butter with this easy recipe. ",
-        "ingredients":"['heavy whipping cream', 'water', 'ice cubes']",
-        "average_rating":5.0,
-        "ingredients_raw_str":"[\"1   cup    heavy whipping cream\",\"1\/2  cup    water\",\"2       ice cubes\"]",
-        "serving_size":"1 (399 g)",
-        "servings":1.0,
-        "search_terms":"{'low-sodium', 'low-carb'}"
     },
     {
         "name":"thai citrus chicken salad",
@@ -4710,21 +4650,6 @@
         "search_terms":"{'dinner', 'low-sodium', 'low-carb'}"
     },
     {
-        "name":"herbal vinegar with garlic   basil",
-        "id":1379,
-        "minutes":0,
-        "tags":"['15-minutes-or-less', 'time-to-make', 'course', 'preparation', 'occasion', '5-ingredients-or-less', 'condiments-etc', 'easy', 'gifts', 'taste-mood']",
-        "nutrition":"[29.6, 0.0, 1.0, 0.0, 3.0, 0.0, 1.0]",
-        "steps":"['in a glass or stainless steel sauce pan heat white wine vinegar on the stove to where it is warm , but not boiling', 'bruise basil and loosely fill clean glass jars with basil and halved garlic cloves', 'pour the warmed vinegar to fill each glass jar and cap with an acid-proof lid', 'store in a cool , dark place 2 weeks , shaking occasionally', 'after two weeks have passed strain through cheesecloth and rebottle', 'add a few fresh basil leaves to the bottle for identification purposes and visual appeal']",
-        "description":"herbal vinegars are easy to prepare, beautiful to look at and can be used in any recipe that calls for vinegar. plus they make great gifts from your garden. the prodecure for making any herbal vinegar is the same, no matter what herb or combination of herbs you are using. all you need are some herbs, top quality vinegars, glass jars and a glass or stainless steel saucepan. \r\nfor the best retention of flavors, store flavored vinegars in the refrigerator or a cool dark place. if properly prepared, flavored vinegars should retain good quality for two to three months in cool room storage and for six to eight months in refrigerated storage. \r\n-=attention=-\r\nshould you decided to display pretty bottles of herb and fruit vinegars on a kitchen window sill. if left out for more than a few weeks, these bottles are then considered as decoration and not used in food preparation.",
-        "ingredients":"['garlic', 'fresh basil', 'white wine vinegar']",
-        "average_rating":5.0,
-        "ingredients_raw_str":null,
-        "serving_size":null,
-        "servings":null,
-        "search_terms":null
-    },
-    {
         "name":"mammy s apple crisp",
         "id":1423,
         "minutes":60,
@@ -5655,21 +5580,6 @@
         "search_terms":"{'healthy', 'dessert', 'pie'}"
     },
     {
-        "name":"cucumber lemonade",
-        "id":2405,
-        "minutes":5,
-        "tags":"['15-minutes-or-less', 'time-to-make', 'course', 'preparation', 'low-protein', 'healthy', '5-ingredients-or-less', 'beverages', 'easy', 'low-fat', 'dietary', 'low-sodium', 'low-cholesterol', 'low-saturated-fat', 'low-calorie', 'low-in-something', 'presentation', 'served-cold', '3-steps-or-less']",
-        "nutrition":"[137.1, 0.0, 132.0, 0.0, 0.0, 0.0, 11.0]",
-        "steps":"['make a pitcher of your favorite lemonade', 'grate the cucumber over the pitcher , and mix in the cucumber juice and pulp', 'serve over ice']",
-        "description":"yum",
-        "ingredients":"['cucumber', 'lemonade', 'ice']",
-        "average_rating":3.5,
-        "ingredients_raw_str":"[\"1       cucumber, peeled \",\"2   quarts    lemonade\",\"1   cup    ice\"]",
-        "serving_size":"1 (314 g)",
-        "servings":8.0,
-        "search_terms":"{'healthy', 'low-calorie', 'low-fat', 'low-sodium'}"
-    },
-    {
         "name":"old fashioned crumb cake",
         "id":2417,
         "minutes":55,
@@ -6225,21 +6135,6 @@
         "search_terms":"{'low-sodium', 'salad'}"
     },
     {
-        "name":"tamarillo sauce",
-        "id":2644,
-        "minutes":0,
-        "tags":"['15-minutes-or-less', 'time-to-make', 'course', 'cuisine', 'preparation', 'south-west-pacific', 'condiments-etc', 'dietary', 'gluten-free', 'new-zealand', 'free-of-something', 'number-of-servings']",
-        "nutrition":"[483.0, 0.0, 480.0, 29.0, 4.0, 1.0, 40.0]",
-        "steps":"['peel and chop tamarillos , combine with sugar and water in pan , simmer , covered , about 5 mins', 'or until tamarillos are soft', 'blend or process mixture', 'strain', 'return mixture to pan , stir in stock , spice , extra water and extra sugar , simmer , uncovered , 5 minutes', 'freezes well', 'cheers , doreen doreen randal , wanganui', 'new zealand']",
-        "description":"this one goes well grilled or roast chicken also good with pork and ham. i leave the five spice out because i don't like it.  ",
-        "ingredients":"['tamarillos', 'brown sugar', 'water', 'beef stock', 'five-spice powder']",
-        "average_rating":5.0,
-        "ingredients_raw_str":"[\"8       tamarillos\",\"1\/2  cup    brown sugar, firmly packed \",\"1\/4  cup    water\",\"3\/4  cup    beef stock\",\"1\/2  teaspoon    five-spice powder\",\"1\/3  cup    water (extra)\",\"1   tablespoon    brown sugar (extra)\"]",
-        "serving_size":"1 (442 g)",
-        "servings":1.0,
-        "search_terms":"{'gluten-free'}"
-    },
-    {
         "name":"tame kimchi",
         "id":2645,
         "minutes":0,
@@ -6658,21 +6553,6 @@
         "serving_size":"1 (1130 g)",
         "servings":1.0,
         "search_terms":"{'cookie', 'dessert'}"
-    },
-    {
-        "name":"guacamole with sour cream",
-        "id":2708,
-        "minutes":10,
-        "tags":"['15-minutes-or-less', 'time-to-make', 'course', 'main-ingredient', 'cuisine', 'preparation', 'north-american', 'for-1-or-2', 'low-protein', 'appetizers', 'condiments-etc', 'fruit', 'mexican', 'easy', 'dips', 'dietary', 'low-sodium', 'low-carb', 'low-in-something', 'number-of-servings']",
-        "nutrition":"[227.3, 31.0, 7.0, 3.0, 6.0, 19.0, 4.0]",
-        "steps":"['cut the avocado in half , scoop out the flesh with a spoon', 'mash 3 \/ 4 of it well and chop the remaining 1 \/ 4 coarsely', 'mix it into the mashed portion', 'mix all remaining ingredients together', 'serve immediately , or cover with plastic wrap , pressing wrap firmly to surface of guacamole and refrigerate up to 4 hours before serving']",
-        "description":"my guacamole is very free-form, but here are the basics:  figure about 1\/2 large avocado per person. i don't care whether i'm using haas or regular avocados - some people do. pick ones that give to mild pressure but are not mushy. if you can't find any that are ripe, get hard ones and keep them in a paper bag for a couple of days until they ripen.",
-        "ingredients":"['avocado', 'sour cream', 'salsa', 'garlic clove', 'sweet onion', 'cilantro', 'tomatoes', 'black olives', 'fresh lemon juice', 'salt']",
-        "average_rating":4.7741935484,
-        "ingredients_raw_str":"[\"1   large    avocado, scooped out of shell and mashed \",\"2   tablespoons    sour cream\",\"1   tablespoon    salsa\",\"1       garlic clove, pressed \",\"1   tablespoon    sweet onion, finely diced \",\"1   teaspoon    cilantro (note, some people find it vile) or 1   teaspoon    parsley (note, some people find it vile)\",\"1   tablespoon    tomatoes, finely diced \",\"2   teaspoons    black olives, minced \",\"1   teaspoon    lime juice or 1   teaspoon    balsamic vinegar\",\"  salt, use less if you\\u0027ll refrigerate  (you shouldn\\u0027t need much)\"]",
-        "serving_size":"1 (158 g)",
-        "servings":2.0,
-        "search_terms":"{'appetizer', 'mexican', 'low-sodium', 'low-carb'}"
     },
     {
         "name":"baked fish with orange",
@@ -7453,36 +7333,6 @@
         "serving_size":"1 (442 g)",
         "servings":8.0,
         "search_terms":"{'low-calorie', 'low-sodium', 'stew', 'low-carb', 'dinner', 'chicken'}"
-    },
-    {
-        "name":"herbal vinegar with lemon verbena   mint",
-        "id":2880,
-        "minutes":20,
-        "tags":"['30-minutes-or-less', 'time-to-make', 'course', 'preparation', 'occasion', '5-ingredients-or-less', 'condiments-etc', 'easy', 'gifts', 'taste-mood']",
-        "nutrition":"[9.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]",
-        "steps":"['in a glass or stainless steel sauce pan heat white wine vinegar on the stove to where it is warm , but not boiling', 'bruise lemon verbena and mint and loosely fill clean glass jars', 'pour the warmed vinegar to fill each glass jar and cap with an acid-proof lid', 'store in a cool , dark place and shake daily for 2 weeks', 'after two weeks have passed test for flavor', 'if a stronger taste is desired , strain the vinegar and repeat using fresh herbs', 'store as it is or strain through cheesecloth and rebottle', 'add a few fresh sprigs of lemon verbena and mint to the bottle for identification purposes and visual appeal']",
-        "description":"herbal vinegars are easy to prepare, beautiful to look at and can be used in any recipe that calls for vinegar. plus they make great gifts from your garden.  the prodecure for making any herbal vinegar is the same, no matter what herb or combination of herbs you are using.  all you need are some herbs, top quality vinegars, glass jars and a glass or stainless steel saucepan.\r\nfor the best retention of flavors, store flavored vinegars in the refrigerator or a cool dark place. if properly prepared, flavored vinegars should retain good quality for two to three months in cool room storage and for six to eight months in refrigerated storage. \r\n-=attention=-\r\nshould you decided to display pretty bottles of herb and fruit vinegars on a kitchen window sill. if left out for more than a few weeks, these bottles are then considered as decoration and not used in food preparation.",
-        "ingredients":"['white wine vinegar', 'lemon verbena leaf', 'fresh mint leaves']",
-        "average_rating":4.5,
-        "ingredients_raw_str":null,
-        "serving_size":null,
-        "servings":null,
-        "search_terms":null
-    },
-    {
-        "name":"herbal vinegar with basil",
-        "id":2881,
-        "minutes":0,
-        "tags":"['15-minutes-or-less', 'time-to-make', 'course', 'preparation', 'occasion', 'low-protein', 'healthy', '5-ingredients-or-less', 'very-low-carbs', 'canning', 'condiments-etc', 'easy', 'low-fat', 'dietary', 'gifts', 'low-sodium', 'low-cholesterol', 'low-saturated-fat', 'low-calorie', 'low-carb', 'low-in-something', 'taste-mood', 'number-of-servings', 'technique']",
-        "nutrition":"[201.1, 0.0, 1.0, 3.0, 6.0, 0.0, 1.0]",
-        "steps":"['in a glass or stainless steel sauce pan heat red wine vinegar on the stove to where it is warm , but not boiling', 'bruise basil and loosely fill clean glass jars', 'pour the warmed vinegar to fill each glass jar and cap with an acid-proof lid', 'store in a cool , dark place and shake daily for 2 weeks', 'after two weeks have passed test for flavor', 'if a stronger taste is desired , strain the vinegar and repeat using fresh herbs', 'store as it is or strain through cheesecloth and rebottle', 'add a few fresh sprigs of basil to the bottle for identification purposes and visual appeal']",
-        "description":"herbal vinegars are easy to prepare, beautiful to look at and can be used in any recipe that calls for vinegar. plus they make great gifts from your garden. the prodecure for making any herbal vinegar is the same, no matter what herb or combination of herbs you are using. all you need are some herbs, top quality vinegars, glass jars and a glass or stainless steel saucepan.\r\nfor the best retention of flavors, store flavored vinegars in the refrigerator or a cool dark place. if properly prepared, flavored vinegars should retain good quality for two to three months in cool room storage and for six to eight months in refrigerated storage. \r\n-=attention=-\r\nshould you decided to display pretty bottles of herb and fruit vinegars on a kitchen window sill. if left out for more than a few weeks, these bottles are then considered as decoration and not used in food preparation.",
-        "ingredients":"['fresh sweet basil leaves', 'red wine vinegar']",
-        "average_rating":5.0,
-        "ingredients_raw_str":"[\"2   cups    fresh sweet basil leaves, , chopped \",\"1   quart    red wine vinegar\"]",
-        "serving_size":"1 (1041 g)",
-        "servings":1.0,
-        "search_terms":"{'low-calorie', 'low-sodium', 'healthy', 'low-carb', 'low-fat'}"
     },
     {
         "name":"best banana bread",

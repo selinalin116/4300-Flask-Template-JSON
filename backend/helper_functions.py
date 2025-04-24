@@ -123,7 +123,6 @@ def build_combined_weight_dict(script_words, idf_lookup, boost=1.5, common_penal
         final_weight = idf_weight * boost * penalty
         final_weights[word] = final_weight
 
-        print(f"{word}: {final_weight:.4f}")
     return final_weights
 
 def tokenize_ingredients(ingredient):
@@ -135,6 +134,9 @@ def jaccard_similarity(set1, set2):
     return intersection / union if union != 0 else 0
 
 def weighted_jaccard_similarity(script_words, ingredient_set, weight_dict):
+    """
+    A version of jaccard similarity that takes adds more weights for ingredients words that appears in scripts
+    """
     intersection = script_words & ingredient_set
 
     # Focus on the percentage of ingredients shared
@@ -144,6 +146,9 @@ def weighted_jaccard_similarity(script_words, ingredient_set, weight_dict):
     return intersection_weight / ingredient_weight if ingredient_weight != 0 else 0.0
 
 def idf_jaccard_similarity(script_words, ingredient_set, weight_dict, raw_weight_dict):
+    """
+    A version of jaccard similarity that takes idf into account
+    """
     intersection = script_words & ingredient_set
     union = script_words | ingredient_set
 
@@ -160,6 +165,16 @@ def idf_jaccard_similarity(script_words, ingredient_set, weight_dict, raw_weight
     return weighted_score, raw_jaccard
 
 def penalize_jaccard_similarity(script_words, ingredient_set, weight_dict, raw_weight_dict):
+    """
+    A version of jaccard similarity that takes idf and ingredient list length into account
+    """
+    # bad_substrings = {"hot", "damn"}
+
+    # ingredient_set = {
+    #     ing for ing in ingredient_set
+    #     if not any(bad in ing.lower() for bad in bad_substrings)
+    # }
+
     intersection = script_words & ingredient_set
     union = script_words | ingredient_set
 
@@ -249,18 +264,29 @@ def embed_ingredient_list(ingredients, model):
         return None
     return sum(all_vectors) / len(all_vectors)
 
-
-def dietary_res(items, top_k=6, restrictions=None):
+def get_cocktail_ingredients(cocktail):
     """
-    Helper to filter and return top_k items based on dietary restrictions.
+    Returns the ingredients of a cocktail
+    """
+    ingredients = []
+    raw_ingredients = []
+    for i in range(1, 16):
+        ingredient = cocktail.get(f'strIngredient{i}')
+        measure = cocktail.get(f'strMeasure{i}', '') or ''
+        measure = str(measure).strip()
 
-    Parameters:
-    - items: list of food items
-    - top_k: number of top items to return.
-    - restrictions: list of restricted diets (ie. ['vegetarian', 'lactose'])
+        if ingredient and ingredient.strip():
+            raw_ingredients.append(ingredient.strip().lower())
+            ingredients.append(
+                f"{ingredient.strip()} ({measure})" if measure 
+                else ingredient.strip()
+            )
+    
+    return raw_ingredients, ingredients
 
-    Returns:
-    - Filtered and sorted list of top_k items.
+def dietary_res(items, top_k=6, restrictions=None, item_type="food"):
+    """
+    Helper to filter and return top_k items based on dietary restrictions
     """
     meat_no_fish = ['chicken','bacon','turkey','beef','pork','duck','steak','wings',
                     'boneless skinless chicken breast halves','ham','veal','lamb', 'sausage',
@@ -269,9 +295,9 @@ def dietary_res(items, top_k=6, restrictions=None):
             'flounder', 'tilapia', 'shellfish', 'mussels', 'scallops', 'squid', 
             'oysters', 'crab', 'shrimp', 'sea bass', 'halibut', 'tuna','clams',
             'lobster','anchovy','marlin steaks','conch','caviar']
-    dairy = ['milk', 'ice cream', 'cheese', 'yogurt', 'cream', 'butter', 
+    dairy = ['milk', 'ice cream', 'cheese', 'yoghurt', 'yogurt', 'cream', 'butter', 
              'buttermilk', 'heavy cream', 'butter', 'egg','custard',
-             'half-and-half','marscarpone','eggs','heavy whipping cream']
+             'half-and-half','marscarpone','eggs','heavy whipping cream', 'chocolate']
     gluten_food = ['bread', 'beer', 'cake', 'pie', 'candy', 'cereal', 'cookie', 'croutons', 'french fries',
                    'gravy', 'seafood', 'malt', 'pasta', 'hot dog', 'salad dressing', 'soy sauce', 'rice seasoning', 
                    'chips', 'chicken', 'soup','flour','wheat','pastry','couscous','semolina','bulgar','barley','rye','oats',
@@ -289,8 +315,12 @@ def dietary_res(items, top_k=6, restrictions=None):
 
     filtered = []
     for item in items:
-        ingredients = item[0]["ingredients"]
-        ingredients = ast.literal_eval(ingredients)
+        ingredients = []
+        if item_type != "food":
+            ingredients, _ = get_cocktail_ingredients(item[0])
+        else:
+            ingredients = item[0]["ingredients"]
+            ingredients = ast.literal_eval(ingredients)
         violates = False
         for restriction in restrictions:
             restricted_ings = restriction_map.get(restriction, [])
@@ -310,14 +340,6 @@ def dietary_res(items, top_k=6, restrictions=None):
 def drinks_filtered(items, top_k, preferences):
     """
     Helper to filter and return top_k items for user's drink preferences.
-
-    Parameters:
-    - items: list of drink items
-    - top_k: number of top items to return.
-    - restrictions: list of preference (ie. ['alcoholic'])
-
-    Returns:
-    - Filtered and sorted list of top_k items.
     """
     filtered = []
     for item in items:

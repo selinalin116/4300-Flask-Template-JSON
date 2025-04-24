@@ -5,7 +5,7 @@ from sklearn.preprocessing import normalize
 from collections import Counter
 import math
 import re
-from helper_functions import tokenize_ingredients
+from helper_functions import tokenize_ingredients, get_cocktail_ingredients
 
 with open('data/cocktails.json', 'r') as f:
     cocktails = json.load(f)
@@ -72,19 +72,7 @@ def jaccard_similarity(script, raw_ingredients):
     return len(intersection) / (len(script_words | ingredient_words) + 1e-8)
 
 def clean_cocktail_data(cocktail):
-    ingredients = []
-    raw_ingredients = []
-    for i in range(1, 16):
-        ingredient = cocktail.get(f'strIngredient{i}')
-        measure = cocktail.get(f'strMeasure{i}', '') or ''
-        measure = str(measure).strip()
-
-        if ingredient and ingredient.strip():
-            raw_ingredients.append(ingredient.strip().lower())
-            ingredients.append(
-                f"{ingredient.strip()} ({measure})" if measure 
-                else ingredient.strip()
-            )
+    raw_ingredients, ingredients = get_cocktail_ingredients(cocktail)
 
     instructions = cocktail.get('strInstructions', '').strip()
 

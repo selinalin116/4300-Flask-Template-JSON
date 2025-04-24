@@ -286,7 +286,7 @@
                     <div class="explanation">
                         <h4>Why this recipe?</h4>
                         <p> This recipe was recommended because it shares ${recipe.jaccard_score}% of its ingredients with the movie script keywords 
-                            and has a script similarity score of ${recipe.svd_text_score}% based on thematic content${recipe.svd_desc_score !== null ? ` and also has a similarity score of ${recipe.svd_desc_score}% based on additional description provided` : ''}.</p>
+                            and has a script similarity score of ${recipe.svd_text_score}% based on thematic content${recipe.svd_desc_score !== null ? ` and also has a similarity score of ${recipe.svd_desc_score}% based on additional description provided` : ''}. If we give lower weighting to common ingredients, the recipe has a ingredient similarity of ${recipe.weighted_jaccard}%.</p>
                         <p class="detail-text">
                             <strong>Shared Ingredients/Words:</strong> ${recipe.jaccard_intersection && recipe.jaccard_intersection.length > 0 ? recipe.jaccard_intersection.join(', ') : 'N/A'}
                         </p>
@@ -517,6 +517,7 @@
                             const recipe = r.data;
                             recipe.score = r.score;
                             recipe.jaccard_score = r.jaccard_score;
+                            recipe.weighted_jaccard = r.weighted_jaccard;
                             recipe.svd_text_score = r.svd_text_score;
                             recipe.svd_desc_score = r.svd_desc_score;
                             recipe.jaccard_intersection = r.jaccard_intersection;

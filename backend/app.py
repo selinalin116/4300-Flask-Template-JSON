@@ -103,7 +103,6 @@ def find_foods():
         cocktail_ingredients_set = set(" ".join(cocktail_ingredients).lower().split())
         # jaccard_score = weighted_jaccard_similarity(script_words, cocktail_ingredients_set, cocktail_weight_dict)
         jaccard_score, raw_jaccard_score = penalize_jaccard_similarity(script_words, cocktail_ingredients_set, cocktail_weight_dict, weight_dict)
-        print(raw_jaccard_score * 100)
         cocktail_jaccard_scores.append(jaccard_score)
         cocktail_raw_jaccard_scores.append(raw_jaccard_score)
         # cosine_score = helper_functions.cosine_similarity(cocktail_ingredients_tfidf, drink_description, cocktail_ingredients_vectorizer)
@@ -153,6 +152,9 @@ def find_foods():
 
     combined_cocktail_scores = sorted(combined_cocktail_scores, key=lambda x: -x[1])
 
+    if (len(dietary_restrictions)>0):
+        combined_cocktail_scores = dietary_res(combined_cocktail_scores, 6, dietary_restrictions, "drink")
+
     # Filter based on user preferences
     if (len(alcohol_preference)==1):
         combined_cocktail_scores = drinks_filtered(combined_cocktail_scores, 6, alcohol_preference)
@@ -187,8 +189,8 @@ def find_foods():
         except (SyntaxError, ValueError):
             ingredients = set()
 
-        # jaccard_score = weighted_jaccard_similarity(script_words, ingredients, food_weight_dict)
-        jaccard_score, raw_jaccard_score = idf_jaccard_similarity(script_words, ingredients, food_weight_dict, weight_dict)
+        # jaccard_score = weighted_jaccard_similarity(script_words, ingredients, weight_dict)
+        jaccard_score, raw_jaccard_score = penalize_jaccard_similarity(script_words, ingredients, food_weight_dict, weight_dict)
         recipe_jaccard_scores.append(jaccard_score)
         food_raw_jaccard_scores.append(raw_jaccard_score)
         
@@ -240,7 +242,9 @@ def find_foods():
         normalized_rating = rating / 5.0  
         final_score = (0.95 * base_score) + (0.05 * normalized_rating)
 
-        combined_scores.append((recipe, final_score, raw_jaccard_score, svd_script_score, combined_desc_score, base_score, intersecting_words, top_svd_terms))
+        combined_scores.append((recipe, final_score, raw_jaccard_score, jaccard_score, svd_script_score, combined_desc_score, base_score, intersecting_words, top_svd_terms))
+
+        # combined_scores.append((recipe, final_score, jaccard_score, svd_script_score, combined_desc_score, base_score, intersecting_words, top_svd_terms))
 
     combined_scores = sorted(
         combined_scores,
@@ -257,12 +261,13 @@ def find_foods():
             "score": round(score * 100, 1),
             # "jaccard_score": round(jaccard_score * 100, 1),
             "jaccard_score": round(raw_jaccard_score * 100, 1),
+            "weighted_jaccard": round(jaccard_score * 100, 1),
             "svd_text_score": round(svd_script_score * 100, 1),
             "svd_desc_score": round(combined_desc_score * 100, 1) if combined_desc_score is not None else None,
             "jaccard_intersection": list(intersecting_words),
             "top_svd_terms": top_svd_terms
         }
-        for recipe, _, raw_jaccard_score, svd_script_score, combined_desc_score, score, intersecting_words, top_svd_terms in combined_scores[:6]
+        for recipe, _, raw_jaccard_score, jaccard_score, svd_script_score, combined_desc_score, score, intersecting_words, top_svd_terms in combined_scores[:6]
     ]
     
 
