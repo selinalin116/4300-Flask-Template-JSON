@@ -6,7 +6,7 @@ from flask_cors import CORS
 import helper_functions
 import ast
 from cocktail import extract_ingredients
-from helper_functions import weighted_jaccard_similarity, dietary_res, drinks_filtered, penalize_jaccard_similarity, idf_jaccard_similarity, cosine_sim, create_index_to_title
+from helper_functions import weighted_jaccard_similarity, dietary_res, drinks_filtered, penalize_jaccard_similarity, idf_jaccard_similarity, cosine_sim
 from gensim.models import KeyedVectors
 import numpy as np
 from pairings import get_pairing_score_ranked
