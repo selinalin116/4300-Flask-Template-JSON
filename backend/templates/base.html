@@ -479,11 +479,9 @@
                 splittedFoodDesc.forEach((word, i) => {
                     if (dietaryRestrictions.includes(word)) {
                         foodRestrictions.push(word);
-
                         indexesToRemove.push(i);
                     }
                 });
-
                 indexesToRemove.forEach((index) => {
                     splittedFoodDesc.splice(index, 1);
                 });
@@ -499,7 +497,10 @@
                 splittedDrinkDesc.forEach((word, i) => {
                     if (alcRestrictions.includes(word)) {
                         drinkRestrictions.push(word);
-
+                        indexesToRemove.push(i);
+                    }
+                    else if (dietaryRestrictions.includes(word)) {
+                        drinkRestrictions.push(word);
                         indexesToRemove.push(i);
                     }
                 });
