@@ -163,7 +163,6 @@ def find_foods():
         combined_cocktail_scores.append((cocktail, combined_score, raw_jaccard_score, jaccard_score, svd_text_score, combined_desc_score, intersecting_words, top_svd_terms, source))
 
     combined_cocktail_scores = sorted(combined_cocktail_scores, key=lambda x: -x[1])
-    print("diet", dietary_restrictions)
     if (len(dietary_restrictions)>0):
         combined_cocktail_scores=ingredients_to_drink(combined_cocktail_scores,dietary_restrictions)
     alcohol_preference = extract_alcohol_phrases(alcohol_preference)
@@ -349,8 +348,6 @@ def find_foods():
         sorted_pairings = sorted(pairings, key=lambda x: -x["rank"])[:3]
 
         recipe["data"]["recommended_cocktails"] = sorted_pairings
-    # print(top_cocktails)
-    # print(top_recipes)
     return jsonify({
         "cocktails": top_cocktails,
         "recipes": top_recipes,
