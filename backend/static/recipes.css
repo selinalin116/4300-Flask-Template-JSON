@@ -187,6 +187,7 @@ div.cocktail-details {
     height: 90%;
     margin: 30px;
     overflow-y: auto;
+    overflow-x: hidden;
 }
 div.modal-image {
     width: 45%;
@@ -203,7 +204,7 @@ img.cocktail-image {
 
     border: 4px solid black;
 }
-div.cocktail-card div.cocktail-explanation {
+div.cocktail-card div.explanation {
     width: 80%;
 }
 button.close-button {
