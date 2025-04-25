@@ -319,7 +319,7 @@ def find_foods():
             recipe_ings = recipe["data"]["ingredients"]
             if isinstance(recipe_ings, str):
                 recipe_ings = ast.literal_eval(recipe_ings)
-            label, rank, overlap = get_pairing_score_ranked(cocktail_ings, recipe_ings, model)
+            label, rank = get_pairing_score_ranked(cocktail_ings, recipe_ings, model)
 
             if rank > 0:
                 pairings_by_recipe[recipe_name].append({
@@ -327,7 +327,6 @@ def find_foods():
                     "link": cocktail["data"]["recipe_link"],
                     "compatibility": label,
                     "rank": rank,
-                    "ingredient_overlap": overlap
                 })
 
     for recipe in top_recipes:
