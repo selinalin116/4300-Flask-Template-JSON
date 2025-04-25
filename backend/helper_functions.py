@@ -247,13 +247,6 @@ def penalize_jaccard_similarity(script_words, ingredient_set, weight_dict, raw_w
     """
     A version of jaccard similarity that takes idf and ingredient list length into account
     """
-    # bad_substrings = {"hot", "damn"}
-
-    # ingredient_set = {
-    #     ing for ing in ingredient_set
-    #     if not any(bad in ing.lower() for bad in bad_substrings)
-    # }
-
     intersection = script_words & ingredient_set
     union = script_words | ingredient_set
 
@@ -279,24 +272,6 @@ def cosine_sim(vec1, vec2):
 
 def combine_scores(jaccard_score, svd_score, alpha = .25):
     return alpha * jaccard_score + (1 - alpha) * svd_score
-
-# def cosine_similarity(script, recipes, recipe_vectorizer):
-#     """
-#     Calculate cosine similarity between script and recipes using existing TF-IDF vectorizer
-#     """
-#     # Transform script using existing recipe vectorizer
-#     script_tfidf = recipe_vectorizer.transform([script])
-    
-#     # Get recipe ingredients as text for vectorization
-#     recipe_texts = [" ".join(recipe['ingredients']) for recipe in recipes]
-    
-#     # Transform recipes using the same vectorizer
-#     recipe_tfidf = recipe_vectorizer.transform(recipe_texts)
-    
-#     # Calculate cosine similarity directly between script and each recipe
-#     similarities = sklearn_cosine_similarity(script_tfidf, recipe_tfidf)[0]
-    
-#     return similarities
 
 def cosine_similarity(ingredients_tfidf, description, vectorizer):
     description_tfidf = vectorizer.transform([description])
@@ -408,8 +383,6 @@ def dietary_res(items, top_k=6, restrictions=None):
     Helper to filter and return top_k items based on dietary restrictions
     """
 
-
-    # print(items)
     filtered = []
     for item in items:
         ingredients = item[0]["ingredients"]
@@ -437,8 +410,6 @@ def drinks_filtered(items, top_k, preferences):
     filtered = []
     for item in items:
         alc = [item[0]["strAlcoholic"].lower()]
-        # print("alc",alc)
-        # print("pref",preferences)
         if (alc==preferences):
             filtered.append(item)
 
@@ -475,7 +446,10 @@ def extract_alcohol_phrases(word_list):
             "alcohol only",
             "only alcohol"
         }:
-            phrases.append(pair)
+            if pair=="non alcoholic" or pair=="no alcohol":
+                phrases.append("non alcoholic")
+            else:
+                phrases.append("alcoholic")
             i += 2
         else:
             i += 1

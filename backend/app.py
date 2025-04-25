@@ -12,7 +12,6 @@ import numpy as np
 from pairings import get_pairing_score_ranked
 from collections import defaultdict
 import ast
-# from scipy.linalg import orthogonal_procrustes
 
 os.environ['ROOT_PATH'] = os.path.abspath(os.path.join("..",os.curdir))
 
@@ -48,12 +47,11 @@ def find_foods():
     if food_description is not None:
         food_description = food_description.strip().lower()
 
-    # print("food desc", food_description)
-    # dietary_restrictions = request.args.get('dietary', '').strip()
+
     x = [r.strip() for r in drink_description.split(' ')] if drink_description else []
-    # print("x", x)
+
     y = [r.strip() for r in food_description.split(' ')] if food_description else []
-    # print("y", y)
+
     diet = x+y
     combine_pairs = [('dairy', 'free'), ('gluten', 'free')]
 
@@ -67,11 +65,9 @@ def find_foods():
             dietary_restrictions.append(diet[i])
             i += 1
 
-    # print(dietary_restrictions)
 
-    # print("60",dietary_restrictions)
     alcohol_preference = x+y
-    # print(alcohol_preference)
+
     script = helper_functions.get_movie_script(movie_title, SCRIPT_FOLDER)
     if not script:
         return jsonify({"error": "Script or plot not found"})
@@ -81,7 +77,6 @@ def find_foods():
     script_projected = normalize(script_projected)
     
     script_words = set(script.split())
-    # script_words = get_script_phrases(script)
 
     # Extract cocktail ingredients
     cocktail_ingredients_set = set()
@@ -98,7 +93,6 @@ def find_foods():
     for recipe in recipes:
         try:
             ingredients_list = ast.literal_eval(recipe['ingredients'])
-            # recipe_ingredients_set.update(ing.lower().strip() for ing in ingredients_list)
             for ing in ingredients_list:
                 phrase = ing.lower().strip()
                 words = phrase.split()
@@ -136,12 +130,9 @@ def find_foods():
         cocktail_vec = helper_functions.embed_ingredient_list(cocktail_ingredients, model)
 
         cocktail_ingredients_set = set(" ".join(cocktail_ingredients).lower().split())
-        # jaccard_score = weighted_jaccard_similarity(script_words, cocktail_ingredients_set, cocktail_weight_dict)
         jaccard_score, raw_jaccard_score = penalize_jaccard_similarity(script_words, cocktail_ingredients_set, cocktail_weight_dict, weight_dict)
         cocktail_jaccard_scores.append(jaccard_score)
         cocktail_raw_jaccard_scores.append(raw_jaccard_score)
-        # cosine_score = helper_functions.cosine_similarity(cocktail_ingredients_tfidf, drink_description, cocktail_ingredients_vectorizer)
-        # print(cosine_score)
 
         if drink_description is not None:
             query_vec = helper_functions.embed_ingredient_list([drink_description], model)
@@ -149,9 +140,6 @@ def find_foods():
             if query_vec is not None and cocktail_vec is not None:
                 sim = cosine_sim(query_vec, cocktail_vec)
                 cocktail_cosine_scores.append(sim)
-                # print("Similarity:", sim)
-            # else:
-            #     print("Could not compute similarity")
 
     
     combined_cocktail_scores = []
@@ -235,22 +223,17 @@ def find_foods():
         except (SyntaxError, ValueError):
             ingredients = set()
 
-        # jaccard_score = weighted_jaccard_similarity(script_words, ingredients, weight_dict)
         jaccard_score, raw_jaccard_score = penalize_jaccard_similarity(script_words, ingredients, food_weight_dict, weight_dict)
         recipe_jaccard_scores.append(jaccard_score)
         food_raw_jaccard_scores.append(raw_jaccard_score)
         
         if food_description is not None:
             query_vec = helper_functions.embed_ingredient_list([food_description], model)
-            # print(query_vec)
             food_vec = helper_functions.embed_ingredient_list(ingredients_list, model)
-            # print(food_vec)
 
             if query_vec is not None and food_vec is not None:
                 sim = cosine_sim(query_vec, food_vec)
                 food_cosine_scores.append(sim)
-            # else:
-            #     print("Could not compute similarity")
 
     combined_scores = []
     for i, recipe in enumerate(recipes):
@@ -268,7 +251,6 @@ def find_foods():
                 elif words:
                     ingredients.add(words[0])
 
-            # print(recipe_ingredients_set)
         except (SyntaxError, ValueError):
             ingredients = set()
 
@@ -306,8 +288,6 @@ def find_foods():
 
         combined_scores.append((recipe, final_score, raw_jaccard_score, jaccard_score, svd_script_score, combined_desc_score, base_score, intersecting_words, top_svd_terms))
 
-        # combined_scores.append((recipe, final_score, jaccard_score, svd_script_score, combined_desc_score, base_score, intersecting_words, top_svd_terms))
-
     combined_scores = sorted(
         combined_scores,
         key=lambda x: (
@@ -318,13 +298,10 @@ def find_foods():
     if (len(dietary_restrictions)>0):
         combined_scores = dietary_res(combined_scores, 6, dietary_restrictions)
     
-    # print("dietary restrictions", dietary_restrictions)
-    # print("combined", combined_scores)
     top_recipes = [
         {
             "data": clean_recipe_data(recipe),
             "score": round(score * 100, 1),
-            # "jaccard_score": round(jaccard_score * 100, 1),
             "jaccard_score": round(raw_jaccard_score * 100, 1),
             "weighted_jaccard": round(jaccard_score * 100, 1),
             "svd_text_score": round(svd_script_score * 100, 1),
@@ -390,6 +367,3 @@ def movie_suggestions():
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=5000)
-
-# # if 'DB_NAME' not in os.environ:
-# #     app.run(debug=True,host="0.0.0.0",port=5000)
