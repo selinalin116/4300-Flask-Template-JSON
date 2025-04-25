@@ -141,7 +141,7 @@ def clean_recipe_data(recipe):
     """
     Extracts and formats key details from a recipe dictionary.
     """
-    instructions = parse_steps_to_paragraph(recipe["steps"])
+    # instructions = parse_steps_to_paragraph(recipe["steps"])
 
     return {
         'name': recipe['name'].title(),
@@ -149,6 +149,6 @@ def clean_recipe_data(recipe):
         'ingredients': [ingredient.strip().lower() for ingredient in ast.literal_eval(recipe['ingredients'])],
         'rating': recipe['average_rating'],
         'rating_count': recipe['review_count'],
-        # 'instructions': recipe['steps'] 
-        'instructions': instructions
+        'instructions': recipe['steps'] 
+        # 'instructions': instructions
     }
