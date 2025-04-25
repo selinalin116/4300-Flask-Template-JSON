@@ -59,7 +59,18 @@
                         id="description-drink-search">
                     
                     <div class="info-tooltip">i
-                        <span class="tooltip-text">Describe your drink's vibe: tangy, cozy, nostalgic etc. You can also mention dietary restrictions using "dairy-free" and "vegan" and alcohol preferences using "non-alcoholic" or "alcoholic" if preferred.</span>
+                        <div class="tooltip-text">
+                            <p>Describe your drink's vibe: is it tangy? Acidic? Fruity?</p> 
+                            <p>
+                                Some pre-coded drink filters you can add:
+                            </p>
+                            <ul class="no-bullet">
+                                <li>"vegan"</li>
+                                <li>"dairy-free"</li>
+                                <li>"non-alcoholic"</li>
+                                <li>"alcoholic"</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
                 <div class="input-box" onclick="descriptionFocusFood()">
@@ -67,7 +78,20 @@
                         id="description-food-search">
                     
                     <div class="info-tooltip">i
-                        <span class="tooltip-text">Share your meal's mood: comfort food, nostalgic, vegan, fancy, spicy, etc. You can add dietary restrictions using one of these choices:  vegan, vegetarian, pescatarian, meat_no_fish, dairy-free, gluten-free, kosher.</span>
+                        <div class="tooltip-text">
+                            <p>Describe your recipe's vibe: is it rich? Spicy? Sweet?</p> 
+                            <p>
+                                Some pre-coded recipe filters you can add:
+                            </p>
+                            <ul class="no-bullet">
+                                <li>"vegan"</li>
+                                <li>"vegetarian"</li>
+                                <li>"pescatarian"</li>
+                                <li>"dairy-free"</li>
+                                <li>"gluten-free"</li>
+                                <li>"kosher"</li>
+                            </ul>                        
+                        </div>
                     </div>
                 </div>
 
@@ -275,7 +299,11 @@
                     .join('')}
                     </ul>
 
-                    <p>${recipe.instructions}</p>
+                    <h4>Instructions:</h4>
+                    
+                    <ol>
+                        ${JSON.parse(recipe.instructions.replace(/'(?=\s*[\],])/g, '"').replace(/(?<=[\[,]\s*)'/g, '"')).map(step => `<li class="capitalized">${step}.</li>`).join('')}
+                    </ol>
                 </div>
 
                 <div class="explanation">
