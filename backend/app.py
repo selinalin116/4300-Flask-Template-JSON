@@ -208,10 +208,11 @@ def find_foods():
                     for result in ing:
                         ingredients.add(result)
 
-                if len(words) >= 2:
-                    ingredients.update(words[-2:])
-                elif words:
-                    ingredients.add(words[0])
+                if words:
+                    if len(words) >= 2:
+                        ingredients.update(words[-2:])
+                    elif words:
+                        ingredients.add(words[0])
         except (SyntaxError, ValueError):
             ingredients = set()
 
@@ -242,12 +243,12 @@ def find_foods():
                 if ing:
                     for result in ing:
                         ingredients.add(result)
-                if len(words) >= 2:
-                    ingredients.update(words[-2:])
-                elif words:
-                    ingredients.add(words[0])
+                if words:
+                    if len(words) >= 2:
+                        ingredients.update(words[-2:])
+                    elif words:
+                        ingredients.add(words[0])
             
-            print(ingredients)
         except (SyntaxError, ValueError):
             ingredients = set()
 

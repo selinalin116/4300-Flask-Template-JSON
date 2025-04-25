@@ -130,12 +130,63 @@ def get_script_phrases(script_text, min_word_length=3):
 
     return phrases
 
+# def normalize_ingredient(ingredient):
+#     """
+#     Normalize ingredient phrase to remove common descriptors
+#     """
+#     phrase = ingredient.lower().strip()
+#     results = set()
+
+#     # Compounds where we don't want to extract the base ingredient since the individual words do not have much significant meanings
+#     no_base_extraction = ['baking powder', 'baking soda']
+    
+#     # Common compound ingredints
+#     compound_ingredients = [
+#         'olive oil', 'vegetable oil', 'peanut butter', 'cream cheese', 
+#         'sour cream', 'maple syrup',
+#         'coconut milk', 'heavy cream', 'red wine', 'white wine', 
+#     ]
+    
+#     all_compounds = no_base_extraction + compound_ingredients
+
+#     for compound in all_compounds:
+#         if compound in phrase:
+#             results.add(compound)
+            
+#             if compound not in no_base_extraction:
+#                 base_ingredient = compound.split()[-1]  # Gets the last word of a compound ingredient since that is usually a noun
+#                 if base_ingredient not in results:
+#                     results.add(base_ingredient)
+#             else:
+#                 return
+
+#     phrase = ingredient.lower().strip()
+    
+#     # Common descriptors in ingredients
+#     modifiers = [
+#         'fresh', 'chopped', 'diced', 'sliced', 'crushed', 'ground', 'minced',
+#         'large', 'small', 'medium', 'extra', 'shredded', 'grated', 'whole', 'cups',
+#         'plain', 'unsweetened', 'sweetened', 'semi-sweet', 'cooked', 'raw', 'all-purpose',
+#         'brown', 'heavy', 'unsalted', 'light', 'dark', 'hard', 'smoked',
+#         'half', 'green', 'hot', 'red', 'warm', 'lean', 'sour', 'food', 'sweet', 'mixed', 'yellow', 'black', 'white', 'prepared', 'round', 'boiling', 'bay', 'dry', 'instant', 'cut', 'dried', 'fresh', 'stuffed'
+#     ]
+
+#     # Remove descriptors
+#     words = phrase.split()
+#     filtered_words = [word for word in words if word not in modifiers]
+
+#     if filtered_words:
+#         results.add(" ".join(filtered_words))  # cleaned full phrase
+#         results.update(filtered_words)   
+    
+#     return list(results)
+
 def normalize_ingredient(ingredient):
     """
     Normalize ingredient phrase to remove common descriptors
     """
-    phrase = ingredient.lower().strip()
-    results = set()
+    phrase = ingredient.lower()
+    results = []
 
     # Compounds where we don't want to extract the base ingredient since the individual words do not have much significant meanings
     no_base_extraction = ['baking powder', 'baking soda']
@@ -151,12 +202,14 @@ def normalize_ingredient(ingredient):
 
     for compound in all_compounds:
         if compound in phrase:
-            results.add(compound)
+            results.append(compound)
             
             if compound not in no_base_extraction:
                 base_ingredient = compound.split()[-1]  # Gets the last word of a compound ingredient since that is usually a noun
                 if base_ingredient not in results:
-                    results.add(base_ingredient)
+                    results.append(base_ingredient)
+            else:
+                return
 
     phrase = ingredient.lower().strip()
     
@@ -165,19 +218,32 @@ def normalize_ingredient(ingredient):
         'fresh', 'chopped', 'diced', 'sliced', 'crushed', 'ground', 'minced',
         'large', 'small', 'medium', 'extra', 'shredded', 'grated', 'whole', 'cups',
         'plain', 'unsweetened', 'sweetened', 'semi-sweet', 'cooked', 'raw', 'all-purpose',
-        'brown', 'heavy', 'unsalted', 'light', 'dark',
-        'half', 'green', 'hot', 'red', 'warm', 'lean', 'sour', 'food', 'sweet', 'mixed'
+        'brown', 'heavy', 'unsalted', 'light', 'dark', 'hard', 'smoked',
+        'half', 'green', 'hot', 'red', 'warm', 'lean', 'sour', 'food', 'sweet', 'mixed', 'yellow', 'black', 'white', 'prepared', 'round', 'boiling', 'bay', 'dry', 'instant', 'cut', 'dried', 'fresh', 'stuffed', 'live'
     ]
 
     # Remove descriptors
     words = phrase.split()
     filtered_words = [word for word in words if word not in modifiers]
 
-    if filtered_words:
-        results.add(" ".join(filtered_words))  # cleaned full phrase
-        results.update(filtered_words)   
+    normalized = ' '.join(filtered_words).strip()
+    if normalized and normalized not in results:
+        results.append(normalized)
     
-    return list(results)
+    if len(filtered_words) >= 2:
+        last_one = filtered_words[-1]
+        second_last = filtered_words[-2]
+        if second_last not in results:
+            results.append(second_last)
+        if last_one not in results:
+            results.append(last_one)
+    elif filtered_words:
+        if filtered_words[0] not in results:
+            results.append(filtered_words[0])
+    
+    print(results)
+    
+    return results if results else None
 
 
 COMMON_INGREDIENTS = {"water", "salt", "sugar", "hot", "damn"}
@@ -253,7 +319,7 @@ def penalize_jaccard_similarity(script_words, ingredient_set, weight_dict, raw_w
     raw_jaccard = raw_intersection_weight / raw_ingredient_weight if union else 0.0
 
     # Penalize short ingredient lists
-    penalty = len(ingredient_set) / (len(ingredient_set) + 2) 
+    penalty = len(ingredient_set) / (len(ingredient_set) + 3) 
     penalized_score = weighted_score * penalty
 
     return penalized_score, raw_jaccard
