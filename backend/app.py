@@ -6,7 +6,7 @@ from flask_cors import CORS
 import helper_functions
 import ast
 from cocktail import extract_ingredients
-from helper_functions import dietary_res, drinks_filtered, penalize_jaccard_similarity, cosine_sim, normalize_ingredient, get_script_phrases
+from helper_functions import dietary_res, drinks_filtered, penalize_jaccard_similarity, cosine_sim, normalize_ingredient
 from gensim.models import KeyedVectors
 import numpy as np
 from pairings import get_pairing_score_ranked
@@ -63,38 +63,36 @@ def find_foods():
     script_projected = normalize(script_projected)
     
     script_words = set(script.split())
-    # script_words = get_script_phrases(script)
 
     # Extract cocktail ingredients
-    cocktail_ingredients_set = set()
-    for cocktail in cocktails:
-        cocktail_ingredients = extract_ingredients(cocktail)
-        for ingredient in cocktail_ingredients:
-            normalized_results = normalize_ingredient(ingredient)
-            if normalized_results:
-                for result in normalized_results:
-                    cocktail_ingredients_set.add(result)
+    # cocktail_ingredients_set = set()
+    # for cocktail in cocktails:
+    #     cocktail_ingredients = extract_ingredients(cocktail)
+    #     for ingredient in cocktail_ingredients:
+    #         normalized_results = normalize_ingredient(ingredient)
+    #         if normalized_results:
+    #             for result in normalized_results:
+    #                 cocktail_ingredients_set.add(result)
 
-    # Extract recipe ingredients
-    recipe_ingredients_set = set()
-    for recipe in recipes:
-        try:
-            ingredients_list = ast.literal_eval(recipe['ingredients'])
-            # recipe_ingredients_set.update(ing.lower().strip() for ing in ingredients_list)
-            for ing in ingredients_list:
-                phrase = ing.lower().strip()
-                words = phrase.split()
+    # # Extract recipe ingredients
+    # recipe_ingredients_set = set()
+    # for recipe in recipes:
+    #     try:
+    #         ingredients_list = ast.literal_eval(recipe['ingredients'])
+    #         for ing in ingredients_list:
+    #             phrase = ing.lower().strip()
+    #             words = phrase.split()
 
-            # Add full ingredient
-            recipe_ingredients_set.add(phrase)
+    #         # Add full ingredient
+    #         recipe_ingredients_set.add(phrase)
 
-            # Add last two words individually
-            if len(words) >= 2:
-                recipe_ingredients_set.update(words[-2:])
-            elif words:
-                recipe_ingredients_set.add(words[0])
-        except (SyntaxError, ValueError):
-            pass
+    #         # Add last two words individually
+    #         if len(words) >= 2:
+    #             recipe_ingredients_set.update(words[-2:])
+    #         elif words:
+    #             recipe_ingredients_set.add(words[0])
+    #     except (SyntaxError, ValueError):
+    #         pass
 
     similarities = script_projected.dot(cocktail_vectors.T)
 
@@ -118,12 +116,9 @@ def find_foods():
         cocktail_vec = helper_functions.embed_ingredient_list(cocktail_ingredients, model)
 
         cocktail_ingredients_set = set(" ".join(cocktail_ingredients).lower().split())
-        # jaccard_score = weighted_jaccard_similarity(script_words, cocktail_ingredients_set, cocktail_weight_dict)
         jaccard_score, raw_jaccard_score = penalize_jaccard_similarity(script_words, cocktail_ingredients_set, cocktail_weight_dict, weight_dict)
         cocktail_jaccard_scores.append(jaccard_score)
         cocktail_raw_jaccard_scores.append(raw_jaccard_score)
-        # cosine_score = helper_functions.cosine_similarity(cocktail_ingredients_tfidf, drink_description, cocktail_ingredients_vectorizer)
-        # print(cosine_score)
 
         if drink_description is not None:
             query_vec = helper_functions.embed_ingredient_list([drink_description], model)
@@ -131,9 +126,8 @@ def find_foods():
             if query_vec is not None and cocktail_vec is not None:
                 sim = cosine_sim(query_vec, cocktail_vec)
                 cocktail_cosine_scores.append(sim)
-                # print("Similarity:", sim)
-            # else:
-            #     print("Could not compute similarity")
+            else:
+                print("Could not compute similarity")
 
     
     combined_cocktail_scores = []
@@ -147,6 +141,8 @@ def find_foods():
 
         svd_text_score = similarities[0][i]
         combined_desc_score = None
+
+        # SVD for additional description for drinks
         if drink_description is not None:
             svd_desc_score = cocktail_desc_similarities[0][i]
             cosine_score = cocktail_cosine_scores[i]
@@ -159,7 +155,7 @@ def find_foods():
         jaccard_score = cocktail_jaccard_scores[i]
         raw_jaccard_score = cocktail_raw_jaccard_scores[i]
 
-        # boost score if user preference matches cocktail ingredients
+        # Boost score if user preference matches cocktail ingredients
         preference_boost = 0
         if drink_description:
             preference_boost = sum(1 for word in drink_description.split() if word in cocktail_ingredients) * 0.1
@@ -208,8 +204,9 @@ def find_foods():
             for ing in ingredients_list:
                 ing = normalize_ingredient(ing)
                 words = ing
-
-                ingredients.add(phrase)
+                if ing:
+                    for result in ing:
+                        ingredients.add(result)
 
                 if len(words) >= 2:
                     ingredients.update(words[-2:])
@@ -243,9 +240,9 @@ def find_foods():
             for ing in ingredients_list:
                 ing = normalize_ingredient(ing)
                 words = ing
-
-                ingredients.add(phrase)
-
+                if ing:
+                    for result in ing:
+                        ingredients.add(result)
                 if len(words) >= 2:
                     ingredients.update(words[-2:])
                 elif words:
