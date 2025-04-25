@@ -5841,29 +5841,6 @@
         "search_terms":"{'low-calorie', 'low-sodium', 'lunch', 'low-carb', 'gluten-free', 'low-fat', 'snack'}"
     },
     {
-        "name":"drunken chicken marinade",
-        "id":659,
-        "minutes":115,
-        "tags":"['weeknight', 'time-to-make', 'course', 'main-ingredient', 'preparation', 'occasion', '5-ingredients-or-less', 'condiments-etc', 'easy', 'marinades-and-rubs', 'dietary', 'number-of-servings', '4-hours-or-less']",
-        "nutrition":"[222.0, 7.0, 8.0, 198.0, 30.0, 12.0, 14.0]",
-        "steps":"['optional add-ins: garlic - i use powdered for the intensity- but crushed cloves of garlic will also be good', 'splash of cayenne pepper sauce rotel chiles and tomatoes a-1 sweet and tangy sauce sriracha chili sauce substitution: vodka or honey mead for cider', '---- combine all ingredients and pour over meat to be marinated', 'the estimated amount above marinates about 2 1 \/ 2 to 3 lbs of chicken', 'marinate in tightly sealed dish at minimum for about 1 1 \/ 2 hours i marinated overnight and had wonderful results', 'i hope you enjoy it']",
-        "description":"hi, it's been a very long time since the last time i posted to r.f.r, but i couldn't resist sending this when i saw the drunken chicken thread, this is a relatively new favorite of mine i created - i like it best for hickory or mesquite grilled chicken - but i think it works well for beef too...  ",
-        "ingredients":"['sage', 'coarse black pepper', 'hard apple cider', 'soy sauce']",
-        "average_rating":4.6,
-        "review_list":[
-            "Really yummy! I only had Pear Cider on hand, but it was lovely and grilled divinely :)",
-            "I used 0.5ounce (weight) dried sage and 0.5ounce (weight) of freshly ground pepper corns with 2 cups cider and soy sauce. Marinaded overnight and the chicken legs I used turned out beautiful! I was afraid the pepper would be too strong but it turned out that sage was the only flavour that got into the super tender meat.",
-            "Well, I have to confess that I know a great marinade when I see one.... and I also have to confess that I messed with it more than a bit -- I have some basics that I like to incorporate into chicken\/shrimp marinades. The resulting hybrid recipe (for split chicken breasts cooked over an open apple-wood fire) was the absolute best grilled chicken, ever... anywhere. My guests were awestruck. Here's my modified ingredients:\r\n2 dried red smoked chilies; 3 cloves fresh garlic; 3 oz. A-1 Sauce; 2 Tbsp. Fresh Rosemary (instead of sage); 2 Tbsp. cracked black pepper; 1 cup vodka; 1 1\/2 c. apple juice; 1\/2 c. lemon juice (bottled); 3 Tbsp. regular Olive oil; 3 oz. Maggi Seasoning sauce. I liquefied all the ingredients in my food processor and marinated for 4 hours, grilled the stuff over the open fire\/coals and, WOW! I entered this one into my \"Secret Recipe Book\" last night at about midnite or so. And all I can say is, \"THANK YOU, TRACEY!\" (My guests offer their highest regards too!)",
-            "Delicious!!!  We used it for kabobs and the chicken was tender, moist, and tasty!!!",
-            "Super base marinade! I used vodka instead of apple cider, oregano instead of sage, plus some garlic and sweet chili sauce. This rocks!! Thanks for sharing."
-        ],
-        "review_count":5.0,
-        "ingredients_raw_str":"[\"1 -2   ounce    sage (or to taste)\",\"1 -2   ounce    coarse black pepper (or to taste)\",\"1 -3   cup    hard apple cider (to \\\"break down\\\" the chicken)\",\"3   ounces    soy sauce or 3   ounces    maggi seasoning sauce (the Maggi sauce is saltier than soy)\"]",
-        "serving_size":"1 (143 g)",
-        "servings":1.0,
-        "search_terms":"{'chicken'}"
-    },
-    {
         "name":"crawfish or shrimp cocktail",
         "id":660,
         "minutes":5,
