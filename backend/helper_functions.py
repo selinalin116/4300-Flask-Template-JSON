@@ -496,6 +496,7 @@ def ingredients_to_drink(drink, pref):
     return filtered
 
 def extract_alcohol_phrases(word_list):
+    print(word_list)
     phrases = []
     i = 0
     while i < len(word_list) - 1:
@@ -513,6 +514,8 @@ def extract_alcohol_phrases(word_list):
             i += 2
         else:
             i += 1
+    if "non alcoholic" in word_list:
+        phrases.append("non alcoholic")
     return phrases
 
 def load_all_scripts(script_folder):
