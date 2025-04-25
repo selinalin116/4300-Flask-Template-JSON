@@ -300,28 +300,26 @@ def find_foods():
             "weighted_jaccard": round(jaccard_score * 100, 1),
             "svd_text_score": round(svd_script_score * 100, 1),
             "svd_desc_score": round(combined_desc_score * 100, 1) if combined_desc_score is not None else None,
-            "score": round(score * 100, 1),
             "jaccard_intersection": list(intersecting_words),
             "top_svd_terms": top_svd_terms,
             "sentiment_text": sentiment_text,
             "sentiment_score": sentiment_score
             }
-        for recipe, _, raw_jaccard_score, jaccard_score, svd_script_score, combined_desc_score, score, intersecting_words, top_svd_terms, sentiment_text, sentiment_score in combined_scores[:6]
+        for recipe, score, raw_jaccard_score, jaccard_score, svd_script_score, combined_desc_score, _, intersecting_words, top_svd_terms, sentiment_text, sentiment_score in combined_scores[:6]
     ]
     
 
     pairings_by_recipe = defaultdict(list)
 
     for cocktail in top_cocktails:
-        cocktail_ings = cocktail["data"]["ingredients"]
+        cocktail_ings = cocktail["data"]["raw_ingredients"]
 
         for recipe in top_recipes:
             recipe_name = recipe["data"]["name"]
             recipe_ings = recipe["data"]["ingredients"]
             if isinstance(recipe_ings, str):
                 recipe_ings = ast.literal_eval(recipe_ings)
-
-            label, rank = get_pairing_score_ranked(cocktail_ings, recipe_ings, model)
+            label, rank, overlap = get_pairing_score_ranked(cocktail_ings, recipe_ings, model)
 
             if rank > 0:
                 pairings_by_recipe[recipe_name].append({
@@ -329,6 +327,7 @@ def find_foods():
                     "link": cocktail["data"]["recipe_link"],
                     "compatibility": label,
                     "rank": rank,
+                    "ingredient_overlap": overlap
                 })
 
     for recipe in top_recipes:
@@ -338,7 +337,7 @@ def find_foods():
         sorted_pairings = sorted(pairings, key=lambda x: -x["rank"])[:3]
 
         recipe["data"]["recommended_cocktails"] = sorted_pairings
-    
+
     return jsonify({
         "cocktails": top_cocktails,
         "recipes": top_recipes,

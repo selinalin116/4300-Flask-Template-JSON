@@ -283,6 +283,14 @@ div.recipe-header > p {
     margin-bottom: 10px;
 }
 
+.recommended-cocktails-list a {
+    text-decoration: none; 
+}
+
+.recommended-cocktails-list a:hover {
+    text-decoration: underline;
+}
+
 /* Rating section in food recipes container */
 .rating-container {
     display: flex;
@@ -399,7 +407,6 @@ div.recipe-header > p {
 .capitalized::first-letter {
     text-transform: capitalize;
 }
-
 
 @media (max-width: 1600px) {
     div#relevant-cocktail-card img {

@@ -1,11 +1,10 @@
 import json
-import numpy as np
 from helper_functions import cosine_sim
 
 with open("data/taste_trios.json", "r") as f:
     compatible_trios = json.load(f)
 
-def get_pairing_score_ranked(cocktail_ings, recipe_ings, model, sim_threshold=0.30):
+def get_pairing_score_ranked(cocktail_ings, recipe_ings, model, sim_threshold=0.90):
     cocktail_ings = set(ing.lower().strip() for ing in cocktail_ings)
     recipe_ings = set(ing.lower().strip() for ing in recipe_ings)
 
@@ -45,15 +44,16 @@ def get_pairing_score_ranked(cocktail_ings, recipe_ings, model, sim_threshold=0.
                             break
 
         overlap = matched_cocktail_ings | matched_recipe_ings
+        ingredients_overlap = overlap
 
         if matched_cocktail_ings and matched_recipe_ings:
             if len(overlap) >= 3:
                 if compatibility == "Highly Compatible":
-                    return compatibility, 3
+                    return compatibility, 3, list(overlap)
                 elif compatibility == "Moderately Compatible":
-                    return compatibility, 2.5
+                    return compatibility, 2.5, list(overlap)
                 elif compatibility == "Compatible":
-                    return compatibility, 2
+                    return compatibility, 2, list(overlap)
             elif len(overlap) == 2:
                 best_label = "Weak Compatibility"
                 best_rank = 1
