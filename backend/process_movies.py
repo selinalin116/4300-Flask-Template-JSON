@@ -21,10 +21,13 @@ existing_movies = {
 def sanitize_filename(name):
     return re.sub(r'[^\w\s-]', '', name).replace(' ', '_')
 
+
 for decade, movies_file in movies_by_decade.items():
     with open(movies_file, "r", encoding="utf-8") as file:
         reader = csv.DictReader(file)
-        for row in reader:
+        movies = list(reader)
+
+        for row in movies:
             movie_name = row["title"].strip()
             movie_plot = row["plot"].strip()
 
@@ -36,7 +39,6 @@ for decade, movies_file in movies_by_decade.items():
 
             base_name = re.sub(r'\s+\d{4}$', '', movie_name).lower()
 
-            # skip if the movie (ignoring year) is already in data/scripts
             if base_name in existing_movies:
                 print(f"Skipping {movie_name}, already in data/scripts.")
                 continue
@@ -48,7 +50,7 @@ for decade, movies_file in movies_by_decade.items():
             with open(script_file_path, "w", encoding="utf-8") as script_file:
                 script_file.write(movie_plot)
             print(f"Saved plot for {movie_name} to {script_file_path}.")
-            existing_movies.add(base_name)  # Add to existing_movies to prevent duplicates
+            existing_movies.add(base_name)
 
 # Delete plot files with "untitled" or "film" in their title
 for root, _, files in os.walk(plots_dir):

@@ -229,28 +229,28 @@
                     <h4>Similarity Score: ${recipe.score}%</h4>
                     <div class="rating-container">
                         <span class="numeric-rating">
-                            ${recipe.rating === 'NA' || recipe.rating == null || recipe.rating === 0 
-                            ? 'N/A' 
-                            : (Math.round(Number(recipe.rating) * 100) / 100).toString().replace(/\.00$/, '')}
+                            ${recipe.rating === 'NA' || recipe.rating == null || recipe.rating === 0
+                    ? 'N/A'
+                    : (Math.round(Number(recipe.rating) * 100) / 100).toString().replace(/\.00$/, '')}
                         </span>
 
                         ${recipe.rating && recipe.rating !== 'NA' && recipe.rating !== 0
-                            ? `<div class="star-rating" data-rating="${recipe.rating}">
+                    ? `<div class="star-rating" data-rating="${recipe.rating}">
                                 <div class="star-base">★★★★★</div>
                                 <div class="star-fill">★★★★★</div>
                             </div>`
-                            : ''}
+                    : ''}
 
                         ${recipe.rating_count && recipe.rating_count > 0
-                            ? `<span class="rating-count">(${recipe.rating_count} ratings)</span>`
-                            : ''}
+                    ? `<span class="rating-count">(${recipe.rating_count} ratings)</span>`
+                    : ''}
                         
                         ${recipe.sentiment_text !== undefined && recipe.sentiment_score !== null
-                            ? `<span class="sentiment-text">
+                    ? `<span class="sentiment-text">
                                 Sentiment: ${recipe.sentiment_text} (${recipe.sentiment_score.toFixed(2)})
                                 </span>`
-                            : '<span>NO SENTIMENT</span>'
-                            }
+                    : '<span>NO SENTIMENT</span>'
+                }
 
                     </div>
 
@@ -465,9 +465,9 @@
                         answerBox.innerHTML = errorTemplate(data.error);
                         return;
                     }
-                    const source = data.source === "plot" ? "Plot" : "Script";
-                    const sourceInfo = `<div class="source-info"><strong>Similarity measures are based on:</strong> ${source}</div>`;
-                    answerBox.innerHTML = sourceInfo;
+                    // const source = data.source === "plot" ? "Plot" : "Script";
+                    // const sourceInfo = `<div class="source-info"><strong>Similarity measures are based on:</strong> ${source}</div>`;
+                    // answerBox.innerHTML = sourceInfo;
                     const resultsContainer = document.createElement("div");
                     resultsContainer.className = "results-container";
                     // resultsContainer.innerHTML = `<h2>Results for "${movieTitle}"</h2>`;
@@ -561,11 +561,11 @@
                     }
 
                     document.querySelectorAll('.star-rating').forEach(el => {
-                            const rating = parseFloat(el.dataset.rating);
-                            const percent = Math.max(0, Math.min(100, (rating / 5) * 100));
-                            console.log(rating)
-                            el.querySelector('.star-fill').style.width = percent + '%';
-                        });
+                        const rating = parseFloat(el.dataset.rating);
+                        const percent = Math.max(0, Math.min(100, (rating / 5) * 100));
+                        console.log(rating)
+                        el.querySelector('.star-fill').style.width = percent + '%';
+                    });
 
                     document.querySelectorAll('.cocktail-buttons').forEach(button => {
                         button.addEventListener('click', () => {
