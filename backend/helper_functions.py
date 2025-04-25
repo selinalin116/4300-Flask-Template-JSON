@@ -366,7 +366,8 @@ def edit_normalize_ingredient(ingredient):
     return ingredient
 
 synonym_map = {
-    "homecooked": ["homemade", "comfort", "family", "cooked", "traditional"]
+    "homecooked": ["homemade", "comfort", "family", "cooked", "traditional"],
+    "pescatarian": ["fish"]
 }
 
 def embed_ingredient_list(ingredients, model):

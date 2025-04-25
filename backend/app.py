@@ -55,7 +55,13 @@ def find_foods():
 
     y = [r.strip() for r in food_description.split(' ')] if food_description else []
 
-    diet = [dietary]+x+y
+    diet = []
+    if dietary is not None:
+        dietary_list = [r.strip() for r in dietary.split(',')]  # Split dietary on commas
+        diet = dietary_list + x + y
+    else:
+        diet = x + y
+
     combine_pairs = [('dairy', 'free'), ('gluten', 'free')]
 
     dietary_restrictions = []

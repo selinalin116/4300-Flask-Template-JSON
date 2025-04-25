@@ -475,12 +475,13 @@
 
             if (additionalFoodDesc) {
                 splittedFoodDesc = additionalFoodDesc.toLowerCase().split(" ");
+                console.log(splittedFoodDesc)
                 let indexesToRemove = [];
 
                 splittedFoodDesc.forEach((word, i) => {
                     if (dietaryRestrictions.includes(word)) {
                         foodRestrictions.push(word);
-                        drinkRestrictions.push(word);
+                        // drinkRestrictions.push(word);
                         indexesToRemove.push(i);
                     }
                 });
@@ -493,10 +494,12 @@
 
             if (additionalDrinkDesc) {
                 splittedDrinkDesc = additionalDrinkDesc.toLowerCase().split(" ");
+                console.log(splittedDrinkDesc)
                 let indexesToRemove = [];
 
                 splittedDrinkDesc.forEach((word, i) => {
                     if (alcRestrictions.includes(word)) {
+                        console.log(word)
                         drinkRestrictions.push(word);
                         // foodRestrictions.push(word);
                         indexesToRemove.push(i);
