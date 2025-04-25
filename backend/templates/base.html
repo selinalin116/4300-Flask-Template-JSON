@@ -227,7 +227,34 @@
                 <div class = "recipe-left">
                     <h3>${recipe.name}</h3>
                     <h4>Similarity Score: ${recipe.score}%</h4>
-                    <p>User Rating: ${recipe.rating === 'NA' || recipe.rating == null || recipe.rating === 0 ? 'N/A' : (Math.round(Number(recipe.rating) * 100) / 100).toString().replace(/\.00$/, '')}</p>
+                    <div class="rating-container">
+                        <span class="numeric-rating">
+                            ${recipe.rating === 'NA' || recipe.rating == null || recipe.rating === 0 
+                            ? 'N/A' 
+                            : (Math.round(Number(recipe.rating) * 100) / 100).toString().replace(/\.00$/, '')}
+                        </span>
+
+                        ${recipe.rating && recipe.rating !== 'NA' && recipe.rating !== 0
+                            ? `<div class="star-rating" data-rating="${recipe.rating}">
+                                <div class="star-base">★★★★★</div>
+                                <div class="star-fill">★★★★★</div>
+                            </div>`
+                            : ''}
+
+                        ${recipe.rating_count && recipe.rating_count > 0
+                            ? `<span class="rating-count">(${recipe.rating_count} ratings)</span>`
+                            : ''}
+                        
+                        ${recipe.sentiment_text !== undefined && recipe.sentiment_score !== null
+                            ? `<span class="sentiment-text">
+                                Sentiment: ${recipe.sentiment_text} (${recipe.sentiment_score.toFixed(2)})
+                                </span>`
+                            : '<span>NO SENTIMENT</span>'
+                            }
+
+                    </div>
+
+
                     <div class="explanation">
                         <h4>Why this recipe?</h4>
                         <p> This recipe was recommended because it shares ${recipe.jaccard_score}% of its ingredients with the movie script keywords 
@@ -516,6 +543,8 @@
                             recipe.svd_desc_score = r.svd_desc_score;
                             recipe.jaccard_intersection = r.jaccard_intersection;
                             recipe.top_svd_terms = r.top_svd_terms;
+                            recipe.sentiment_text = r.sentiment_text;
+                            recipe.sentiment_score = r.sentiment_score
                             recipeSection.innerHTML += recipeTemplate(recipe);
                         });
 
@@ -523,11 +552,19 @@
                         resultsContainer.appendChild(recipeMain);
                     }
 
+
                     if (resultsContainer.children.length > 1) { // 1 is the initial h2
                         answerBox.appendChild(resultsContainer);
                     } else {
                         answerBox.innerHTML = noResultsTemplate(movieTitle);
                     }
+
+                    document.querySelectorAll('.star-rating').forEach(el => {
+                            const rating = parseFloat(el.dataset.rating);
+                            const percent = Math.max(0, Math.min(100, (rating / 5) * 100));
+                            console.log(rating)
+                            el.querySelector('.star-fill').style.width = percent + '%';
+                        });
 
                     document.querySelectorAll('.cocktail-buttons').forEach(button => {
                         button.addEventListener('click', () => {

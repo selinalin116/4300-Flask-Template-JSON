@@ -30,3 +30,4 @@ Werkzeug==2.2.2
 nltk==3.9.1
 gensim==4.3.0
 python-Levenshtein==0.21.1
+textblob==0.15.3

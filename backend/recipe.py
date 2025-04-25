@@ -6,6 +6,22 @@ import ast
 import helper_functions
 import math
 from collections import Counter
+import ssl
+import nltk
+from textblob import TextBlob
+
+# try:
+#     _create_unverified_https_context = ssl._create_unverified_context
+# except AttributeError:
+#     pass
+# else:
+#     ssl._create_default_https_context = _create_unverified_https_context
+
+# nltk.download('punkt')
+# nltk.download('wordnet')
+# nltk.download('brown')
+# nltk.download('averaged_perceptron_tagger')
+# nltk.download('movie_reviews')
 
 with open('data/recipes_cleaned.json', 'r') as f:
     recipes = json.load(f)
@@ -96,6 +112,31 @@ def recipe_compute_idf():
 
     return idf_lookup
 
+def get_sentiment(reviews):
+    if reviews is None:
+        return None
+    clean_reviews = [str(r) for r in reviews if isinstance(r, str) and r.strip()]
+
+    if not clean_reviews:
+        return None
+    
+    combined = ' '.join(clean_reviews)
+    return TextBlob(combined).sentiment.polarity
+
+def get_sentiment_text(score):
+    if score is None: 
+        return "No Ratings"
+    elif score < -0.5:
+        return "Very Negative"
+    elif -0.5 <= score < -0.1:
+        return "Fairly Negative"
+    elif -0.1 <= score <= 0.1:
+        return "Neutral"
+    elif 0.1 < score <= 0.5:
+        return "Fairly Positive"
+    else:
+        return "Very Positive"
+
 def clean_recipe_data(recipe):
     """
     Extracts and formats key details from a recipe dictionary.
@@ -107,5 +148,6 @@ def clean_recipe_data(recipe):
         'description': helper_functions.capitalize_sentences(recipe['description']),
         'ingredients': [ingredient.strip().lower() for ingredient in ast.literal_eval(recipe['ingredients'])],
         'rating': recipe['average_rating'],
+        'rating_count': recipe['review_count'],
         'instructions': instructions 
     }

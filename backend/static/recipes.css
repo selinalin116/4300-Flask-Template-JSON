@@ -230,6 +230,47 @@ button.close-button:hover {
     font-family: 'Montserrat', sans-serif;
 }
 
+.rating-container {
+    display: flex;
+    align-items: center;
+    gap: 8px; 
+}
+  
+.numeric-rating {
+    margin: 0;
+    font-weight: bold;
+}
+  
+
+.star-rating {
+    position: relative;
+    display: inline-block;
+    font-size: 24px;
+    font-family: Arial, sans-serif;
+    line-height: 1;
+}
+  
+.star-base {
+    color: lightgray;
+}
+  
+.star-fill {
+    color: gold;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.sentiment-text {
+    font-size: 14px;
+    color: #555;
+    margin-left: 8px;
+}
+  
+
 .recipe-link {
     margin-top: 15px;
     display: inline-block;

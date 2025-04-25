@@ -1,5 +1,5 @@
 from cocktail import *
-from recipe import recipe_vectors, recipes, clean_recipe_data, rec_vt, recipe_vectorizer, i_rec_vt, i_recipe_vectors, recipe_vectorizer_instructions, recipe_compute_idf
+from recipe import recipe_vectors, recipes, clean_recipe_data, rec_vt, recipe_vectorizer, i_rec_vt, i_recipe_vectors, recipe_vectorizer_instructions, recipe_compute_idf, get_sentiment, get_sentiment_text
 import os, string
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
@@ -206,7 +206,6 @@ def find_foods():
             ingredients_list = ast.literal_eval(recipe['ingredients'])
             for ing in ingredients_list:
                 ing = normalize_ingredient(ing)
-                print(ing)
                 words = ing
 
                 ingredients.add(phrase)
@@ -255,6 +254,9 @@ def find_foods():
         except (SyntaxError, ValueError):
             ingredients = set()
 
+        sentiment_score = get_sentiment(recipe["review_list"])
+        sentiment_text = get_sentiment_text(sentiment_score)
+
         intersecting_words = script_words & ingredients  # Compute intersecting words
 
         # Compute top SVD terms
@@ -287,7 +289,7 @@ def find_foods():
         normalized_rating = rating / 5.0  
         final_score = (0.95 * base_score) + (0.05 * normalized_rating)
 
-        combined_scores.append((recipe, final_score, raw_jaccard_score, jaccard_score, svd_script_score, combined_desc_score, base_score, intersecting_words, top_svd_terms))
+        combined_scores.append((recipe, final_score, raw_jaccard_score, jaccard_score, svd_script_score, combined_desc_score, base_score, intersecting_words, top_svd_terms, sentiment_text, sentiment_score))
 
         # combined_scores.append((recipe, final_score, jaccard_score, svd_script_score, combined_desc_score, base_score, intersecting_words, top_svd_terms))
 
@@ -310,9 +312,11 @@ def find_foods():
             "svd_text_score": round(svd_script_score * 100, 1),
             "svd_desc_score": round(combined_desc_score * 100, 1) if combined_desc_score is not None else None,
             "jaccard_intersection": list(intersecting_words),
-            "top_svd_terms": top_svd_terms
+            "top_svd_terms": top_svd_terms,
+            "sentiment_text": sentiment_text,
+            "sentiment_score": sentiment_score
             }
-        for recipe, _, raw_jaccard_score, jaccard_score, svd_script_score, combined_desc_score, score, intersecting_words, top_svd_terms in combined_scores[:6]
+        for recipe, _, raw_jaccard_score, jaccard_score, svd_script_score, combined_desc_score, score, intersecting_words, top_svd_terms, sentiment_text, sentiment_score in combined_scores[:6]
     ]
     
 

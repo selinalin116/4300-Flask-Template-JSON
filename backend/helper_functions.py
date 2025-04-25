@@ -408,7 +408,6 @@ def dietary_res(items, top_k=6, restrictions=None):
         "kosher": non_kosher,
     }
 
-    print(items)
     filtered = []
     for item in items:
         ingredients = item[0]["ingredients"]
