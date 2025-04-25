@@ -396,6 +396,17 @@ div.recipe-header > p {
     opacity: 1;
 }
 
+.no-bullet {
+    list-style: none;
+}
+
+.capitalized {
+    margin-bottom: 6px;
+}
+
+.capitalized::first-letter {
+    text-transform: capitalize;
+}
 
 @media (max-width: 1600px) {
     div#relevant-cocktail-card img {
