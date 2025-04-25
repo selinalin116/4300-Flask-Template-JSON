@@ -47,13 +47,15 @@ def find_foods():
     food_description = request.args.get('fooddescription')
     if food_description is not None:
         food_description = food_description.strip().lower()
+    
+    dietary = request.args.get('dietary')
 
 
     x = [r.strip() for r in drink_description.split(' ')] if drink_description else []
 
     y = [r.strip() for r in food_description.split(' ')] if food_description else []
 
-    diet = x+y
+    diet = [dietary]+x+y
     combine_pairs = [('dairy', 'free'), ('gluten', 'free')]
 
     dietary_restrictions = []
@@ -155,6 +157,7 @@ def find_foods():
         combined_cocktail_scores.append((cocktail, combined_score, raw_jaccard_score, jaccard_score, svd_text_score, combined_desc_score, intersecting_words, top_svd_terms, source))
 
     combined_cocktail_scores = sorted(combined_cocktail_scores, key=lambda x: -x[1])
+    print("diet", dietary_restrictions)
     if (len(dietary_restrictions)>0):
         combined_cocktail_scores=ingredients_to_drink(combined_cocktail_scores,dietary_restrictions)
     alcohol_preference = extract_alcohol_phrases(alcohol_preference)

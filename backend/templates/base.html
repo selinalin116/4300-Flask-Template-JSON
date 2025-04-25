@@ -498,11 +498,11 @@
                 splittedDrinkDesc.forEach((word, i) => {
                     if (alcRestrictions.includes(word)) {
                         drinkRestrictions.push(word);
-                        foodRestrictions.push(word);
+                        // foodRestrictions.push(word);
                         indexesToRemove.push(i);
                     }
                     else if (dietaryRestrictions.includes(word)) {
-                        drinkRestrictions.push(word);
+                        // drinkRestrictions.push(word);
                         foodRestrictions.push(word);
                         indexesToRemove.push(i);
                     }

@@ -411,7 +411,7 @@ def get_cocktail_ingredients(cocktail):
     
     return raw_ingredients, ingredients
 
-meat_no_fish = ['chicken','bacon','turkey','beef','pork','duck','steak','wings',
+meat_no_fish = ['chicken','bacon','turkey','beef','pork','duck','steak','wings','ground round',
                 'boneless skinless chicken breast halves','ham','veal','lamb', 'sausage',
                 'ground chuck','suet','ox kidney']
 fish = ['fish', 'salmon', 'sardines','trout', 'mackerel', 'cod', 'haddock', 'pollock',
