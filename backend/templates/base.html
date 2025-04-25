@@ -351,8 +351,6 @@
                         <h4 class="accent-text">Some Nice Pairings...</h4>
                         <ul class="recommended-cocktails-list">
                             ${recipe.recommended_cocktails.map(cocktail => {
-
-                                console.log(cocktail)
                                 pairingIndex += 1;
 
                                 return `
@@ -635,7 +633,6 @@
                         data.recipes.forEach((r,i) => {
                             const recipe = r.data;
 
-                            console.log(recipe.recommended_cocktails)
                             recipe.score = r.score;
                             recipe.jaccard_score = r.jaccard_score;
                             recipe.weighted_jaccard = r.weighted_jaccard;
@@ -655,7 +652,6 @@
                                     recipeModalContent.className = 'cocktail-card hidden';
                                     recipeModalContent.id = `${i}_${u}`;
 
-                                    console.log(d)
                                     recipeModalContent.innerHTML += cocktailModal(d.data, i, rank=d.rank);
                                     modalContainer.appendChild(recipeModalContent);
                                 })
@@ -748,13 +744,14 @@
                         document.querySelector(`.modal-shadow`).classList.add('hidden');
                     };
 
+                    answerBox.scrollIntoView({ block: "start", inline: "nearest", behavior: "smooth" });
                 })
                 .catch(error => {
                     loadingIndicator.style.display = "none";
                     answerBox.innerHTML = errorTemplate("Failed to get results. Please try again.");
                     console.error('Error:', error);
                 });
-        }
+            }
     </script>
 </body>
 
