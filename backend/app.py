@@ -14,7 +14,6 @@ import numpy as np
 from pairings import get_pairing_score_ranked
 from collections import defaultdict
 import ast
-# from scipy.linalg import orthogonal_procrustes
 
 os.environ['ROOT_PATH'] = os.path.abspath(os.path.join("..",os.curdir))
 
@@ -50,12 +49,11 @@ def find_foods():
     if food_description is not None:
         food_description = food_description.strip().lower()
 
-    # print("food desc", food_description)
-    # dietary_restrictions = request.args.get('dietary', '').strip()
+
     x = [r.strip() for r in drink_description.split(' ')] if drink_description else []
-    # print("x", x)
+
     y = [r.strip() for r in food_description.split(' ')] if food_description else []
-    # print("y", y)
+
     diet = x+y
     combine_pairs = [('dairy', 'free'), ('gluten', 'free')]
 
@@ -69,11 +67,9 @@ def find_foods():
             dietary_restrictions.append(diet[i])
             i += 1
 
-    # print(dietary_restrictions)
 
-    # print("60",dietary_restrictions)
     alcohol_preference = x+y
-    # print(alcohol_preference)
+
     script = helper_functions.get_movie_script(movie_title, SCRIPT_FOLDER)
     if not script:
         return jsonify({"error": "Script or plot not found"})
@@ -242,15 +238,11 @@ def find_foods():
         
         if food_description is not None:
             query_vec = helper_functions.embed_ingredient_list([food_description], model)
-            # print(query_vec)
             food_vec = helper_functions.embed_ingredient_list(ingredients_list, model)
-            # print(food_vec)
 
             if query_vec is not None and food_vec is not None:
                 sim = cosine_sim(query_vec, food_vec)
                 food_cosine_scores.append(sim)
-            # else:
-            #     print("Could not compute similarity")
 
     combined_scores = []
     for i, recipe in enumerate(recipes):
@@ -307,9 +299,7 @@ def find_foods():
         normalized_rating = rating / 5.0  
         final_score = (0.95 * base_score) + (0.05 * normalized_rating)
 
-        combined_scores.append((recipe, final_score, raw_jaccard_score, jaccard_score, svd_script_score, combined_desc_score, base_score, intersecting_words, top_svd_terms, sentiment_text, sentiment_score))
-
-        # combined_scores.append((recipe, final_score, jaccard_score, svd_script_score, combined_desc_score, base_score, intersecting_words, top_svd_terms))
+        combined_scores.append((recipe, final_score, raw_jaccard_score, jaccard_score, svd_script_score, combined_desc_score, base_score, intersecting_words, top_svd_terms))
 
     combined_scores = sorted(
         combined_scores,
@@ -321,13 +311,10 @@ def find_foods():
     if (len(dietary_restrictions)>0):
         combined_scores = dietary_res(combined_scores, 6, dietary_restrictions)
     
-    # print("dietary restrictions", dietary_restrictions)
-    # print("combined", combined_scores)
     top_recipes = [
         {
             "data": clean_recipe_data(recipe),
             "score": round(score * 100, 1),
-            # "jaccard_score": round(jaccard_score * 100, 1),
             "jaccard_score": round(raw_jaccard_score * 100, 1),
             "weighted_jaccard": round(jaccard_score * 100, 1),
             "svd_text_score": round(svd_script_score * 100, 1),
@@ -395,6 +382,3 @@ def movie_suggestions():
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=5000)
-
-# # if 'DB_NAME' not in os.environ:
-# #     app.run(debug=True,host="0.0.0.0",port=5000)
