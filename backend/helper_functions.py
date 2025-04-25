@@ -419,7 +419,7 @@ fish = ['fish', 'salmon', 'sardines','trout', 'mackerel', 'cod', 'haddock', 'pol
         'oysters', 'crab', 'shrimp', 'sea bass', 'halibut', 'tuna','clams',
         'lobster','anchovy','marlin steaks','conch','caviar']
 dairy = ['milk', 'ice cream', 'cheese', 'yoghurt', 'yogurt', 'cream', 'butter', 
-            'buttermilk', 'heavy cream', 'butter', 'egg','custard',
+            'buttermilk', 'heavy cream', 'butter', 'egg','custard', 'heavy cream',
             'half-and-half','marscarpone','eggs','heavy whipping cream', 'chocolate']
 gluten_food = ['bread', 'beer', 'cake', 'pie', 'candy', 'cereal', 'cookie', 'croutons', 'french fries',
                 'gravy', 'seafood', 'malt', 'pasta', 'hot dog', 'salad dressing', 'soy sauce', 'rice seasoning', 
