@@ -165,7 +165,7 @@ def find_foods():
             preference_boost = sum(1 for word in drink_description.split() if word in cocktail_ingredients) * 0.1
 
         combined_score = helper_functions.combine_scores(jaccard_score, combined_svd_score, alpha=0.4) + preference_boost
-        combined_cocktail_scores.append((cocktail, combined_score, raw_jaccard_score, svd_text_score, combined_desc_score, intersecting_words, top_svd_terms, source))
+        combined_cocktail_scores.append((cocktail, combined_score, raw_jaccard_score, jaccard_score, svd_text_score, combined_desc_score, intersecting_words, top_svd_terms, source))
 
     combined_cocktail_scores = sorted(combined_cocktail_scores, key=lambda x: -x[1])
 
@@ -182,13 +182,14 @@ def find_foods():
             "data": clean_cocktail_data(cocktail),
             "score": round(score * 100, 1),
             "jaccard_score": round(raw_jaccard_score * 100, 1),
+            "weighted_jaccard_score": round(jaccard_score * 100, 1),
             "svd_text_score": round(svd_text_score * 100, 1),
             "svd_desc_score": round(combined_desc_score * 100, 1) if combined_desc_score is not None else None,
             "jaccard_intersection": list(intersecting_words),
             "top_svd_terms": top_svd_terms,
             "source": source
         }
-        for cocktail, score, raw_jaccard_score, svd_text_score, combined_desc_score, intersecting_words, top_svd_terms, source in combined_cocktail_scores[:6]
+        for cocktail, score, raw_jaccard_score, jaccard_score, svd_text_score, combined_desc_score, intersecting_words, top_svd_terms, source in combined_cocktail_scores[:6]
     ]
 
     rec_script_tfidf = recipe_vectorizer.transform([script])
