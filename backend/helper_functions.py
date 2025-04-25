@@ -476,6 +476,7 @@ def drinks_filtered(items, top_k, preferences):
             break
 
     return filtered
+
 def ingredients_to_drink(drink, pref):
     filtered = []
     for item in drink:
@@ -513,3 +514,20 @@ def extract_alcohol_phrases(word_list):
         else:
             i += 1
     return phrases
+
+def load_all_scripts(script_folder):
+    """
+    Loads the full text of all .txt scripts in the given folder.
+    
+    Parameters:
+        script_folder (str): Path to the folder containing movie scripts.
+
+    Returns:
+        List[str]: A list of script texts (one per file).
+    """
+    script_texts = []
+    for filename in os.listdir(script_folder):
+        if filename.endswith(".txt"):
+            with open(os.path.join(script_folder, filename), "r", encoding="utf-8", errors="ignore") as f:
+                script_texts.append(f.read())
+    return script_texts

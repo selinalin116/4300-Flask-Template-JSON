@@ -80,36 +80,6 @@ def find_foods():
     
     script_words = set(script.split())
 
-    # Extract cocktail ingredients
-    # cocktail_ingredients_set = set()
-    # for cocktail in cocktails:
-    #     cocktail_ingredients = extract_ingredients(cocktail)
-    #     for ingredient in cocktail_ingredients:
-    #         normalized_results = normalize_ingredient(ingredient)
-    #         if normalized_results:
-    #             for result in normalized_results:
-    #                 cocktail_ingredients_set.add(result)
-
-    # # Extract recipe ingredients
-    # recipe_ingredients_set = set()
-    # for recipe in recipes:
-    #     try:
-    #         ingredients_list = ast.literal_eval(recipe['ingredients'])
-    #         for ing in ingredients_list:
-    #             phrase = ing.lower().strip()
-    #             words = phrase.split()
-
-    #         # Add full ingredient
-    #         recipe_ingredients_set.add(phrase)
-
-    #         # Add last two words individually
-    #         if len(words) >= 2:
-    #             recipe_ingredients_set.update(words[-2:])
-    #         elif words:
-    #             recipe_ingredients_set.add(words[0])
-    #     except (SyntaxError, ValueError):
-    #         pass
-
     similarities = script_projected.dot(cocktail_vectors.T)
 
     beta = 0.9
