@@ -44,7 +44,6 @@ def find_foods():
     drink_description = request.args.get('drinkdescription')
     if drink_description is not None:
         drink_description = drink_description.strip().lower()
-    
     food_description = request.args.get('fooddescription')
     if food_description is not None:
         food_description = food_description.strip().lower()
@@ -66,9 +65,15 @@ def find_foods():
         else:
             dietary_restrictions.append(diet[i])
             i += 1
-
-
-    alcohol_preference = x+y
+    phrases = []
+    alcohol_pref = request.args.get('alcohol')
+    if alcohol_pref:
+        alcohol_pref = alcohol_pref.strip().lower()
+        if alcohol_pref in ["non-alcoholic", "non alcoholic", "no alcohol", "Non-alcoholic"]:
+            phrases.append("non alcoholic")
+        elif alcohol_pref in ["alcohol only", "only alcohol"]:
+            phrases.append("alcoholic")
+    alcohol_preference = x+y+phrases
 
     script = helper_functions.get_movie_script(movie_title, SCRIPT_FOLDER)
     if not script:
@@ -152,7 +157,6 @@ def find_foods():
     combined_cocktail_scores = sorted(combined_cocktail_scores, key=lambda x: -x[1])
     if (len(dietary_restrictions)>0):
         combined_cocktail_scores=ingredients_to_drink(combined_cocktail_scores,dietary_restrictions)
-
     alcohol_preference = extract_alcohol_phrases(alcohol_preference)
     # Filter based on user preferences
     if (len(alcohol_preference)==1):
@@ -336,7 +340,8 @@ def find_foods():
         sorted_pairings = sorted(pairings, key=lambda x: -x["rank"])[:3]
 
         recipe["data"]["recommended_cocktails"] = sorted_pairings
-
+    # print(top_cocktails)
+    # print(top_recipes)
     return jsonify({
         "cocktails": top_cocktails,
         "recipes": top_recipes,
