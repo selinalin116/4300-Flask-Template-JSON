@@ -194,10 +194,15 @@
                     </div>
 
                     <div class="cocktail-explanation">
-                        <p>
-                            This drink was recommended because it shares ${cocktail.jaccard_score}% of its ingredients with the movie script keywords 
-                        and has a script similarity score of ${cocktail.svd_text_score}% based on thematic content${cocktail.svd_desc_score !== null ? ` and also has a similarity score of ${cocktail.svd_desc_score}% based on additional description provided` : ''} If we give lower weighting to common ingredients, the recipe has a ingredient similarity of ${cocktail.weighted_jaccard_score}%.
-                        </p>
+                           <p>
+                                This drink was recommended because it shares ${cocktail.jaccard_score}% of its ingredients with the movie script keywords.
+                            </p>
+                            <p class="detail-text">
+                                <strong>Shared Ingredients/Words:</strong> ${cocktail.jaccard_intersection && cocktail.jaccard_intersection.length > 0 ? cocktail.jaccard_intersection.join(', ') : 'N/A'}
+                            </p>
+                            <p class="detail-text">
+                                <strong>Top SVD Themes:</strong> ${cocktail.top_svd_terms && cocktail.top_svd_terms.length > 0 ? cocktail.top_svd_terms.join(', ') : 'N/A'}
+                            </p>
                     </div>
                 </div>
                 <div class='modal-image'>
