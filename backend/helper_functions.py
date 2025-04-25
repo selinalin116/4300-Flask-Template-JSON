@@ -336,33 +336,6 @@ def combine_scores(jaccard_score, svd_score, alpha = .25):
     """
     return alpha * jaccard_score + (1 - alpha) * svd_score
 
-# def cosine_similarity(script, recipes, recipe_vectorizer):
-#     """
-#     Calculate cosine similarity between script and recipes using existing TF-IDF vectorizer
-#     """
-#     # Transform script using existing recipe vectorizer
-#     script_tfidf = recipe_vectorizer.transform([script])
-    
-#     # Get recipe ingredients as text for vectorization
-#     recipe_texts = [" ".join(recipe['ingredients']) for recipe in recipes]
-    
-#     # Transform recipes using the same vectorizer
-#     recipe_tfidf = recipe_vectorizer.transform(recipe_texts)
-    
-#     # Calculate cosine similarity directly between script and each recipe
-#     similarities = sklearn_cosine_similarity(script_tfidf, recipe_tfidf)[0]
-    
-#     return similarities
-
-def cosine_similarity(ingredients_tfidf, description, vectorizer):
-    description_tfidf = vectorizer.transform([description])
-    
-    # Calculate similarity (0-1 score)
-    similarity = sklearn_cosine_similarity(ingredients_tfidf, description_tfidf)[0]
-    
-    # Convert to percentage
-    return similarity
-
 
 def description_svd(vectorizer, additional_description, vt, vectors):
     """
@@ -494,6 +467,8 @@ def drinks_filtered(items, top_k, preferences):
     filtered = []
     for item in items:
         alc = [item[0]["strAlcoholic"].lower()]
+        # print("alc",alc)
+        # print("pref",preferences)
         if (alc==preferences):
             filtered.append(item)
 
