@@ -328,7 +328,7 @@ def find_foods():
                     "cocktail": cocktail["data"]["name"],
                     "link": cocktail["data"]["recipe_link"],
                     "compatibility": label,
-                    "rank": rank
+                    "rank": rank,
                 })
 
     for recipe in top_recipes:

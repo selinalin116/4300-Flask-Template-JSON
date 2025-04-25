@@ -58,4 +58,5 @@ def get_pairing_score_ranked(cocktail_ings, recipe_ings, model, sim_threshold=0.
                 best_label = "Weak Compatibility"
                 best_rank = 1
 
+
     return best_label, best_rank
