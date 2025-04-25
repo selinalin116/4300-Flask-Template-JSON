@@ -113,6 +113,9 @@ def get_movie_script(movie_title, folder, min_word_length=3):
     return ' '.join(tokens)
 
 def generate_ngrams(tokens, n):
+    """
+    Generates a list of n-grams (contiguous sequences of n tokens) from a list of tokens
+    """
     return [' '.join(tokens[i:i+n]) for i in range(len(tokens) - n + 1)]
 
 def get_script_phrases(script_text, min_word_length=3):
@@ -127,44 +130,87 @@ def get_script_phrases(script_text, min_word_length=3):
 
     return phrases
 
+# def normalize_ingredient(ingredient):
+#     """
+#     Normalize ingredient phrase to remove common descriptors
+#     """
+#     phrase = ingredient.lower().strip()
+#     results = set()
 
-import re
+#     # Compounds where we don't want to extract the base ingredient since the individual words do not have much significant meanings
+#     no_base_extraction = ['baking powder', 'baking soda']
+    
+#     # Common compound ingredints
+#     compound_ingredients = [
+#         'olive oil', 'vegetable oil', 'peanut butter', 'cream cheese', 
+#         'sour cream', 'maple syrup',
+#         'coconut milk', 'heavy cream', 'red wine', 'white wine', 
+#     ]
+    
+#     all_compounds = no_base_extraction + compound_ingredients
+
+#     for compound in all_compounds:
+#         if compound in phrase:
+#             results.add(compound)
+            
+#             if compound not in no_base_extraction:
+#                 base_ingredient = compound.split()[-1]  # Gets the last word of a compound ingredient since that is usually a noun
+#                 if base_ingredient not in results:
+#                     results.add(base_ingredient)
+#             else:
+#                 return
+
+#     phrase = ingredient.lower().strip()
+    
+#     # Common descriptors in ingredients
+#     modifiers = [
+#         'fresh', 'chopped', 'diced', 'sliced', 'crushed', 'ground', 'minced',
+#         'large', 'small', 'medium', 'extra', 'shredded', 'grated', 'whole', 'cups',
+#         'plain', 'unsweetened', 'sweetened', 'semi-sweet', 'cooked', 'raw', 'all-purpose',
+#         'brown', 'heavy', 'unsalted', 'light', 'dark', 'hard', 'smoked',
+#         'half', 'green', 'hot', 'red', 'warm', 'lean', 'sour', 'food', 'sweet', 'mixed', 'yellow', 'black', 'white', 'prepared', 'round', 'boiling', 'bay', 'dry', 'instant', 'cut', 'dried', 'fresh', 'stuffed'
+#     ]
+
+#     # Remove descriptors
+#     words = phrase.split()
+#     filtered_words = [word for word in words if word not in modifiers]
+
+#     if filtered_words:
+#         results.add(" ".join(filtered_words))  # cleaned full phrase
+#         results.update(filtered_words)   
+    
+#     return list(results)
 
 def normalize_ingredient(ingredient):
     """
     Normalize ingredient phrase to remove common descriptors
-    Returns both compound ingredients and base ingredients except for special cases
     """
     phrase = ingredient.lower()
     results = []
 
-    # Compounds where we don't want to extract the base ingredient
+    # Compounds where we don't want to extract the base ingredient since the individual words do not have much significant meanings
     no_base_extraction = ['baking powder', 'baking soda']
     
-    # Regular compound ingredients
+    # Common compound ingredints
     compound_ingredients = [
         'olive oil', 'vegetable oil', 'peanut butter', 'cream cheese', 
-        'sour cream', 'maple syrup', 'vanilla extract', 'almond extract', 
+        'sour cream', 'maple syrup',
         'coconut milk', 'heavy cream', 'red wine', 'white wine', 
-        'beef stock', 'chicken stock'
     ]
     
-    # All compounds to check (both types)
     all_compounds = no_base_extraction + compound_ingredients
 
-    # Check if the phrase contains a compound ingredient
     for compound in all_compounds:
         if compound in phrase:
-            # Add the compound ingredient
             results.append(compound)
             
-            # Add the base ingredient only for regular compounds
             if compound not in no_base_extraction:
-                base_ingredient = compound.split()[-1]  # Get the last word
+                base_ingredient = compound.split()[-1]  # Gets the last word of a compound ingredient since that is usually a noun
                 if base_ingredient not in results:
                     results.append(base_ingredient)
+            else:
+                return
 
-    # Process the regular way too
     phrase = ingredient.lower().strip()
     
     # Common descriptors in ingredients
@@ -172,18 +218,28 @@ def normalize_ingredient(ingredient):
         'fresh', 'chopped', 'diced', 'sliced', 'crushed', 'ground', 'minced',
         'large', 'small', 'medium', 'extra', 'shredded', 'grated', 'whole', 'cups',
         'plain', 'unsweetened', 'sweetened', 'semi-sweet', 'cooked', 'raw', 'all-purpose',
-        'brown', 'heavy', 'unsalted', 'light', 'dark',
-        'half', 'green', 'hot', 'red', 'warm', 'lean', 'sour', 'food', 'sweet', 'mixed'
+        'brown', 'heavy', 'unsalted', 'light', 'dark', 'hard', 'smoked',
+        'half', 'green', 'hot', 'red', 'warm', 'lean', 'sour', 'food', 'sweet', 'mixed', 'yellow', 'black', 'white', 'prepared', 'round', 'boiling', 'bay', 'dry', 'instant', 'cut', 'dried', 'fresh', 'stuffed', 'live'
     ]
 
-    # Remove modifiers
+    # Remove descriptors
     words = phrase.split()
     filtered_words = [word for word in words if word not in modifiers]
 
-    # Collapse to final phrase
     normalized = ' '.join(filtered_words).strip()
     if normalized and normalized not in results:
         results.append(normalized)
+    
+    if len(filtered_words) >= 2:
+        last_one = filtered_words[-1]
+        second_last = filtered_words[-2]
+        if second_last not in results:
+            results.append(second_last)
+        if last_one not in results:
+            results.append(last_one)
+    elif filtered_words:
+        if filtered_words[0] not in results:
+            results.append(filtered_words[0])
     
     return results if results else None
 
@@ -247,12 +303,6 @@ def penalize_jaccard_similarity(script_words, ingredient_set, weight_dict, raw_w
     """
     A version of jaccard similarity that takes idf and ingredient list length into account
     """
-    # bad_substrings = {"hot", "damn"}
-
-    # ingredient_set = {
-    #     ing for ing in ingredient_set
-    #     if not any(bad in ing.lower() for bad in bad_substrings)
-    # }
 
     intersection = script_words & ingredient_set
     union = script_words | ingredient_set
@@ -267,45 +317,24 @@ def penalize_jaccard_similarity(script_words, ingredient_set, weight_dict, raw_w
     raw_jaccard = raw_intersection_weight / raw_ingredient_weight if union else 0.0
 
     # Penalize short ingredient lists
-    penalty = len(ingredient_set) / (len(ingredient_set) + 2) 
+    penalty = len(ingredient_set) / (len(ingredient_set) + 3) 
     penalized_score = weighted_score * penalty
 
     return penalized_score, raw_jaccard
 
 def cosine_sim(vec1, vec2):
+    """
+    Computes the cosine similarity between two vectors.
+    """
     sim = np.dot(vec1, vec2) / (np.linalg.norm(vec1) * np.linalg.norm(vec2))
 
     return sim
 
 def combine_scores(jaccard_score, svd_score, alpha = .25):
+    """
+    Combines Jaccard and SVD similarity scores using a weighted average.
+    """
     return alpha * jaccard_score + (1 - alpha) * svd_score
-
-# def cosine_similarity(script, recipes, recipe_vectorizer):
-#     """
-#     Calculate cosine similarity between script and recipes using existing TF-IDF vectorizer
-#     """
-#     # Transform script using existing recipe vectorizer
-#     script_tfidf = recipe_vectorizer.transform([script])
-    
-#     # Get recipe ingredients as text for vectorization
-#     recipe_texts = [" ".join(recipe['ingredients']) for recipe in recipes]
-    
-#     # Transform recipes using the same vectorizer
-#     recipe_tfidf = recipe_vectorizer.transform(recipe_texts)
-    
-#     # Calculate cosine similarity directly between script and each recipe
-#     similarities = sklearn_cosine_similarity(script_tfidf, recipe_tfidf)[0]
-    
-#     return similarities
-
-def cosine_similarity(ingredients_tfidf, description, vectorizer):
-    description_tfidf = vectorizer.transform([description])
-    
-    # Calculate similarity (0-1 score)
-    similarity = sklearn_cosine_similarity(ingredients_tfidf, description_tfidf)[0]
-    
-    # Convert to percentage
-    return similarity
 
 
 def description_svd(vectorizer, additional_description, vt, vectors):
@@ -327,9 +356,13 @@ def is_edit_distance_match(word, target, max_dist=2):
     return Levenshtein.distance(word.lower(), target.lower()) <= max_dist
 
 def edit_normalize_ingredient(ingredient):
-    for canonical in synonym_map:
-        if is_edit_distance_match(ingredient, canonical):
-            return canonical
+    """
+    Normalizes an ingredient string by matching it to a synonym key 
+    using edit distance.
+    """
+    for key in synonym_map:
+        if is_edit_distance_match(ingredient, key):
+            return key
     return ingredient
 
 synonym_map = {
@@ -347,7 +380,6 @@ def embed_ingredient_list(ingredients, model):
         normalized = edit_normalize_ingredient(ingredient)
         words = normalized.lower().split()
 
-        # Inject synonyms for known concepts like "homecooked"
         if normalized in synonym_map:
             words += synonym_map[normalized]
 
@@ -408,8 +440,6 @@ def dietary_res(items, top_k=6, restrictions=None):
     Helper to filter and return top_k items based on dietary restrictions
     """
 
-
-    # print(items)
     filtered = []
     for item in items:
         ingredients = item[0]["ingredients"]

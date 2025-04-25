@@ -1,4 +1,3 @@
-
 .results-container {
     width: 100%;
     max-width: 100%;
@@ -21,10 +20,11 @@ ul.dashed > li:before {
 
 .section-header {
     width: 100%;
-    text-align: left;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    font-family: 'Kanit', sans-serif;
+    text-align: center;
+    margin-top: 40px;
+    margin-bottom: 0;
+    font-weight: normal;
+    color: #e50914;
 }
 
 /*
@@ -65,10 +65,10 @@ div.cocktail-header {
 div.cocktail-header > p {
     margin: 0;
 }
-div.cocktail-instructions {
+div.instructions {
     width: 75%;
 }
-div.cocktail-explanation {
+div.explanation {
     border-left: 6px solid black;
     background-color: rgb(194, 194, 194);
     padding: 10px 40px;
@@ -100,7 +100,7 @@ div.hr {
     padding: 30px;
 
     background-color: rgb(194, 194, 194);
-    box-shadow: 0 0 5px 1px rgba(0,0,0,0.9);
+    /* box-shadow: 0 0 5px 1px rgba(0,0,0,0.9); */
 }
 .cocktail-section > h4 {
     margin: 0;
@@ -112,13 +112,13 @@ div.hr {
     justify-content: space-evenly;
     align-items: top;
 
-    padding: 0 50px;
+    padding: 0 20px;
 }
 .cocktail-buttons {
     width:auto;
-    max-width: 15%;
-    height: 300px;
-    padding: 8px;
+    max-width: 16%;
+    height: 280px;
+    padding: 15px;
 
     display: flex;
     flex-direction: column;
@@ -128,6 +128,7 @@ div.hr {
     font-family: 'Montserrat', sans-serif;
     border: none;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    /* border-radius: 10px; */
 
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -138,6 +139,7 @@ div.hr {
 }
 .cocktail-buttons img {
     width: 95%;
+    max-width: 200px; 
     height: auto;
     margin: 0 auto;
 
@@ -180,10 +182,11 @@ div.cocktail-card {
     flex-direction: row;
     justify-content: space-between;
 }
-div#cocktail-details {
+div.cocktail-details {
     width: 50%;
-    height: 100%;
-    padding: 30px;
+    height: 90%;
+    margin: 30px;
+    overflow-y: auto;
 }
 div.modal-image {
     width: 45%;
@@ -218,63 +221,105 @@ button.close-button:hover {
     cursor: pointer;
 }
 
-.ingredients-list {
-    width: 100%;
-    padding-left: 20px;
-    margin: 10px 0;
-    text-align: left;
-}
+/*
+RECIPE SECTION
+*/
+div.recipe-section {
+    padding: 40px;
+    padding-top: 15px;
+    margin-bottom: 200px;
 
-.ingredients-list li {
-    margin-bottom: 5px;
-    font-family: 'Montserrat', sans-serif;
-}
-
-.recipe-link {
-    margin-top: 15px;
-    display: inline-block;
-    padding: 8px 16px;
-    background-color: #4b6584;
-    color: white;
-    text-decoration: none;
-    border-radius: 20px;
-    font-weight: 500;
-    transition: background-color 0.3s;
-}
-
-.recipe-link:hover {
-    background-color: #3867d6;
-}
-
-.recipe-card {
-    width: 100%;
-    box-sizing: border-box;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    margin-bottom: 20px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-
-.recipe-left {
-    flex: 50%;
-    padding-right: 30px;
-}
-
-.recipe-right {
-    flex: 50%;
-}
-
-.recipe-info {
     display: flex;
     flex-direction: row;
 }
+div.recipe-buttons {
+    width: 40%;
+    height: fit-content;
 
-.recipe-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display:flex;
+    flex-direction: column;
+}
+button.recipe-button {
+    text-align: left;
+    padding: 10px;
+    font-family: 'Montserrat', sans-serif;
+    border-radius: 0;
+    border: 1px solid black;
+    font-size: 15px;
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 23px 10px;
+}
+button.recipe-button:hover {
+    cursor: pointer;
+}
+button.recipe-button h3 {
+    margin: 0;
+    font-weight: normal;
+}
+button.recipe-button h4 {
+    margin: 0;
+    margin-top: 5px;
+    font-weight: normal;
+}
+
+.recipe-cards {
+    width: 70%;
+    background-color: white;
+    border-radius: 0 8px 8px 8px;
+    border: 2px solid black;
+    
+    padding: 30px;
+}
+h3.recipe-name {
+    font-size: 40px;
+    margin: 0;
+}
+div.recipe-header > p {
+    margin: 0;
+    margin-bottom: 10px;
+}
+
+/* Rating section in food recipes container */
+.rating-container {
+    display: flex;
+    align-items: center;
+    gap: 8px; 
+}
+  
+.numeric-rating {
+    margin: 0;
+    font-weight: bold;
+}
+
+.star-rating {
+    position: relative;
+    display: inline-block;
+    font-size: 24px;
+    font-family: Arial, sans-serif;
+    line-height: 1;
+}
+  
+.star-base {
+    color: lightgray;
+}
+  
+.star-fill {
+    color: #e50914;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.sentiment-text {
+    font-size: 14px;
+    color: #555;
+    margin-left: 8px;
 }
 
 .suggestions-dropdown {
@@ -301,6 +346,47 @@ button.close-button:hover {
 .suggestions-dropdown li:hover {
     background-color: #f0f0f0;
 }
+
+/* Info Hover Buttons */
+.info-tooltip {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #444;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    line-height: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.tooltip-text {
+    visibility: hidden;
+    width: 240px;
+    background-color: #333;
+    color: #fff;
+    text-align: left;
+    border-radius: 5px;
+    padding: 8px;
+    position: absolute;
+    z-index: 1;
+    top: -5px;
+    left: 30px;
+    font-size: 13px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.info-tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
 
 
 @media (max-width: 1600px) {

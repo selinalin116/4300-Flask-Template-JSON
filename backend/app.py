@@ -1,12 +1,14 @@
 from cocktail import *
-from recipe import recipe_vectors, recipes, clean_recipe_data, rec_vt, recipe_vectorizer, i_rec_vt, i_recipe_vectors, recipe_vectorizer_instructions, recipe_compute_idf
+from recipe import recipe_vectors, recipes, clean_recipe_data, rec_vt, recipe_vectorizer, i_rec_vt, i_recipe_vectors, recipe_vectorizer_instructions, recipe_compute_idf, get_sentiment, get_sentiment_text
 import os, string
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 import helper_functions
 import ast
 from cocktail import extract_ingredients
+
 from helper_functions import dietary_res, drinks_filtered, penalize_jaccard_similarity, cosine_sim, normalize_ingredient, ingredients_to_drink, extract_alcohol_phrases
+
 from gensim.models import KeyedVectors
 import numpy as np
 from pairings import get_pairing_score_ranked
@@ -81,38 +83,36 @@ def find_foods():
     script_projected = normalize(script_projected)
     
     script_words = set(script.split())
-    # script_words = get_script_phrases(script)
 
     # Extract cocktail ingredients
-    cocktail_ingredients_set = set()
-    for cocktail in cocktails:
-        cocktail_ingredients = extract_ingredients(cocktail)
-        for ingredient in cocktail_ingredients:
-            normalized_results = normalize_ingredient(ingredient)
-            if normalized_results:
-                for result in normalized_results:
-                    cocktail_ingredients_set.add(result)
+    # cocktail_ingredients_set = set()
+    # for cocktail in cocktails:
+    #     cocktail_ingredients = extract_ingredients(cocktail)
+    #     for ingredient in cocktail_ingredients:
+    #         normalized_results = normalize_ingredient(ingredient)
+    #         if normalized_results:
+    #             for result in normalized_results:
+    #                 cocktail_ingredients_set.add(result)
 
-    # Extract recipe ingredients
-    recipe_ingredients_set = set()
-    for recipe in recipes:
-        try:
-            ingredients_list = ast.literal_eval(recipe['ingredients'])
-            # recipe_ingredients_set.update(ing.lower().strip() for ing in ingredients_list)
-            for ing in ingredients_list:
-                phrase = ing.lower().strip()
-                words = phrase.split()
+    # # Extract recipe ingredients
+    # recipe_ingredients_set = set()
+    # for recipe in recipes:
+    #     try:
+    #         ingredients_list = ast.literal_eval(recipe['ingredients'])
+    #         for ing in ingredients_list:
+    #             phrase = ing.lower().strip()
+    #             words = phrase.split()
 
-            # Add full ingredient
-            recipe_ingredients_set.add(phrase)
+    #         # Add full ingredient
+    #         recipe_ingredients_set.add(phrase)
 
-            # Add last two words individually
-            if len(words) >= 2:
-                recipe_ingredients_set.update(words[-2:])
-            elif words:
-                recipe_ingredients_set.add(words[0])
-        except (SyntaxError, ValueError):
-            pass
+    #         # Add last two words individually
+    #         if len(words) >= 2:
+    #             recipe_ingredients_set.update(words[-2:])
+    #         elif words:
+    #             recipe_ingredients_set.add(words[0])
+    #     except (SyntaxError, ValueError):
+    #         pass
 
     similarities = script_projected.dot(cocktail_vectors.T)
 
@@ -136,12 +136,9 @@ def find_foods():
         cocktail_vec = helper_functions.embed_ingredient_list(cocktail_ingredients, model)
 
         cocktail_ingredients_set = set(" ".join(cocktail_ingredients).lower().split())
-        # jaccard_score = weighted_jaccard_similarity(script_words, cocktail_ingredients_set, cocktail_weight_dict)
         jaccard_score, raw_jaccard_score = penalize_jaccard_similarity(script_words, cocktail_ingredients_set, cocktail_weight_dict, weight_dict)
         cocktail_jaccard_scores.append(jaccard_score)
         cocktail_raw_jaccard_scores.append(raw_jaccard_score)
-        # cosine_score = helper_functions.cosine_similarity(cocktail_ingredients_tfidf, drink_description, cocktail_ingredients_vectorizer)
-        # print(cosine_score)
 
         if drink_description is not None:
             query_vec = helper_functions.embed_ingredient_list([drink_description], model)
@@ -149,9 +146,8 @@ def find_foods():
             if query_vec is not None and cocktail_vec is not None:
                 sim = cosine_sim(query_vec, cocktail_vec)
                 cocktail_cosine_scores.append(sim)
-                # print("Similarity:", sim)
-            # else:
-            #     print("Could not compute similarity")
+            else:
+                print("Could not compute similarity")
 
     
     combined_cocktail_scores = []
@@ -165,6 +161,8 @@ def find_foods():
 
         svd_text_score = similarities[0][i]
         combined_desc_score = None
+
+        # SVD for additional description for drinks
         if drink_description is not None:
             svd_desc_score = cocktail_desc_similarities[0][i]
             cosine_score = cocktail_cosine_scores[i]
@@ -177,13 +175,13 @@ def find_foods():
         jaccard_score = cocktail_jaccard_scores[i]
         raw_jaccard_score = cocktail_raw_jaccard_scores[i]
 
-        # boost score if user preference matches cocktail ingredients
+        # Boost score if user preference matches cocktail ingredients
         preference_boost = 0
         if drink_description:
             preference_boost = sum(1 for word in drink_description.split() if word in cocktail_ingredients) * 0.1
 
         combined_score = helper_functions.combine_scores(jaccard_score, combined_svd_score, alpha=0.4) + preference_boost
-        combined_cocktail_scores.append((cocktail, combined_score, raw_jaccard_score, svd_text_score, combined_desc_score, intersecting_words, top_svd_terms, source))
+        combined_cocktail_scores.append((cocktail, combined_score, raw_jaccard_score, jaccard_score, svd_text_score, combined_desc_score, intersecting_words, top_svd_terms, source))
 
     combined_cocktail_scores = sorted(combined_cocktail_scores, key=lambda x: -x[1])
     if (len(dietary_restrictions)>0):
@@ -200,13 +198,14 @@ def find_foods():
             "data": clean_cocktail_data(cocktail),
             "score": round(score * 100, 1),
             "jaccard_score": round(raw_jaccard_score * 100, 1),
+            "weighted_jaccard_score": round(jaccard_score * 100, 1),
             "svd_text_score": round(svd_text_score * 100, 1),
             "svd_desc_score": round(combined_desc_score * 100, 1) if combined_desc_score is not None else None,
             "jaccard_intersection": list(intersecting_words),
             "top_svd_terms": top_svd_terms,
             "source": source
         }
-        for cocktail, score, raw_jaccard_score, svd_text_score, combined_desc_score, intersecting_words, top_svd_terms, source in combined_cocktail_scores[:6]
+        for cocktail, score, raw_jaccard_score, jaccard_score, svd_text_score, combined_desc_score, intersecting_words, top_svd_terms, source in combined_cocktail_scores[:6]
     ]
 
     rec_script_tfidf = recipe_vectorizer.transform([script])
@@ -225,17 +224,18 @@ def find_foods():
             for ing in ingredients_list:
                 ing = normalize_ingredient(ing)
                 words = ing
+                if ing:
+                    for result in ing:
+                        ingredients.add(result)
 
-                ingredients.add(phrase)
-
-                if len(words) >= 2:
-                    ingredients.update(words[-2:])
-                elif words:
-                    ingredients.add(words[0])
+                if words:
+                    if len(words) >= 2:
+                        ingredients.update(words[-2:])
+                    elif words:
+                        ingredients.add(words[0])
         except (SyntaxError, ValueError):
             ingredients = set()
 
-        # jaccard_score = weighted_jaccard_similarity(script_words, ingredients, weight_dict)
         jaccard_score, raw_jaccard_score = penalize_jaccard_similarity(script_words, ingredients, food_weight_dict, weight_dict)
         recipe_jaccard_scores.append(jaccard_score)
         food_raw_jaccard_scores.append(raw_jaccard_score)
@@ -260,17 +260,20 @@ def find_foods():
             for ing in ingredients_list:
                 ing = normalize_ingredient(ing)
                 words = ing
-
-                ingredients.add(phrase)
-
-                if len(words) >= 2:
-                    ingredients.update(words[-2:])
-                elif words:
-                    ingredients.add(words[0])
-
-            # print(recipe_ingredients_set)
+                if ing:
+                    for result in ing:
+                        ingredients.add(result)
+                if words:
+                    if len(words) >= 2:
+                        ingredients.update(words[-2:])
+                    elif words:
+                        ingredients.add(words[0])
+            
         except (SyntaxError, ValueError):
             ingredients = set()
+
+        sentiment_score = get_sentiment(recipe["review_list"])
+        sentiment_text = get_sentiment_text(sentiment_score)
 
         intersecting_words = script_words & ingredients  # Compute intersecting words
 
@@ -304,7 +307,7 @@ def find_foods():
         normalized_rating = rating / 5.0  
         final_score = (0.95 * base_score) + (0.05 * normalized_rating)
 
-        combined_scores.append((recipe, final_score, raw_jaccard_score, jaccard_score, svd_script_score, combined_desc_score, base_score, intersecting_words, top_svd_terms))
+        combined_scores.append((recipe, final_score, raw_jaccard_score, jaccard_score, svd_script_score, combined_desc_score, base_score, intersecting_words, top_svd_terms, sentiment_text, sentiment_score))
 
         # combined_scores.append((recipe, final_score, jaccard_score, svd_script_score, combined_desc_score, base_score, intersecting_words, top_svd_terms))
 
@@ -330,9 +333,11 @@ def find_foods():
             "svd_text_score": round(svd_script_score * 100, 1),
             "svd_desc_score": round(combined_desc_score * 100, 1) if combined_desc_score is not None else None,
             "jaccard_intersection": list(intersecting_words),
-            "top_svd_terms": top_svd_terms
+            "top_svd_terms": top_svd_terms,
+            "sentiment_text": sentiment_text,
+            "sentiment_score": sentiment_score
             }
-        for recipe, _, raw_jaccard_score, jaccard_score, svd_script_score, combined_desc_score, score, intersecting_words, top_svd_terms in combined_scores[:6]
+        for recipe, _, raw_jaccard_score, jaccard_score, svd_script_score, combined_desc_score, score, intersecting_words, top_svd_terms, sentiment_text, sentiment_score in combined_scores[:6]
     ]
     
 

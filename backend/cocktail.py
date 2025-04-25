@@ -76,13 +76,45 @@ def clean_cocktail_data(cocktail):
         'recipe_link': cocktail_url
     }
 
+# def extract_ingredients(cocktail):
+#     """
+#     Extract all non-null strIngredient[x] values from a cocktail entry.
+#     """
+#     ingredients = []
+#     for i in range(1, 16):
+#         ingredient = cocktail.get(f'strIngredient{i}')
+#         if ingredient:
+#             ingredients.append(ingredient.strip())
+#     return ingredients
+
 def extract_ingredients(cocktail):
     """
-    Extract all non-null strIngredient[x] values from a cocktail entry.
+    Extracts cleaned, non-null ingredients from a cocktail dictionary,
+    removing modifier-only entries and stripping known descriptor words.
     """
+    modifiers = {
+        'fresh', 'chopped', 'diced', 'sliced', 'crushed', 'ground', 'minced',
+        'large', 'small', 'medium', 'extra', 'shredded', 'grated', 'whole', 'cups',
+        'plain', 'unsweetened', 'sweetened', 'semi-sweet', 'cooked', 'raw', 'all-purpose',
+        'brown', 'heavy', 'unsalted', 'light', 'dark', 'hard', 'smoked',
+        'half', 'green', 'hot', 'red', 'warm', 'lean', 'sour', 'food', 'sweet', 'mixed',
+        'yellow', 'black', 'white', 'prepared', 'round', 'boiling', 'bay', 'dry', 'instant',
+        'cut', 'dried', 'stuffed', 'live'
+    }
+
     ingredients = []
     for i in range(1, 16):
-        ingredient = cocktail.get(f'strIngredient{i}')
-        if ingredient:
-            ingredients.append(ingredient.strip())
+        raw = cocktail.get(f'strIngredient{i}')
+        if not raw:
+            continue
+
+        words = raw.lower().strip().split()
+        # Remove modifiers
+        cleaned_words = [w for w in words if w not in modifiers]
+
+        if cleaned_words:  # Only keep ingredient if something remains
+            cleaned_ingredient = ' '.join(cleaned_words)
+            ingredients.append(cleaned_ingredient)
+
     return ingredients
+
