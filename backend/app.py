@@ -299,7 +299,18 @@ def find_foods():
         normalized_rating = rating / 5.0  
         final_score = (0.95 * base_score) + (0.05 * normalized_rating)
 
-        combined_scores.append((recipe, final_score, raw_jaccard_score, jaccard_score, svd_script_score, combined_desc_score, base_score, intersecting_words, top_svd_terms))
+        combined_scores.append(
+            (recipe, 
+             final_score, 
+             raw_jaccard_score, 
+             jaccard_score, 
+             svd_script_score, 
+             combined_desc_score, 
+             base_score, 
+             intersecting_words, 
+             top_svd_terms, 
+             sentiment_text,
+             sentiment_score ))
 
     combined_scores = sorted(
         combined_scores,
@@ -310,7 +321,7 @@ def find_foods():
     )
     if (len(dietary_restrictions)>0):
         combined_scores = dietary_res(combined_scores, 6, dietary_restrictions)
-    
+
     top_recipes = [
         {
             "data": clean_recipe_data(recipe),
@@ -319,6 +330,7 @@ def find_foods():
             "weighted_jaccard": round(jaccard_score * 100, 1),
             "svd_text_score": round(svd_script_score * 100, 1),
             "svd_desc_score": round(combined_desc_score * 100, 1) if combined_desc_score is not None else None,
+            "score": round(score * 100, 1),
             "jaccard_intersection": list(intersecting_words),
             "top_svd_terms": top_svd_terms,
             "sentiment_text": sentiment_text,
