@@ -381,6 +381,13 @@ div.recipe-header > p {
     background-color: #f0f0f0;
 }
 
+a.kaggle-link {
+    font-weight: bold;
+}
+a.kaggle-link:hover {
+    text-decoration: underline;
+}
+
 /* Info Hover Buttons */
 .info-tooltip {
     position: absolute;
