@@ -261,6 +261,10 @@
         // Track index because we want to keep the first one not hidden
         function recipeTemplate(recipe, i) {
             hidden = (i == 0) ? "" : "hidden";
+            // instructionsArray = recipe.instructions.replace(/(["])/g, '\\"')
+            //                                        .replace(/'(?=\s*[\],])/g, '"')
+            //                                        .replace(/(?<=[\[,]\s*)'/g, '"');
+            instructionsArray = recipe.instructions.slice(0, -1).split(".")
 
             return `
             <div class='recipe-card ${hidden}' id="recipe${i}">
@@ -302,7 +306,7 @@
                     <h4>Instructions:</h4>
                     
                     <ol>
-                        ${JSON.parse(recipe.instructions.replace(/'(?=\s*[\],])/g, '"').replace(/(?<=[\[,]\s*)'/g, '"')).map(step => `<li class="capitalized">${step}.</li>`).join('')}
+                        ${(instructionsArray).map(step => `<li class="capitalized">${step}.</li>`).join('')}
                     </ol>
                 </div>
 
@@ -602,6 +606,8 @@
 
                         data.recipes.forEach((r,i) => {
                             const recipe = r.data;
+
+                            console.log(recipe)
                             recipe.score = r.score;
                             recipe.jaccard_score = r.jaccard_score;
                             recipe.weighted_jaccard = r.weighted_jaccard;
