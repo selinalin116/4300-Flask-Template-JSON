@@ -471,6 +471,8 @@
             // Split the ad-hoc by spaces
             // Find any restrictions
             foodRestrictions = [];
+            drinkRestrictions = [];
+
             if (additionalFoodDesc) {
                 splittedFoodDesc = additionalFoodDesc.toLowerCase().split(" ");
                 let indexesToRemove = [];
@@ -489,7 +491,6 @@
                 additionalFoodDesc = splittedFoodDesc.join(" ");
             };
 
-            drinkRestrictions = [];
             if (additionalDrinkDesc) {
                 splittedDrinkDesc = additionalDrinkDesc.toLowerCase().split(" ");
                 let indexesToRemove = [];
