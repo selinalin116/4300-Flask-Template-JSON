@@ -411,34 +411,34 @@ def get_cocktail_ingredients(cocktail):
     
     return raw_ingredients, ingredients
 
+meat_no_fish = ['chicken','bacon','turkey','beef','pork','duck','steak','wings',
+                'boneless skinless chicken breast halves','ham','veal','lamb', 'sausage',
+                'ground chuck','suet','ox kidney']
+fish = ['fish', 'salmon', 'sardines','trout', 'mackerel', 'cod', 'haddock', 'pollock',
+        'flounder', 'tilapia', 'shellfish', 'mussels', 'scallops', 'squid', 
+        'oysters', 'crab', 'shrimp', 'sea bass', 'halibut', 'tuna','clams',
+        'lobster','anchovy','marlin steaks','conch','caviar']
+dairy = ['milk', 'ice cream', 'cheese', 'yoghurt', 'yogurt', 'cream', 'butter', 
+            'buttermilk', 'heavy cream', 'butter', 'egg','custard',
+            'half-and-half','marscarpone','eggs','heavy whipping cream', 'chocolate']
+gluten_food = ['bread', 'beer', 'cake', 'pie', 'candy', 'cereal', 'cookie', 'croutons', 'french fries',
+                'gravy', 'seafood', 'malt', 'pasta', 'hot dog', 'salad dressing', 'soy sauce', 'rice seasoning', 
+                'chips', 'chicken', 'soup','flour','wheat','pastry','couscous','semolina','bulgar','barley','rye','oats',
+                'spelt','deitan','graham crackers','pretzel']
+non_kosher = ['shellfish', 'crab', 'shrimp', 'lobster', 'pork']
+
+restriction_map = {
+    "vegan": meat_no_fish + fish + dairy,
+    "vegetarian": meat_no_fish + fish,
+    "pescatarian": meat_no_fish,
+    "dairy-free": dairy,
+    "gluten-free": gluten_food,
+    "kosher": non_kosher,
+}
 def dietary_res(items, top_k=6, restrictions=None):
     """
     Helper to filter and return top_k items based on dietary restrictions
     """
-    meat_no_fish = ['chicken','bacon','turkey','beef','pork','duck','steak','wings',
-                    'boneless skinless chicken breast halves','ham','veal','lamb', 'sausage',
-                    'ground chuck','suet','ox kidney']
-    fish = ['fish', 'salmon', 'sardines','trout', 'mackerel', 'cod', 'haddock', 'pollock',
-            'flounder', 'tilapia', 'shellfish', 'mussels', 'scallops', 'squid', 
-            'oysters', 'crab', 'shrimp', 'sea bass', 'halibut', 'tuna','clams',
-            'lobster','anchovy','marlin steaks','conch','caviar']
-    dairy = ['milk', 'ice cream', 'cheese', 'yoghurt', 'yogurt', 'cream', 'butter', 
-             'buttermilk', 'heavy cream', 'butter', 'egg','custard',
-             'half-and-half','marscarpone','eggs','heavy whipping cream', 'chocolate']
-    gluten_food = ['bread', 'beer', 'cake', 'pie', 'candy', 'cereal', 'cookie', 'croutons', 'french fries',
-                   'gravy', 'seafood', 'malt', 'pasta', 'hot dog', 'salad dressing', 'soy sauce', 'rice seasoning', 
-                   'chips', 'chicken', 'soup','flour','wheat','pastry','couscous','semolina','bulgar','barley','rye','oats',
-                   'spelt','deitan','graham crackers','pretzel']
-    non_kosher = ['shellfish', 'crab', 'shrimp', 'lobster', 'pork']
-
-    restriction_map = {
-        "vegan": meat_no_fish + fish + dairy,
-        "vegetarian": meat_no_fish + fish,
-        "pescatarian": meat_no_fish,
-        "dairy-free": dairy,
-        "gluten-free": gluten_food,
-        "kosher": non_kosher,
-    }
 
     filtered = []
     for item in items:
@@ -476,3 +476,37 @@ def drinks_filtered(items, top_k, preferences):
             break
 
     return filtered
+def ingredients_to_drink(drink, pref):
+    filtered = []
+    for item in drink:
+        ingredients = []
+        for i in range(1, 16):
+            ingredients += [item[0][(f"strIngredient{i}")]]
+        violates = False
+        for restriction in pref:
+            restricted_ings = restriction_map.get(restriction, [])
+            if any(restricted in ing.lower() if ing else '' for ing in ingredients for restricted in restricted_ings):
+                violates = True
+                break
+
+        if not violates:
+            filtered.append(item)
+
+    return filtered
+
+def extract_alcohol_phrases(word_list):
+    phrases = []
+    i = 0
+    while i < len(word_list) - 1:
+        pair = f"{word_list[i].lower()} {word_list[i+1].lower()}"
+        if pair in {
+            "non alcoholic",
+            "no alcohol",
+            "alcohol only",
+            "only alcohol"
+        }:
+            phrases.append(pair)
+            i += 2
+        else:
+            i += 1
+    return phrases

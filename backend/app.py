@@ -6,7 +6,9 @@ from flask_cors import CORS
 import helper_functions
 import ast
 from cocktail import extract_ingredients
-from helper_functions import dietary_res, drinks_filtered, penalize_jaccard_similarity, cosine_sim, normalize_ingredient
+
+from helper_functions import dietary_res, drinks_filtered, penalize_jaccard_similarity, cosine_sim, normalize_ingredient, ingredients_to_drink, extract_alcohol_phrases
+
 from gensim.models import KeyedVectors
 import numpy as np
 from pairings import get_pairing_score_ranked
@@ -48,12 +50,30 @@ def find_foods():
     if food_description is not None:
         food_description = food_description.strip().lower()
 
-    dietary_restrictions = request.args.get('dietary', '').strip()
-    dietary_restrictions = [r.strip() for r in dietary_restrictions.split(',')] if dietary_restrictions else []
+    # print("food desc", food_description)
+    # dietary_restrictions = request.args.get('dietary', '').strip()
+    x = [r.strip() for r in drink_description.split(' ')] if drink_description else []
+    # print("x", x)
+    y = [r.strip() for r in food_description.split(' ')] if food_description else []
+    # print("y", y)
+    diet = x+y
+    combine_pairs = [('dairy', 'free'), ('gluten', 'free')]
 
-    alcohol_preference = request.args.get('alcohol', '').strip()
-    alcohol_preference = [a.strip().lower().replace('-', ' ') for a in alcohol_preference.split(',')] if alcohol_preference else []
+    dietary_restrictions = []
+    i = 0
+    while i < len(diet):
+        if i + 1 < len(diet) and (diet[i], diet[i + 1]) in combine_pairs:
+            dietary_restrictions.append(f"{diet[i]}-{diet[i + 1]}")
+            i += 2
+        else:
+            dietary_restrictions.append(diet[i])
+            i += 1
 
+    # print(dietary_restrictions)
+
+    # print("60",dietary_restrictions)
+    alcohol_preference = x+y
+    # print(alcohol_preference)
     script = helper_functions.get_movie_script(movie_title, SCRIPT_FOLDER)
     if not script:
         return jsonify({"error": "Script or plot not found"})
@@ -164,10 +184,10 @@ def find_foods():
         combined_cocktail_scores.append((cocktail, combined_score, raw_jaccard_score, jaccard_score, svd_text_score, combined_desc_score, intersecting_words, top_svd_terms, source))
 
     combined_cocktail_scores = sorted(combined_cocktail_scores, key=lambda x: -x[1])
+    if (len(dietary_restrictions)>0):
+        combined_cocktail_scores=ingredients_to_drink(combined_cocktail_scores,dietary_restrictions)
 
-    # if (len(dietary_restrictions)>0):
-    #     combined_cocktail_scores = dietary_res(combined_cocktail_scores, 6, dietary_restrictions)
-
+    alcohol_preference = extract_alcohol_phrases(alcohol_preference)
     # Filter based on user preferences
     if (len(alcohol_preference)==1):
         combined_cocktail_scores = drinks_filtered(combined_cocktail_scores, 6, alcohol_preference)
@@ -300,6 +320,9 @@ def find_foods():
     )
     if (len(dietary_restrictions)>0):
         combined_scores = dietary_res(combined_scores, 6, dietary_restrictions)
+    
+    # print("dietary restrictions", dietary_restrictions)
+    # print("combined", combined_scores)
     top_recipes = [
         {
             "data": clean_recipe_data(recipe),
