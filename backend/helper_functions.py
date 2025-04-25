@@ -241,8 +241,6 @@ def normalize_ingredient(ingredient):
         if filtered_words[0] not in results:
             results.append(filtered_words[0])
     
-    print(results)
-    
     return results if results else None
 
 
