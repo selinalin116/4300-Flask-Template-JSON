@@ -134,8 +134,8 @@ def normalize_ingredient(ingredient):
     """
     Normalize ingredient phrase to remove common descriptors
     """
-    phrase = ingredient.lower()
-    results = []
+    phrase = ingredient.lower().strip()
+    results = set()
 
     # Compounds where we don't want to extract the base ingredient since the individual words do not have much significant meanings
     no_base_extraction = ['baking powder', 'baking soda']
@@ -151,12 +151,12 @@ def normalize_ingredient(ingredient):
 
     for compound in all_compounds:
         if compound in phrase:
-            results.append(compound)
+            results.add(compound)
             
             if compound not in no_base_extraction:
                 base_ingredient = compound.split()[-1]  # Gets the last word of a compound ingredient since that is usually a noun
                 if base_ingredient not in results:
-                    results.append(base_ingredient)
+                    results.add(base_ingredient)
 
     phrase = ingredient.lower().strip()
     
@@ -173,11 +173,11 @@ def normalize_ingredient(ingredient):
     words = phrase.split()
     filtered_words = [word for word in words if word not in modifiers]
 
-    normalized = ' '.join(filtered_words).strip()
-    if normalized and normalized not in results:
-        results.append(normalized)
+    if filtered_words:
+        results.add(" ".join(filtered_words))  # cleaned full phrase
+        results.update(filtered_words)   
     
-    return results if results else None
+    return list(results)
 
 
 COMMON_INGREDIENTS = {"water", "salt", "sugar", "hot", "damn"}

@@ -215,7 +215,6 @@ def find_foods():
         except (SyntaxError, ValueError):
             ingredients = set()
 
-        # jaccard_score = weighted_jaccard_similarity(script_words, ingredients, weight_dict)
         jaccard_score, raw_jaccard_score = penalize_jaccard_similarity(script_words, ingredients, food_weight_dict, weight_dict)
         recipe_jaccard_scores.append(jaccard_score)
         food_raw_jaccard_scores.append(raw_jaccard_score)
@@ -247,8 +246,8 @@ def find_foods():
                     ingredients.update(words[-2:])
                 elif words:
                     ingredients.add(words[0])
-
-            # print(recipe_ingredients_set)
+            
+            print(ingredients)
         except (SyntaxError, ValueError):
             ingredients = set()
 
