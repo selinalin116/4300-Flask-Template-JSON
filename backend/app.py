@@ -367,7 +367,7 @@ def find_foods():
 
         sorted_pairings = sorted(pairings, key=lambda x: -x["rank"])[:3]
 
-        recipe["recommended_cocktails"] = sorted_pairings
+        recipe["data"]["recommended_cocktails"] = sorted_pairings
     
     return jsonify({
         "cocktails": top_cocktails,
