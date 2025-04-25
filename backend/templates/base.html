@@ -57,16 +57,16 @@
                 <div class="input-box" onclick="descriptionFocusDrink()">
                     <input placeholder="Cocktail Preferences (e.g., Non-alcoholic tangy drinks)"
                         id="description-drink-search">
-                    
+
                     <div class="info-tooltip">i
                         <div class="tooltip-text">
-                            <p>Describe your drink's vibe: is it tangy? Acidic? Fruity?</p> 
+                            <p>Describe your drink's vibe: is it tangy? Acidic? Fruity?</p>
                             <p>
                                 Some pre-coded drink filters you can add:
                             </p>
                             <ul class="no-bullet">
                                 <li>"vegan"</li>
-                                <li>"dairy-free"</li>
+                                <li>"dairy free"</li>
                                 <li>"non-alcoholic"</li>
                                 <li>"alcoholic"</li>
                             </ul>
@@ -74,12 +74,11 @@
                     </div>
                 </div>
                 <div class="input-box" onclick="descriptionFocusFood()">
-                    <input placeholder="Meal Preferences (e.g., Vegan homecooked meals)"
-                        id="description-food-search">
-                    
+                    <input placeholder="Meal Preferences (e.g., Vegan homecooked meals)" id="description-food-search">
+
                     <div class="info-tooltip">i
                         <div class="tooltip-text">
-                            <p>Describe your recipe's vibe: is it rich? Spicy? Sweet?</p> 
+                            <p>Describe your recipe's vibe: is it rich? Spicy? Sweet?</p>
                             <p>
                                 Some pre-coded recipe filters you can add:
                             </p>
@@ -87,10 +86,10 @@
                                 <li>"vegan"</li>
                                 <li>"vegetarian"</li>
                                 <li>"pescatarian"</li>
-                                <li>"dairy-free"</li>
-                                <li>"gluten-free"</li>
+                                <li>"dairy free"</li>
+                                <li>"gluten free"</li>
                                 <li>"kosher"</li>
-                            </ul>                        
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -273,21 +272,21 @@
                     <p>
                         <div class="rating-container">
                             <span class="numeric-rating">
-                                ${recipe.rating === 'NA' || recipe.rating == null || recipe.rating === 0 
-                                ? 'N/A' 
-                                : (Math.round(Number(recipe.rating) * 100) / 100).toString().replace(/\.00$/, '')}
+                                ${recipe.rating === 'NA' || recipe.rating == null || recipe.rating === 0
+                    ? 'N/A'
+                    : (Math.round(Number(recipe.rating) * 100) / 100).toString().replace(/\.00$/, '')}
                             </span>
 
                             ${recipe.rating && recipe.rating !== 'NA' && recipe.rating !== 0
-                                ? `<div class="star-rating" data-rating="${recipe.rating}">
+                    ? `<div class="star-rating" data-rating="${recipe.rating}">
                                     <div class="star-base">★★★★★</div>
                                     <div class="star-fill">★★★★★</div>
                                 </div>`
-                                : ''}
+                    : ''}
 
                             ${recipe.rating_count && recipe.rating_count > 0
-                                ? `<span class="rating-count">(${recipe.rating_count} ratings)</span>`
-                                : ''}
+                    ? `<span class="rating-count">(${recipe.rating_count} ratings)</span>`
+                    : ''}
                         </div>
                     </p>
                 </div>
@@ -310,7 +309,7 @@
                     </ol>
                 </div>
 
-                ${recipe.recommended_cocktails && recipe.recommended_cocktails.length > 0 
+                ${recipe.recommended_cocktails && recipe.recommended_cocktails.length > 0
                     ? `<div class="recommended-cocktails">
                         <h4>Recommended Cocktails:</h4>
                         <ul class="recommended-cocktails-list">
@@ -337,11 +336,11 @@
                     <p>
                         User Sentiment:
                         ${recipe.sentiment_text !== undefined && recipe.sentiment_score !== null
-                        ? `<span class="sentiment-text">
+                    ? `<span class="sentiment-text">
                             ${recipe.sentiment_text} Ratings (Score of ${recipe.sentiment_score.toFixed(2)})
                             </span>`
-                        : '<span>NO SENTIMENT</span>'
-                        }
+                    : '<span>NO SENTIMENT</span>'
+                }
                     </p>
                 </div>
             </div>
@@ -604,7 +603,7 @@
                         const recipeCards = document.createElement("div");
                         recipeCards.className = "recipe-cards";
 
-                        data.recipes.forEach((r,i) => {
+                        data.recipes.forEach((r, i) => {
                             const recipe = r.data;
 
                             console.log(recipe)
@@ -635,11 +634,11 @@
                     }
 
                     document.querySelectorAll('.star-rating').forEach(el => {
-                            const rating = parseFloat(el.dataset.rating);
-                            const percent = Math.max(0, Math.min(100, (rating / 5) * 100));
-                            el.querySelector('.star-fill').style.width = percent + '%';
-                        });
-                    
+                        const rating = parseFloat(el.dataset.rating);
+                        const percent = Math.max(0, Math.min(100, (rating / 5) * 100));
+                        el.querySelector('.star-fill').style.width = percent + '%';
+                    });
+
                     // Add a button to each cocktail card to show the modal
                     document.querySelectorAll('.cocktail-buttons').forEach(button => {
                         button.addEventListener('click', () => {
@@ -682,7 +681,7 @@
                                 document.querySelectorAll('.recipe-card').forEach(card => {
                                     card.classList.add('hidden');
                                 });
-                                
+
                                 card.classList.toggle('hidden'); // toggle visibility
                             }
                         });
