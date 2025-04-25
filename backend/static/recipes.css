@@ -282,14 +282,40 @@ div.recipe-header > p {
     margin: 0;
     margin-bottom: 10px;
 }
+.recommended-cocktails-list .accent-text {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
 
+.recommended-cocktails-list {
+    list-style: none;
+}
+
+.recommended-cocktails-list li {
+    text-decoration: none; 
+    margin-bottom: 10px;
+}
 .recommended-cocktails-list a {
     text-decoration: none; 
+    font-weight: bold;
 }
 
 .recommended-cocktails-list a:hover {
     text-decoration: underline;
 }
+
+.pairing-button {
+    border: none;
+    background-color: white;
+    font-weight: bold;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 17px;
+}
+.pairing-button:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
 
 /* Rating section in food recipes container */
 .rating-container {

@@ -197,7 +197,7 @@
             }
             else {
                 return `
-                <button class="cocktail-buttons" id="${i}">
+                <button class="cocktail-buttons" id="cards${i}">
                     <img src="${cocktail.image}" alt="${cocktail.name}">
                     <h3>${cocktail.name}</h3>
                     <h4>${cocktail.score}% match</h4>
@@ -206,8 +206,9 @@
             }
         }
 
-        function cocktailModal(cocktail, i) {
-            return `
+        function cocktailModal(cocktail, i, rank=null) {
+            if (rank === null) {
+                return `
                 <div class="cocktail-details">
                     <h4 class='accent-text'>A Runner-Up...</h4>
                     <div class="cocktail-header">
@@ -245,6 +246,40 @@
                     x
                 </button>
                 `;
+            } else {
+                return `
+                    <div class="cocktail-details">
+                        <h4 class='accent-text'>Our Recommended Pairing...</h4>
+                        <div class="cocktail-header">
+                            <a href="${cocktail.recipe_link}" target="_blank">
+                                <h3 class='cocktail-name'>${cocktail.name}   </h3>
+                            </a>
+                            <p>(Rank: ${rank})</p>
+                        </div>
+
+                        <ul class='cocktail-list dashed'>
+                            ${cocktail.ingredients.map(ing => `<li>${ing}</li>`).join('')}
+                        </ul>
+
+                        <div class="instructions">
+                            <p>${cocktail.instructions}</p>
+                        </div>
+
+                        <div class="explanation">
+                            <p>
+                                This drink was recommended to be paired because it shares similar themes.
+                            </p>
+                        </div>
+                    </div>
+                    <div class='modal-image'>
+                        <img src="${cocktail.image}" alt="${cocktail.name}" class="cocktail-image">
+                    </div>
+
+                    <button class='close-button'>
+                        x
+                    </button>
+                    `
+                };
         }
 
         function recipeButtonMaker(recipe, i) {
@@ -264,7 +299,8 @@
             // instructionsArray = recipe.instructions.replace(/(["])/g, '\\"')
             //                                        .replace(/'(?=\s*[\],])/g, '"')
             //                                        .replace(/(?<=[\[,]\s*)'/g, '"');
-            instructionsArray = recipe.instructions.slice(0, -1).split(".")
+            instructionsArray = recipe.instructions.slice(0, -1).split(".");
+            pairingIndex = -1;
 
             return `
             <div class='recipe-card ${hidden}' id="recipe${i}">
@@ -312,14 +348,20 @@
 
                 ${recipe.recommended_cocktails && recipe.recommended_cocktails.length > 0 
                     ? `<div class="recommended-cocktails">
-                        <h4>Recommended Cocktails:</h4>
+                        <h4 class="accent-text">Some Nice Pairings...</h4>
                         <ul class="recommended-cocktails-list">
-                            ${recipe.recommended_cocktails.map(cocktail => `
-                                <li>
-                                    <a href="${cocktail.link}" target="_blank">${cocktail.cocktail}</a>
-                                    - ${cocktail.compatibility} (Rank: ${cocktail.rank})
-                                </li>
-                            `).join('')}
+                            ${recipe.recommended_cocktails.map(cocktail => {
+
+                                console.log(cocktail)
+                                pairingIndex += 1;
+
+                                return `
+                                    <li>
+                                        <button class="pairing-button" id="${i}_${pairingIndex}">${cocktail.data.name}</button>
+                                        - ${cocktail.compatibility} (Rank: ${cocktail.rank})
+                                    </li>
+                                `
+                            }).join('')}
                         </ul>
                     </div>`
                     : ''
@@ -347,20 +389,6 @@
             </div>
         `;
         }
-
-        // document.addEventListener('click', function (e) {
-        //     // Recipe text shortening and lengthening
-        //     if (e.target && e.target.matches('.see-more')) {
-        //         e.preventDefault();
-        //         const card = e.target.closest('.recipe-card');
-        //         const shortText = card.querySelector('.short-text');
-        //         const fullText = card.querySelector('.full-text');
-
-        //         shortText.classList.toggle('hidden');
-        //         fullText.classList.toggle('hidden');
-        //         e.target.textContent = fullText.classList.contains('hidden') ? 'See more' : 'See less';
-        //     }
-        // });
 
         function fetchMovieSuggestions() {
             const query = document.getElementById('movie-search').value.trim();
@@ -572,7 +600,7 @@
 
                                 let cocktailModalContent = document.createElement("div");
                                 cocktailModalContent.className = 'cocktail-card hidden';
-                                cocktailModalContent.id = i;
+                                cocktailModalContent.id = 'cards' + i;
 
                                 cocktailModalContent.innerHTML += cocktailModal(cocktail, i);
 
@@ -607,7 +635,7 @@
                         data.recipes.forEach((r,i) => {
                             const recipe = r.data;
 
-                            console.log(recipe)
+                            console.log(recipe.recommended_cocktails)
                             recipe.score = r.score;
                             recipe.jaccard_score = r.jaccard_score;
                             recipe.weighted_jaccard = r.weighted_jaccard;
@@ -620,7 +648,21 @@
 
                             recipeButtons.innerHTML += recipeButtonMaker(recipe, i);
                             recipeCards.innerHTML += recipeTemplate(recipe, i);
+
+                            if (recipe.recommended_cocktails) {
+                                recipe.recommended_cocktails.forEach( (d,u) => {
+                                    let recipeModalContent = document.createElement("div");
+                                    recipeModalContent.className = 'cocktail-card hidden';
+                                    recipeModalContent.id = `${i}_${u}`;
+
+                                    console.log(d)
+                                    recipeModalContent.innerHTML += cocktailModal(d.data, i, rank=d.rank);
+                                    modalContainer.appendChild(recipeModalContent);
+                                })
+                            };
                         });
+
+
                         recipeSection.appendChild(recipeButtons);
                         recipeSection.appendChild(recipeCards);
                         recipeMain.appendChild(recipeSection);
@@ -642,6 +684,17 @@
                     
                     // Add a button to each cocktail card to show the modal
                     document.querySelectorAll('.cocktail-buttons').forEach(button => {
+                        button.addEventListener('click', () => {
+                            const id = button.getAttribute('id');
+                            const card = document.querySelector(`.cocktail-card[id='${id}']`);
+
+                            if (card) {
+                                modalContainer.classList.toggle('hidden')
+                                card.classList.toggle('hidden'); // toggle visibility
+                            }
+                        });
+                    });
+                    document.querySelectorAll('.pairing-button').forEach(button => {
                         button.addEventListener('click', () => {
                             const id = button.getAttribute('id');
                             const card = document.querySelector(`.cocktail-card[id='${id}']`);
@@ -678,7 +731,6 @@
                             const card = document.querySelector(`.recipe-card[id='${id}']`);
 
                             if (card.classList.contains('hidden')) {
-                                console.log("currently hidden")
                                 document.querySelectorAll('.recipe-card').forEach(card => {
                                     card.classList.add('hidden');
                                 });

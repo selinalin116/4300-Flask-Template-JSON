@@ -323,7 +323,7 @@ def find_foods():
 
             if rank > 0:
                 pairings_by_recipe[recipe_name].append({
-                    "cocktail": cocktail["data"]["name"],
+                    "data": cocktail["data"],
                     "link": cocktail["data"]["recipe_link"],
                     "compatibility": label,
                     "rank": rank,
