@@ -456,9 +456,21 @@
         });
 
         // List of dietary restrictions to go through when parsing ad-hoc
-        dietaryRestrictions = ['vegetarian', 'vegan', 'pescatarian', 'gluten-free', 'dairy-free', 'kosher'];
+        dietaryRestrictions = ['vegetarian', 'vegan', 'pescatarian', 'gluten-free', 'dairy-free', 'kosher', 'dairy free', 'gluten free'];
+        
         // List of drink restrictions to go through when parsing ad-hoc
-        alcRestrictions = ['alchoholic', 'non-alcoholic'];
+        alcRestrictions = ['alchoholic', 'non-alcoholic', 'non alcoholic'];
+
+        const multiWordDietary = ['dairy free', 'gluten free'];
+        const multiWordAlcoholMap = {
+            'non alcoholic': 'non-alcoholic',
+            'no alcohol': 'non-alcoholic',
+            'alcohol only': 'alcoholic',
+            'only alcohol': 'alcoholic'
+        };
+
+        const genericDrinkWords = ['drink', 'drinks', 'beverage', 'beverages'];
+        const genericFoodWords = ['meal', 'meals', 'food', 'foods', 'dish', 'dishes'];
 
         function searchMovie() {
             const movieTitle = document.getElementById("movie-search").value.trim();
@@ -468,53 +480,69 @@
 
             var additionalDrinkDesc = document.getElementById("description-drink-search").value.trim();
 
-            // Split the ad-hoc by spaces
-            // Find any restrictions
             foodRestrictions = [];
             drinkRestrictions = [];
 
             if (additionalFoodDesc) {
+                additionalFoodDesc = additionalFoodDesc.toLowerCase();
+
+                multiWordDietary.forEach(phrase => {
+                    if (additionalFoodDesc.includes(phrase)) {
+                        foodRestrictions.push(phrase.replace(/\s+/g, '-'));  
+                        additionalFoodDesc = additionalFoodDesc.replace(new RegExp(phrase, 'gi'), '').trim();
+                    }
+                });
+
                 splittedFoodDesc = additionalFoodDesc.toLowerCase().split(" ");
                 console.log(splittedFoodDesc)
-                let indexesToRemove = [];
+                let newFoodDesc = [];
 
                 splittedFoodDesc.forEach((word, i) => {
                     if (dietaryRestrictions.includes(word)) {
                         foodRestrictions.push(word);
-                        // drinkRestrictions.push(word);
-                        indexesToRemove.push(i);
+                    } else if (!genericFoodWords.includes(word)) {
+                        newFoodDesc.push(word);
                     }
                 });
-                indexesToRemove.forEach((index) => {
-                    splittedFoodDesc.splice(index, 1);
-                });
 
-                additionalFoodDesc = splittedFoodDesc.join(" ");
+                additionalFoodDesc = newFoodDesc.join(" ");
             };
 
             if (additionalDrinkDesc) {
-                splittedDrinkDesc = additionalDrinkDesc.toLowerCase().split(" ");
+                additionalDrinkDesc = additionalDrinkDesc.toLowerCase();
+
+                // Map multi-word alcohol phrases
+                Object.keys(multiWordAlcoholMap).forEach(phrase => {
+                    if (additionalDrinkDesc.includes(phrase)) {
+                        drinkRestrictions.push(multiWordAlcoholMap[phrase]);
+                        additionalDrinkDesc = additionalDrinkDesc.replace(phrase, '').trim();
+                    }
+                });
+
+                // Handle multi-word dietary restrictions
+                multiWordDietary.forEach(phrase => {
+                    if (additionalDrinkDesc.includes(phrase)) {
+                        foodRestrictions.push(phrase.replace(/\s+/g, '-'));
+                        additionalDrinkDesc = additionalDrinkDesc.replace(phrase, '').trim();
+                    }
+                });
+
+                splittedDrinkDesc = additionalDrinkDesc.split(" ").filter(w => w !== '');
                 console.log(splittedDrinkDesc)
-                let indexesToRemove = [];
+                let newDrinkDesc = [];
 
                 splittedDrinkDesc.forEach((word, i) => {
                     if (alcRestrictions.includes(word)) {
-                        console.log(word)
                         drinkRestrictions.push(word);
-                        // foodRestrictions.push(word);
-                        indexesToRemove.push(i);
                     }
                     else if (dietaryRestrictions.includes(word)) {
-                        // drinkRestrictions.push(word);
                         foodRestrictions.push(word);
-                        indexesToRemove.push(i);
+                    } else if (!genericDrinkWords.includes(word)) {
+                        newDrinkDesc.push(word);
                     }
                 });
-                indexesToRemove.forEach((index) => {
-                    splittedDrinkDesc.splice(index, 1);
-                });
 
-                additionalDrinkDesc = splittedDrinkDesc.join(" ");
+                additionalDrinkDesc = newDrinkDesc.join(" ").trim();
             };
 
             // Splice together the splitted ad-hoc with the restrictions removed

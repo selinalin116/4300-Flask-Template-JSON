@@ -429,7 +429,7 @@ dairy = ['milk', 'ice cream', 'cheese', 'yoghurt', 'yogurt', 'cream', 'butter',
 gluten_food = ['bread', 'beer', 'cake', 'pie', 'candy', 'cereal', 'cookie', 'croutons', 'french fries',
                 'gravy', 'seafood', 'malt', 'pasta', 'hot dog', 'salad dressing', 'soy sauce', 'rice seasoning', 
                 'chips', 'chicken', 'soup','flour','wheat','pastry','couscous','semolina','bulgar','barley','rye','oats',
-                'spelt','deitan','graham crackers','pretzel']
+                'spelt','deitan','graham crackers','pretzel', 'french baguette', 'baguette']
 non_kosher = ['shellfish', 'crab', 'shrimp', 'lobster', 'pork']
 
 restriction_map = {
@@ -469,12 +469,26 @@ def drinks_filtered(items, top_k, preferences):
     """
     Helper to filter and return top_k items for user's drink preferences.
     """
+    # filtered = []
+    # for item in items:
+    #     alc = [item[0]["strAlcoholic"].lower()]
+    #     print("alc",alc)
+    #     print(alc==preferences)
+    #     # print("alc",alc)
+    #     # print("pref",preferences)
+    #     if (alc==preferences):
+    #         print("here")
+    #         filtered.append(item)
+
+    #     if len(filtered) >= top_k:
+    #         break
+
     filtered = []
     for item in items:
-        alc = [item[0]["strAlcoholic"].lower()]
-        # print("alc",alc)
-        # print("pref",preferences)
-        if (alc==preferences):
+        alc_status = item[0]["strAlcoholic"].lower().replace(' ', '-')  
+        pref_normalized = [p.replace(' ', '-') for p in preferences]  
+
+        if alc_status in pref_normalized:
             filtered.append(item)
 
         if len(filtered) >= top_k:
@@ -501,7 +515,7 @@ def ingredients_to_drink(drink, pref):
     return filtered
 
 def extract_alcohol_phrases(word_list):
-    print(word_list)
+    # print(word_list)
     phrases = []
     i = 0
     while i < len(word_list) - 1:

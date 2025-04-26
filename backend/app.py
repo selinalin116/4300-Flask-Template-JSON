@@ -49,39 +49,23 @@ def find_foods():
         food_description = food_description.strip().lower()
     
     dietary = request.args.get('dietary')
+    alcohol_pref = request.args.get('alcohol')
 
+    dietary_list = []
+    if dietary:
+        dietary_list = [r.strip() for r in dietary.split(',')]
+    
+    dietary_restrictions = dietary_list
 
     x = [r.strip() for r in drink_description.split(' ')] if drink_description else []
 
     y = [r.strip() for r in food_description.split(' ')] if food_description else []
 
-    diet = []
-    if dietary is not None:
-        dietary_list = [r.strip() for r in dietary.split(',')]  # Split dietary on commas
-        diet = dietary_list + x + y
-    else:
-        diet = x + y
-
-    combine_pairs = [('dairy', 'free'), ('gluten', 'free')]
-
-    dietary_restrictions = []
-    i = 0
-    while i < len(diet):
-        if i + 1 < len(diet) and (diet[i], diet[i + 1]) in combine_pairs:
-            dietary_restrictions.append(f"{diet[i]}-{diet[i + 1]}")
-            i += 2
-        else:
-            dietary_restrictions.append(diet[i])
-            i += 1
-    phrases = []
-    alcohol_pref = request.args.get('alcohol')
     if alcohol_pref:
         alcohol_pref = alcohol_pref.strip().lower()
-        if alcohol_pref in ["non-alcoholic", "non alcoholic", "no alcohol", "Non-alcoholic"]:
-            phrases.append("non alcoholic")
-        elif alcohol_pref in ["alcohol only", "only alcohol"]:
-            phrases.append("alcoholic")
-    alcohol_preference = x+y+phrases
+    alcohol_preference = []
+    if alcohol_pref:
+        alcohol_preference.append(alcohol_pref)
 
     script = helper_functions.get_movie_script(movie_title, SCRIPT_FOLDER)
     if not script:
@@ -165,10 +149,11 @@ def find_foods():
     combined_cocktail_scores = sorted(combined_cocktail_scores, key=lambda x: -x[1])
     if (len(dietary_restrictions)>0):
         combined_cocktail_scores=ingredients_to_drink(combined_cocktail_scores,dietary_restrictions)
-    alcohol_preference = extract_alcohol_phrases(alcohol_preference)
+
     # Filter based on user preferences
     if (len(alcohol_preference)==1):
         combined_cocktail_scores = drinks_filtered(combined_cocktail_scores, 6, alcohol_preference)
+
     
     # Sort and Get Top Cocktails
     top_cocktails = [
