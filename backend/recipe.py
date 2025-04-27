@@ -150,5 +150,10 @@ def clean_recipe_data(recipe):
         'rating': recipe['average_rating'],
         'rating_count': recipe['review_count'],
         # 'instructions': recipe['steps'] 
-        'instructions': instructions
+        'instructions': instructions,
+        'five_star': recipe['5_star_percentage'],
+        'four_star': recipe['4_star_percentage'],
+        'three_star': recipe['3_star_percentage'],
+        'two_star': recipe['2_star_percentage'],
+        'one_star': recipe['1_star_percentage']
     }

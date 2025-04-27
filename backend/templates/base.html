@@ -301,9 +301,11 @@
             instructionsArray = recipe.instructions.slice(0, -1).split(".");
             pairingIndex = -1;
 
+            const breakdown = generateFakeRatingBreakdown(recipe.rating || 4.0);
+
             return `
             <div class='recipe-card ${hidden}' id="recipe${i}">
-                <div class='recipe-header'>
+                <div class='recipe-header' style="position: relative;">
                     <h3 class="recipe-name">${recipe.name}</h3>
                     <p>
                         <div class="rating-container">
@@ -321,10 +323,49 @@
                     : ''}
 
                             ${recipe.rating_count && recipe.rating_count > 0
-                    ? `<span class="rating-count">(${recipe.rating_count} ratings)</span>`
+                    ? `<span class="rating-count" style="cursor:pointer;" onclick="toggleBreakdown(${i})">(${recipe.rating_count} ratings)</span>`
                     : ''}
                         </div>
                     </p>
+                    <div class="rating-float-box breakdown-hidden" id="rating-float-${i}">
+                        <div class="breakdown-header">
+                            <div class="average-rating"><strong>${(Math.round(Number(recipe.rating) * 100) / 100).toString().replace(/\.00$/, '')}</strong> out of 5</div>
+                            <div onclick="closeBreakdown(${i})">
+                                <span class="close-button">x</span>
+                            </div>
+                        </div>
+                        <div class="breakdown-bars">
+                            <div class="breakdown-row">
+                                <span>5 star</span>
+                                <div class="bar"><div class="fill" data-target-width="${recipe?.five_star || 0}%"></div></div>
+                                <span>${recipe?.five_star || 0}%</span>
+                            </div>
+                            <div class="breakdown-row">
+                                <span>4 star</span>
+                                <div class="bar"><div class="fill" data-target-width="${recipe?.four_star || 0}%"></div></div>
+                                <span>${recipe?.four_star || 0}%</span>
+                            </div>
+                            <div class="breakdown-row">
+                                <span>3 star</span>
+                                <div class="bar"><div class="fill" data-target-width="${recipe?.three_star || 0}%"></div></div>
+                                <span>${recipe?.three_star || 0}%</span>
+                            </div>
+                            <div class="breakdown-row">
+                                <span>2 star</span>
+                                <div class="bar"><div class="fill" data-target-width="${recipe?.two_star || 0}%"></div></div>
+                                <span>${recipe?.two_star || 0}%</span>
+                            </div>
+                            <div class="breakdown-row">
+                                <span>1 star</span>
+                                <div class="bar"><div class="fill" data-target-width="${recipe?.one_star || 0}%"></div></div>
+                                <span>${recipe?.one_star || 0}%</span>
+                            </div>
+                        </div>
+                        <hr class="divider-line">
+                        <div class="see-reviews-button">
+                            <p>See reviews</p>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="recipe-details instructions">
@@ -386,6 +427,64 @@
             </div>
         `;
         }
+
+        function generateFakeRatingBreakdown(rating) {
+            // Assume higher ratings have higher % of 5-star
+            let fiveStar = Math.min(100, Math.max(0, Math.round(rating * 20 + (Math.random() * 10 - 5))));
+            let fourStar = Math.min(100 - fiveStar, Math.max(0, Math.round((5 - rating) * 10 + Math.random() * 5)));
+            let threeStar = Math.min(100 - fiveStar - fourStar, Math.max(0, Math.round((5 - rating) * 5 + Math.random() * 5)));
+            let twoStar = Math.min(100 - fiveStar - fourStar - threeStar, Math.max(0, Math.round((5 - rating) * 2 + Math.random() * 5)));
+            let oneStar = 100 - fiveStar - fourStar - threeStar - twoStar;
+
+            return { fiveStar, fourStar, threeStar, twoStar, oneStar };
+        }
+
+        function toggleBreakdown(index) {
+            const breakdown = document.getElementById(`rating-float-${index}`);
+            
+            if (breakdown.classList.contains('breakdown-hidden')) {
+                breakdown.classList.remove('breakdown-hidden');
+
+                breakdown.querySelectorAll('.fill').forEach(bar => {
+                    bar.style.width = '0%';
+                });
+
+                setTimeout(() => {
+                    breakdown.querySelectorAll('.fill').forEach(bar => {
+                        const targetWidth = bar.getAttribute('data-target-width');
+                        if (targetWidth) {
+                            bar.style.width = targetWidth;
+                        }
+                    });
+                }, 20); 
+            } else {
+                breakdown.classList.add('breakdown-hidden');
+
+                breakdown.querySelectorAll('.fill').forEach(bar => {
+                    bar.style.width = '0%';
+                });
+            }
+        }
+
+
+        function closeBreakdown(index) {
+            const breakdown = document.getElementById(`rating-float-${index}`);
+            breakdown.classList.add('breakdown-hidden');
+        }
+
+        document.addEventListener('click', function(event) {
+            document.querySelectorAll('.rating-float-box').forEach(box => {
+                if (!box.classList.contains('breakdown-hidden')) {
+                    if (!box.contains(event.target) && !event.target.classList.contains('rating-count')) {
+                        box.classList.add('breakdown-hidden');
+                        box.querySelectorAll('.fill').forEach(bar => {
+                            bar.style.width = '0%';
+                        });
+                    }
+                }
+            });
+        });
+
 
         function fetchMovieSuggestions() {
             const query = document.getElementById('movie-search').value.trim();
