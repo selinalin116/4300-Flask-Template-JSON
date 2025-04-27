@@ -159,6 +159,7 @@
         // i == 0 is the most relevant cocktail
         function cocktailCard(cocktail, i) {
             if (i == 0) {
+                // If we're looking at the most relevant cocktail, it should be a visible headliner, not a button
                 return `
                 <div id="relevant-cocktail-card">
                     <img src="${cocktail.image}" alt="${cocktail.name}" class="relevant-cocktail-image">
@@ -195,6 +196,7 @@
                 `
             }
             else {
+                // If not the most relevant cocktail, make a button that represents it
                 return `
                 <button class="cocktail-buttons" id="cards${i}">
                     <img src="${cocktail.image}" alt="${cocktail.name}">
@@ -205,8 +207,17 @@
             }
         }
 
+
+        // Creates a cocktail modal element within the modal-shadow div
+        // cocktail is the data for a cocktail
+        // i should be the index of the cocktail during the loop
+        // rank is the index of the compatible cocktails for a recipe
         function cocktailModal(cocktail, i, rank=null) {
             if (rank === null) {
+                // the cocktail modals for the movie cocktails have different text than the recipe cocktails
+                // Differences:
+                //      accent flavor text
+                //      explanation
                 return `
                 <div class="cocktail-details">
                     <h4 class='accent-text'>A Runner-Up...</h4>
@@ -281,6 +292,10 @@
                 };
         }
 
+        // Creates the recipe buttons on the left of the recipes
+        // Parameters:
+        //   recipe is the recipe data
+        //   i should be the index during the loop
         function recipeButtonMaker(recipe, i) {
             first = (i == 0) ? "selected-recipe" : "";
 
@@ -292,12 +307,14 @@
         `
         };
 
-        // Track index because we want to keep the first one not hidden
+        // Creates the recipe texts on the right of the recipes
+        // Parameters:
+        //   recipe is the recipe data
+        //   i should be the index during the loop
         function recipeTemplate(recipe, i) {
+            // Every div except the first should be hidden at first
             hidden = (i == 0) ? "" : "hidden";
-            // instructionsArray = recipe.instructions.replace(/(["])/g, '\\"')
-            //                                        .replace(/'(?=\s*[\],])/g, '"')
-            //                                        .replace(/(?<=[\[,]\s*)'/g, '"');
+            
             instructionsArray = recipe.instructions.slice(0, -1).split(".");
             pairingIndex = -1;
 
@@ -667,6 +684,7 @@
                 fetchUrl += `&fooddescription=${encodeURIComponent(additionalFoodDesc)}`;
             }
 
+            // Select the modal container
             const modalContainer = document.getElementById("modal-shadow");
             // Clean away any previous modals
             document.querySelectorAll(".cocktail-card").forEach(cocktail => cocktail.remove());
@@ -708,10 +726,14 @@
                             <div class="hr"></div>
                         `
 
+                        // The container for the cocktail buttons
                         const cocktailRow = document.createElement("div");
                         cocktailRow.className = "cocktail-row";
                         cocktailSection.appendChild(cocktailRow);
 
+                        // Track i to map each button to a respective modal
+                        // A better implementation would add metadata to each recipe
+                        // and then just use that
                         let i = 0;
                         data.cocktails.forEach(c => {
                             const cocktail = c.data;
@@ -724,14 +746,17 @@
                             cocktail.top_svd_terms = c.top_svd_terms;
                             cocktail.source = c.source;
 
+                            // If the most relevant cocktail
                             if (i == 0) {
                                 cocktailRecommended.innerHTML += cocktailCard(cocktail, i);
                             }
+                            // Else every other cocktail
                             else {
                                 cocktailRow.innerHTML += cocktailCard(cocktail, i);
 
                                 let cocktailModalContent = document.createElement("div");
                                 cocktailModalContent.className = 'cocktail-card hidden';
+                                // i.e. The second modal has the id "cards2"
                                 cocktailModalContent.id = 'cards' + i;
 
                                 cocktailModalContent.innerHTML += cocktailModal(cocktail, i);
@@ -747,6 +772,7 @@
 
                     // Add recipes section
                     if (data.recipes?.length > 0) {
+                        // Create the container for everything
                         const recipeMain = document.createElement("div");
                         recipeMain.className = "recipe-main";
                         recipeMain.innerHTML = `<h3 class="section-header">Some recipes to nibble on...</h3>`;
@@ -777,13 +803,18 @@
                             recipe.sentiment_text = r.sentiment_text;
                             recipe.sentiment_score = r.sentiment_score
 
+                            // Add the buttons!
                             recipeButtons.innerHTML += recipeButtonMaker(recipe, i);
+                            // Add the recipes!
                             recipeCards.innerHTML += recipeTemplate(recipe, i);
 
+                            // If there are recommended cocktail pairings
                             if (recipe.recommended_cocktails) {
                                 recipe.recommended_cocktails.forEach( (d,u) => {
+                                    // Create the div inside the modal container
                                     let recipeModalContent = document.createElement("div");
                                     recipeModalContent.className = 'cocktail-card hidden';
+                                    // Track the id "recipeIndex_cocktailPairingIndex"
                                     recipeModalContent.id = `${i}_${u}`;
 
                                     recipeModalContent.innerHTML += cocktailModal(d.data, i, rank=d.rank);
@@ -812,18 +843,20 @@
                         el.querySelector('.star-fill').style.width = percent + '%';
                     });
 
-                    // Add a button to each cocktail card to show the modal
+                    // Add a click-to-show to each cocktail button to show the modal
                     document.querySelectorAll('.cocktail-buttons').forEach(button => {
                         button.addEventListener('click', () => {
                             const id = button.getAttribute('id');
                             const card = document.querySelector(`.cocktail-card[id='${id}']`);
 
+                            // If the card exists
                             if (card) {
                                 modalContainer.classList.toggle('hidden')
                                 card.classList.toggle('hidden'); // toggle visibility
                             }
                         });
                     });
+                    // Add a click-to-show to each cocktail pairing button
                     document.querySelectorAll('.pairing-button').forEach(button => {
                         button.addEventListener('click', () => {
                             const id = button.getAttribute('id');
@@ -835,6 +868,7 @@
                             }
                         });
                     });
+                    // Add a click-to-close to the modal
                     document.querySelectorAll('.close-button').forEach(button => {
                         button.addEventListener('click', () => {
                             closeModal();
@@ -854,7 +888,8 @@
                         closeModal();
                     });
 
-                    // Show and hide the correct recipes
+                    // Show and hide the correct recipes whenever one is clicked
+                    // Fortunately works if you click the same one twice
                     document.querySelectorAll('.recipe-button').forEach(button => {
                         button.addEventListener('click', () => {
                             const id = button.getAttribute('id');
@@ -870,14 +905,17 @@
                         });
                     })
 
+                    // Adds a hidden class to every cocktail card
                     function closeModal() {
                         document.querySelectorAll('.cocktail-card').forEach(card => {
                             card.classList.add('hidden');
                         });
 
+                        // Hides the modal container too
                         document.querySelector(`.modal-shadow`).classList.add('hidden');
                     };
 
+                    // Scroll everything into view once it loads
                     answerBox.scrollIntoView({ block: "start", inline: "nearest", behavior: "smooth" });
                 })
                 .catch(error => {
