@@ -21,40 +21,54 @@ existing_movies = {
 def sanitize_filename(name):
     return re.sub(r'[^\w\s-]', '', name).replace(' ', '_')
 
-for decade, movies_file in movies_by_decade.items():
-    with open(movies_file, "r", encoding="utf-8") as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            movie_name = row["title"].strip()
-            movie_plot = row["plot"].strip()
+def get_decade():
+    for decade, movies_file in movies_by_decade.items():
+        with open(movies_file, "r", encoding="utf-8") as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                movie_name = row["title"].strip()
+                movie_plot = row["plot"].strip()
 
-            # Correct movie titles like "Great Gatsby, The" to "The Great Gatsby"
-            if "," in movie_name:
-                parts = movie_name.split(", ")
-                if len(parts) == 2:
-                    movie_name = f"{parts[1]} {parts[0]}"
+                # Correct movie titles like "Great Gatsby, The" to "The Great Gatsby"
+                if "," in movie_name:
+                    parts = movie_name.split(", ")
+                    if len(parts) == 2:
+                        movie_name = f"{parts[1]} {parts[0]}"
 
-            base_name = re.sub(r'\s+\d{4}$', '', movie_name).lower()
+                base_name = re.sub(r'\s+\d{4}$', '', movie_name).lower()
 
-            # skip if the movie (ignoring year) is already in data/scripts
-            if base_name in existing_movies:
-                print(f"Skipping {movie_name}, already in data/scripts.")
-                continue
+                # skip if the movie (ignoring year) is already in data/scripts
+                if base_name in existing_movies:
+                    print(f"Skipping {movie_name}, already in data/scripts.")
+                    continue
 
-            # Sanitize the movie name for filenames
-            sanitized_name = sanitize_filename(movie_name)
+                # Sanitize the movie name for filenames
+                sanitized_name = sanitize_filename(movie_name)
 
-            script_file_path = os.path.join(scripts_dir, f"plot-{sanitized_name}.txt")
-            with open(script_file_path, "w", encoding="utf-8") as script_file:
-                script_file.write(movie_plot)
-            print(f"Saved plot for {movie_name} to {script_file_path}.")
-            existing_movies.add(base_name)  # Add to existing_movies to prevent duplicates
+                script_file_path = os.path.join(scripts_dir, f"plot-{sanitized_name}.txt")
+                with open(script_file_path, "w", encoding="utf-8") as script_file:
+                    script_file.write(movie_plot)
+                print(f"Saved plot for {movie_name} to {script_file_path}.")
+                existing_movies.add(base_name)
 
-# Delete plot files with "untitled" or "film" in their title
-for root, _, files in os.walk(plots_dir):
-    for file in files:
-        if file.endswith(".txt") and ("untitled" in file.lower() or "film" in file.lower()):
-            file_path = os.path.join(root, file)
-            os.remove(file_path)
-            print(f"Deleted plot file: {file_path}")
+def delete_untitled():
+    # Delete plot files with "untitled" or "film" in their title
+    for root, _, files in os.walk(plots_dir):
+        for file in files:
+            if file.endswith(".txt") and ("untitled" in file.lower() or "film" in file.lower()):
+                file_path = os.path.join(root, file)
+                os.remove(file_path)
+                print(f"Deleted plot file: {file_path}")
 
+def replace_dashes():
+    # Iterate through data/scripts and replace dashes and underscores with spaces in filenames
+    for root, _, files in os.walk(scripts_dir):
+        for file in files:
+            if file.endswith(".txt"):
+                new_file_name = file.replace("-", " ").replace("_", " ")
+                new_file_path = os.path.join(root, new_file_name)
+                old_file_path = os.path.join(root, file)
+                os.rename(old_file_path, new_file_path)
+                print(f"Renamed {old_file_path} to {new_file_path}")
+
+replace_dashes()

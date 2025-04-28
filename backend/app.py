@@ -70,7 +70,18 @@ def find_foods():
     script = helper_functions.get_movie_script(movie_title, SCRIPT_FOLDER)
     if not script:
         return jsonify({"error": "Script or plot not found"})
-    
+
+    script_filename = None
+    variations = [f"plot {movie_title}.txt", f"{movie_title}.txt"]
+    for file in os.listdir(SCRIPT_FOLDER):
+        if file in variations:
+            script_filename = file
+            break
+    if not script_filename:
+        return jsonify({"error": "Script or plot not found"})
+
+    source = "plot" if script_filename.startswith("plot") else "script"
+
     script_tfidf = cocktail_vectorizer.transform([script])
     script_projected = script_tfidf.dot(vt.T)
     script_projected = normalize(script_projected)
@@ -82,7 +93,6 @@ def find_foods():
     beta = 0.9
 
     cocktail_desc_similarities = helper_functions.description_svd(cocktail_vectorizer, drink_description, vt, cocktail_vectors)
-    source = "script"
     weight_dict = {word: 1.5 for word in script_words}
     cocktail_tfidf = compute_idf()
     food_tfidf = recipe_compute_idf()
@@ -163,8 +173,6 @@ def find_foods():
             "jaccard_score": round(raw_jaccard_score * 100, 1),
             "weighted_jaccard_score": round(jaccard_score * 100, 1),
             "svd_text_score": round(svd_text_score * 100, 1),
-            "svd_desc_score": round(combined_desc_score * 100, 1) if combined_desc_score is not None else None,
-            "jaccard_intersection": list(intersecting_words),
             "top_svd_terms": top_svd_terms,
             "source": source
         }
@@ -336,7 +344,7 @@ def find_foods():
     return jsonify({
         "cocktails": top_cocktails,
         "recipes": top_recipes,
-        "source":source
+        "source": source
     })
 
 @app.route("/movie-suggestions")

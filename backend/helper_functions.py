@@ -72,10 +72,6 @@ def tokenize_script(script_text, min_word_length=3):
     return filtered_tokens
 
 def get_movie_script(movie_title, folder, min_word_length=3):
-    """
-    Load and return the content of a movie script.
-    Supports exact and partial matching with hyphens or underscores.
-    """
     base = movie_title.lower()
     variations = [
         f"{base.replace(' ', '-')}.txt",
@@ -553,3 +549,24 @@ def load_all_scripts(script_folder):
             with open(os.path.join(script_folder, filename), "r", encoding="utf-8", errors="ignore") as f:
                 script_texts.append(f.read())
     return script_texts
+
+def get_script_filename(movie_title, folder):
+    base = movie_title.lower().replace(' ', '-')
+    variations = [
+        f"plot-{base}.txt",
+        f"{base}.txt"
+    ]
+
+    for filename in variations:
+        script_path = os.path.join(folder, filename)
+        if os.path.exists(script_path):
+            return is_plot_script(filename)
+
+    return None
+
+def is_plot_script(filename):
+    base_name = os.path.basename(filename).lower().strip()
+    if base_name.startswith("plot-"):
+        return "plot"
+    else:
+        return "script"
