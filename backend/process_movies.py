@@ -1,6 +1,9 @@
 import os
 import csv
 import re
+import requests
+from bs4 import BeautifulSoup
+import time
 
 scripts_dir = "4300-Flask-Template-JSON/backend/data/scripts"
 plots_dir = os.path.join("4300-Flask-Template-JSON/backend/data/plots")
@@ -60,6 +63,16 @@ def delete_untitled():
                 os.remove(file_path)
                 print(f"Deleted plot file: {file_path}")
 
+def delete_film_suffix():
+    for root, _, files in os.walk(scripts_dir):
+        for file in files:
+            if file.has("film") in file.lower():
+                old_file_path = os.path.join(root, file)
+                new_file_name = file.lower().replace("film", "").strip()
+                new_file_path = os.path.join(root, new_file_name)
+                os.rename(old_file_path, new_file_path)
+                print(f"Renamed {old_file_path} to {new_file_path}")
+
 def replace_dashes():
     # Iterate through data/scripts and replace dashes and underscores with spaces in filenames
     for root, _, files in os.walk(scripts_dir):
@@ -71,4 +84,70 @@ def replace_dashes():
                 os.rename(old_file_path, new_file_path)
                 print(f"Renamed {old_file_path} to {new_file_path}")
 
-replace_dashes()
+
+BASE_URL = "https://en.wikipedia.org"
+LIST_URL = BASE_URL + "/wiki/List_of_Studio_Ghibli_works"
+OUTPUT_DIR = "ghibli_plots"
+
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+def get_ghibli_movie_links():
+    res = requests.get(LIST_URL)
+    soup = BeautifulSoup(res.content, "html.parser")
+    links = []
+
+    for td in soup.find_all("td"):
+        i = td.find("i")  # Look for <i> tags
+        if i:
+            a = i.find("a", href=True)  # Find <a> tags inside <i>
+            if a and a['href'].startswith("/wiki/") and not a['href'].startswith("/wiki/List"):
+                if 'title' in a.attrs:  # Check if 'title' attribute exists
+                    links.append((a['title'], BASE_URL + a['href']))
+    
+    return links
+
+def extract_plot_from_page(url):
+    res = requests.get(url)
+    soup = BeautifulSoup(res.content, "html.parser")
+
+    # Locate the div with id="mw-content-text"
+    content_div = soup.find("div", id="mw-content-text")
+    if not content_div:
+        return None
+
+    # Find all <p> tags within this div
+    paragraphs = content_div.find_all("p")
+    plot_text = "\n\n".join(p.get_text().strip() for p in paragraphs if p.get_text().strip())
+
+    return plot_text if plot_text else None
+
+def save_plot(title, plot_text):
+    # Sanitize and format the filename
+    sanitized_name = sanitize_filename(title).replace("-", " ").replace("_", " ")
+    filename = f"plot-{sanitized_name}.txt"
+    path = os.path.join(scripts_dir, filename)  # Save directly to scripts_dir
+
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(plot_text)
+    print(f"Saved: {filename}")
+
+delete_film_suffix()
+
+# def main():
+#     links = get_ghibli_movie_links()
+#     print(f"Found {len(links)} possible movie links...")
+
+#     for title, url in links:
+#         try:
+#             print(f"Fetching plot for: {title}")
+#             plot = extract_plot_from_page(url)
+#             if plot:
+#                 save_plot(title, plot)
+#             else:
+#                 print(f"⚠️ No plot found for {title}")
+#             time.sleep(1)  # Be kind to Wikipedia
+#         except Exception as e:
+#             print(f"❌ Error processing {title}: {e}")
+
+# if __name__ == "__main__":
+#     main()
