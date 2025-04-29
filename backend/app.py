@@ -315,7 +315,6 @@ def find_foods():
             }
         for recipe, score, raw_jaccard_score, jaccard_score, svd_script_score, combined_desc_score, _, intersecting_words, top_svd_terms, sentiment_text, sentiment_score in combined_scores[:6]
     ]
-    
 
     pairings_by_recipe = defaultdict(list)
 

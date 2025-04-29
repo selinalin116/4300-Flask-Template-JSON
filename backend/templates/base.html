@@ -441,8 +441,8 @@
                     <p class="detail-text">
                         <strong>Top SVD Themes:</strong> ${recipe.top_svd_terms && recipe.top_svd_terms.length > 0 ? recipe.top_svd_terms.join(', ') : 'N/A'}
                     </p>
-                    <p>
-                        User Sentiment:
+                    <p class="detail-text">
+                        <strong>User Sentiment:</strong>
                         ${recipe.sentiment_text !== undefined && recipe.sentiment_score !== null
                     ? `<span class="sentiment-text">
                             ${recipe.sentiment_text} Ratings (Score of ${recipe.sentiment_score.toFixed(2)})
