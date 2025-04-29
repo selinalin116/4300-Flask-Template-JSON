@@ -316,7 +316,6 @@ div.recipe-header > p {
     cursor: pointer;
 }
 
-
 /* Rating section in food recipes container */
 .rating-container {
     display: flex;
@@ -384,9 +383,9 @@ div.recipe-header > p {
 .rating-float-box::before {
     content: "";
     position: absolute;
-    top: -8px;
-    left: 20px;
-    border-width: 8px;
+    top: -20px;
+    left: 130px;
+    border-width: 10px;
     border-style: solid;
     border-color: transparent transparent #ccc transparent;
 }
@@ -394,7 +393,6 @@ div.recipe-header > p {
 .rating-float-box::after {
     content: "";
     position: absolute;
-    top: -7px;
     left: 20px;
     border-width: 7px;
     border-style: solid;
@@ -446,7 +444,14 @@ div.recipe-header > p {
 }
 
 .breakdown-row span:first-child {
-    width: 50px;
+    width: 60px;
+    flex-shrink: 0;
+}
+
+.breakdown-row span:last-child {
+    width: 35px; 
+    text-align: right;
+    flex-shrink: 0;
 }
 
 .breakdown-row .bar {
@@ -475,7 +480,61 @@ div.recipe-header > p {
 
 .see-reviews-button {
     text-align: center;
-    pointer: cursor;
+    cursor: pointer;
+}
+
+.see-reviews-button:hover{
+    color: #e50914;
+    text-decoration: underline;
+}
+
+/* Recipe Reviews Modal */
+.reviews-modal {
+    display: none;
+    position: fixed;
+    z-index: 200;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.reviews-modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 1000px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    animation: fadeIn 0.3s;
+}
+
+.close-modal {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-modal:hover {
+    color: black;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+/* See all reviews modal */
+.rating-summary {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: center;
 }
 
 /* Movie dropdown */

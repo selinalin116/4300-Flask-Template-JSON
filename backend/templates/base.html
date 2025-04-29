@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-<title>FoodTastic</title>
+<title>D.N.M.</title>
 <link rel="icon" href="{{ url_for('static', filename='images/DNM.png') }}">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,7 +16,7 @@
     <header>
         <div id="logo-container">
             <a href="">
-                <img src="{{ url_for('static', filename='images/logo.png') }}">
+                <img src="{{ url_for('static', filename='images/logo2.svg') }}">
             </a>
             <h4>For All Your Movie Nights</h4>
         </div>
@@ -43,8 +43,8 @@
     <div id="hero">
         <div id="intro-container">
             <div id="description">
-                <h1>FoodTastic</h1>
-                <p>Find the perfect food and cocktails for your movie night!</p>
+                <h1>D.N.M.</h1>
+                <p>Find the perfect cocktails and food for your movie night!</p>
             </div>
             <div class="search-container">
                 <div class="input-box" onclick="sendFocus()">
@@ -57,10 +57,41 @@
                 <div class="input-box" onclick="descriptionFocusDrink()">
                     <input placeholder="Cocktail Preferences (e.g., Non-alcoholic tangy drinks)"
                         id="description-drink-search">
+
+                    <div class="info-tooltip">i
+                        <div class="tooltip-text">
+                            <p>Describe your drink's vibe: is it tangy? Acidic? Fruity?</p>
+                            <p>
+                                Some pre-coded drink filters you can add:
+                            </p>
+                            <ul class="no-bullet">
+                                <li>"vegan"</li>
+                                <li>"dairy free"</li>
+                                <li>"non-alcoholic"</li>
+                                <li>"alcoholic"</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
                 <div class="input-box" onclick="descriptionFocusFood()">
-                    <input placeholder="Recipes Preferences (e.g., Nostalgic homecooked meals)"
-                        id="description-food-search">
+                    <input placeholder="Meal Preferences (e.g., Vegan homecooked meals)" id="description-food-search">
+
+                    <div class="info-tooltip">i
+                        <div class="tooltip-text">
+                            <p>Describe your recipe's vibe: is it rich? Spicy? Sweet?</p>
+                            <p>
+                                Some pre-coded recipe filters you can add:
+                            </p>
+                            <ul class="no-bullet">
+                                <li>"vegan"</li>
+                                <li>"vegetarian"</li>
+                                <li>"pescatarian"</li>
+                                <li>"dairy free"</li>
+                                <li>"gluten free"</li>
+                                <li>"kosher"</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="submit-container">
@@ -79,6 +110,17 @@
         <!-- Results will appear here -->
     </div>
 
+    <div id="reviewsModal" class="reviews-modal hidden">
+        <div class="reviews-modal-content">
+        <span class="close-modal" onclick="reviewsCloseModal()">&times;</span>
+        <h2>Reviews</h2>
+        <div id="modal-reviews-container">
+            <!-- Reviews fill here -->
+        </div>
+        </div>
+    </div>
+  
+
     <div class="modal-shadow hidden" id="modal-shadow">
         <!-- Div to cover the whole screen when a cocktail is clicked. -->
     </div>
@@ -88,6 +130,7 @@
 
 
     <script>
+        let allRecipes = [];
         function noResultsTemplate(movieTitle) {
             return `<div class='no-results'>
                 <h3>No food mentions found in "${movieTitle}"</h3>
@@ -128,6 +171,7 @@
         // i == 0 is the most relevant cocktail
         function cocktailCard(cocktail, i) {
             if (i == 0) {
+                // If we're looking at the most relevant cocktail, it should be a visible headliner, not a button
                 return `
                 <div id="relevant-cocktail-card">
                     <img src="${cocktail.image}" alt="${cocktail.name}" class="relevant-cocktail-image">
@@ -144,11 +188,11 @@
                             ${cocktail.ingredients.map(ing => `<li>${ing}</li>`).join('')}
                         </ul>
 
-                        <div class="cocktail-instructions">
+                        <div class="instructions">
                             <p>${cocktail.instructions}</p>
                         </div>
 
-                        <div class="cocktail-explanation">
+                        <div class="explanation">
                             <p>
                                 This drink was recommended because it shares ${cocktail.jaccard_score}% of its ingredients with the movie script keywords.
                             </p>
@@ -164,8 +208,9 @@
                 `
             }
             else {
+                // If not the most relevant cocktail, make a button that represents it
                 return `
-                <button class="cocktail-buttons" id="${i}">
+                <button class="cocktail-buttons" id="cards${i}">
                     <img src="${cocktail.image}" alt="${cocktail.name}">
                     <h3>${cocktail.name}</h3>
                     <h4>${cocktail.score}% match</h4>
@@ -174,9 +219,19 @@
             }
         }
 
-        function cocktailModal(cocktail, i) {
-            return `
-                <div id="cocktail-details">
+
+        // Creates a cocktail modal element within the modal-shadow div
+        // cocktail is the data for a cocktail
+        // i should be the index of the cocktail during the loop
+        // rank is the index of the compatible cocktails for a recipe
+        function cocktailModal(cocktail, i, rank = null) {
+            if (rank === null) {
+                // the cocktail modals for the movie cocktails have different text than the recipe cocktails
+                // Differences:
+                //      accent flavor text
+                //      explanation
+                return `
+                <div class="cocktail-details">
                     <h4 class='accent-text'>A Runner-Up...</h4>
                     <div class="cocktail-header">
                         <a href="${cocktail.recipe_link}" target="_blank">
@@ -189,14 +244,19 @@
                         ${cocktail.ingredients.map(ing => `<li>${ing}</li>`).join('')}
                     </ul>
 
-                    <div class="cocktail-instructions">
+                    <div class="instructions">
                         <p>${cocktail.instructions}</p>
                     </div>
 
-                    <div class="cocktail-explanation">
+                    <div class="explanation">
                         <p>
-                            This drink was recommended because it shares ${cocktail.jaccard_score}% of its ingredients with the movie script keywords 
-                        and has a script similarity score of ${cocktail.svd_text_score}% based on thematic content${cocktail.svd_desc_score !== null ? ` and also has a similarity score of ${cocktail.svd_desc_score}% based on additional description provided` : ''} If we give lower weighting to common ingredients, the recipe has a ingredient similarity of ${cocktail.weighted_jaccard_score}%.
+                            This drink was recommended because it shares ${cocktail.jaccard_score}% of its ingredients with the movie script keywords and has a script similarity score of ${cocktail.svd_text_score}% based on thematic content${cocktail.svd_desc_score !== null ? ` and also has a similarity score of ${cocktail.svd_desc_score}% based on additional description provided` : ''}. If we give lower weighting to common ingredients, the recipe has a ingredient similarity of ${cocktail.weighted_jaccard_score}%.
+                        </p>
+                        <p class="detail-text">
+                            <strong>Shared Ingredients/Words:</strong> ${cocktail.jaccard_intersection && cocktail.jaccard_intersection.length > 0 ? cocktail.jaccard_intersection.join(', ') : 'N/A'}
+                        </p>
+                        <p class="detail-text">
+                            <strong>Top SVD Themes:</strong> ${cocktail.top_svd_terms && cocktail.top_svd_terms.length > 0 ? cocktail.top_svd_terms.join(', ') : 'N/A'}
                         </p>
                     </div>
                 </div>
@@ -208,70 +268,135 @@
                     x
                 </button>
                 `;
+            } else {
+                return `
+                    <div class="cocktail-details">
+                        <h4 class='accent-text'>Our Recommended Pairing...</h4>
+                        <div class="cocktail-header">
+                            <a href="${cocktail.recipe_link}" target="_blank">
+                                <h3 class='cocktail-name'>${cocktail.name}   </h3>
+                            </a>
+                            <p>(Rank: ${rank})</p>
+                        </div>
+
+                        <ul class='cocktail-list dashed'>
+                            ${cocktail.ingredients.map(ing => `<li>${ing}</li>`).join('')}
+                        </ul>
+
+                        <div class="instructions">
+                            <p>${cocktail.instructions}</p>
+                        </div>
+
+                        <div class="explanation">
+                            <p>
+                                This drink was recommended to be paired based on a <a class="kaggle-link" href="https://www.kaggle.com/datasets/uom190346a/tastetrios-exploring-ingredient-combinations">dataset of pre-coded flavor combinations</a>.
+                            </p>
+                        </div>
+                    </div>
+                    <div class='modal-image'>
+                        <img src="${cocktail.image}" alt="${cocktail.name}" class="cocktail-image">
+                    </div>
+
+                    <button class='close-button'>
+                        x
+                    </button>
+                    `
+            };
         }
 
-        function recipeTemplate(recipe) {
-            const maxLength = 300;
-            const inst = recipe.instructions || "";
+        // Creates the recipe buttons on the left of the recipes
+        // Parameters:
+        //   recipe is the recipe data
+        //   i should be the index during the loop
+        function recipeButtonMaker(recipe, i) {
+            first = (i == 0) ? "selected-recipe" : "";
 
-            const isLong = inst.length > maxLength;
-            console.log(inst.length);
-            const shortInst = inst.slice(0, maxLength) + (isLong ? "..." : "");
+            return `
+            <button class="recipe-button ${first}" id="recipe${i}">
+                <h3>${recipe.name}</h3>
+                <h4>Similarity Score: ${recipe.score}%</h4>
+            </button>
+        `
+        };
 
-            const fullInst = `<span class="short-text">${shortInst}</span> 
-            <span class="full-text hidden">${inst}</span>
-            ${isLong ? `<a href="#" class="see-more">See more</a>` : ""}`;
+        // Creates the recipe texts on the right of the recipes
+        // Parameters:
+        //   recipe is the recipe data
+        //   i should be the index during the loop
+        function recipeTemplate(recipe, i) {
+            // Every div except the first should be hidden at first
+            hidden = (i == 0) ? "" : "hidden";
 
-            return `<div class='recipe-card'>
-            <div class="recipe-info">
-                <div class = "recipe-left">
-                    <h3>${recipe.name}</h3>
-                    <h4>Similarity Score: ${recipe.score}%</h4>
-                    <div class="rating-container">
-                        <span class="numeric-rating">
-                            ${recipe.rating === 'NA' || recipe.rating == null || recipe.rating === 0
+            instructionsArray = recipe.instructions.slice(0, -1).split(".");
+            pairingIndex = -1;
+
+            return `
+            <div class='recipe-card ${hidden}' id="recipe${i}">
+                <div class='recipe-header' style="position: relative;">
+                    <h3 class="recipe-name">${recipe.name}</h3>
+                    <p>
+                        <div class="rating-container">
+                            <span class="numeric-rating">
+                                ${recipe.rating === 'NA' || recipe.rating == null || recipe.rating === 0
                     ? 'N/A'
                     : (Math.round(Number(recipe.rating) * 100) / 100).toString().replace(/\.00$/, '')}
-                        </span>
+                            </span>
 
-                        ${recipe.rating && recipe.rating !== 'NA' && recipe.rating !== 0
+                            ${recipe.rating && recipe.rating !== 'NA' && recipe.rating !== 0
                     ? `<div class="star-rating" data-rating="${recipe.rating}">
-                                <div class="star-base">★★★★★</div>
-                                <div class="star-fill">★★★★★</div>
-                            </div>`
+                                    <div class="star-base">★★★★★</div>
+                                    <div class="star-fill">★★★★★</div>
+                                </div>`
                     : ''}
 
-                        ${recipe.rating_count && recipe.rating_count > 0
-                    ? `<span class="rating-count">(${recipe.rating_count} ratings)</span>`
+                            ${recipe.rating_count && recipe.rating_count > 0
+                    ? `<span class="rating-count" style="cursor:pointer;" onclick="toggleBreakdown(${i})">(${recipe.rating_count} ratings)</span>`
                     : ''}
-                        
-                        ${recipe.sentiment_text !== undefined && recipe.sentiment_score !== null
-                    ? `<span class="sentiment-text">
-                                Sentiment: ${recipe.sentiment_text} (${recipe.sentiment_score.toFixed(2)})
-                                </span>`
-                    : '<span>NO SENTIMENT</span>'
-                }
-
-                    </div>
-
-
-                    <div class="explanation">
-                        <h4>Why this recipe?</h4>
-                        <p> This recipe was recommended because it shares ${recipe.jaccard_score}% of its ingredients with the movie script keywords 
-                            and has a script similarity score of ${recipe.svd_text_score}% based on thematic content${recipe.svd_desc_score !== null ? ` and also has a similarity score of ${recipe.svd_desc_score}% based on additional description provided` : ''}. If we give lower weighting to common ingredients, the recipe has a ingredient similarity of ${recipe.weighted_jaccard}%.</p>
-                        <p class="detail-text">
-                            <strong>Shared Ingredients/Words:</strong> ${recipe.jaccard_intersection && recipe.jaccard_intersection.length > 0 ? recipe.jaccard_intersection.join(', ') : 'N/A'}
-                        </p>
-                        <p class="detail-text">
-                            <strong>Top SVD Themes:</strong> ${recipe.top_svd_terms && recipe.top_svd_terms.length > 0 ? recipe.top_svd_terms.join(', ') : 'N/A'}
-                        </p>
+                        </div>
+                    </p>
+                    <div class="rating-float-box breakdown-hidden" id="rating-float-${i}">
+                        <div class="breakdown-header">
+                            <div class="average-rating"><strong>${(Math.round(Number(recipe.rating) * 100) / 100).toString().replace(/\.00$/, '')}</strong> out of 5</div>
+                            <div onclick="closeBreakdown(${i})">
+                                <span class="close-button">x</span>
+                            </div>
+                        </div>
+                        <div class="breakdown-bars">
+                            <div class="breakdown-row">
+                                <span>5 star</span>
+                                <div class="bar"><div class="fill" data-target-width="${recipe?.five_star || 0}%"></div></div>
+                                <span>${recipe?.five_star || 0}%</span>
+                            </div>
+                            <div class="breakdown-row">
+                                <span>4 star</span>
+                                <div class="bar"><div class="fill" data-target-width="${recipe?.four_star || 0}%"></div></div>
+                                <span>${recipe?.four_star || 0}%</span>
+                            </div>
+                            <div class="breakdown-row">
+                                <span>3 star</span>
+                                <div class="bar"><div class="fill" data-target-width="${recipe?.three_star || 0}%"></div></div>
+                                <span>${recipe?.three_star || 0}%</span>
+                            </div>
+                            <div class="breakdown-row">
+                                <span>2 star</span>
+                                <div class="bar"><div class="fill" data-target-width="${recipe?.two_star || 0}%"></div></div>
+                                <span>${recipe?.two_star || 0}%</span>
+                            </div>
+                            <div class="breakdown-row">
+                                <span>1 star</span>
+                                <div class="bar"><div class="fill" data-target-width="${recipe?.one_star || 0}%"></div></div>
+                                <span>${recipe?.one_star || 0}%</span>
+                            </div>
+                        </div>
+                        <hr class="divider-line">
+                        <div class="see-reviews-button" onclick="openModal(${i})">
+                            <p>See reviews</p>
+                        </div>
                     </div>
                 </div>
-                <div class = "recipe-right">
-                    <h4>Instruction</h4>
-                    <p>${fullInst}</p>
-                    <h4>Ingredients</h4>
-                    <ul class="ingredients-list">
+
+                <div class="recipe-details instructions">
+                    <ul class="ingredients-list dashed">
                     ${recipe.ingredients
                     .filter(ing => ing.trim() !== '')
                     .map(ing => {
@@ -281,24 +406,190 @@
                     .join('')}
                     </ul>
 
+                    <h4>Instructions:</h4>
+                    
+                    <ol>
+                        ${(instructionsArray).map(step => `<li class="capitalized">${step}.</li>`).join('')}
+                    </ol>
+                </div>
+
+                ${recipe.recommended_cocktails && recipe.recommended_cocktails.length > 0
+                    ? `<div class="recommended-cocktails">
+                        <h4 class="accent-text">Some Nice Pairings...</h4>
+                        <ul class="recommended-cocktails-list">
+                            ${recipe.recommended_cocktails.map(cocktail => {
+                        pairingIndex += 1;
+
+                        return `
+                                    <li>
+                                        <button class="pairing-button" id="${i}_${pairingIndex}">${cocktail.data.name}</button>
+                                        - ${cocktail.compatibility} (Rank: ${cocktail.rank})
+                                    </li>
+                                `
+                    }).join('')}
+                        </ul>
+                    </div>`
+                    : ''
+                }
+
+                <div class="explanation">
+                    <p> This recipe was recommended because it shares ${recipe.jaccard_score}% of its ingredients with the movie script keywords 
+                        and has a script similarity score of ${recipe.svd_text_score}% based on thematic content${recipe.svd_desc_score !== null ? ` and also has a similarity score of ${recipe.svd_desc_score}% based on additional description provided` : ''}. If we give lower weighting to common ingredients, the recipe has a ingredient similarity of ${recipe.weighted_jaccard}%.</p>
+                    <p class="detail-text">
+                        <strong>Shared Ingredients/Words:</strong> ${recipe.jaccard_intersection && recipe.jaccard_intersection.length > 0 ? recipe.jaccard_intersection.join(', ') : 'N/A'}
+                    </p>
+                    <p class="detail-text">
+                        <strong>Top SVD Themes:</strong> ${recipe.top_svd_terms && recipe.top_svd_terms.length > 0 ? recipe.top_svd_terms.join(', ') : 'N/A'}
+                    </p>
+                    <p>
+                        User Sentiment:
+                        ${recipe.sentiment_text !== undefined && recipe.sentiment_score !== null
+                    ? `<span class="sentiment-text">
+                            ${recipe.sentiment_text} Ratings (Score of ${recipe.sentiment_score.toFixed(2)})
+                            </span>`
+                    : '<span>NO SENTIMENT</span>'
+                }
+                    </p>
                 </div>
             </div>
-        </div>`;
+        `;
         }
 
-        document.addEventListener('click', function (e) {
-            // Recipe text shortening and lengthening
-            if (e.target && e.target.matches('.see-more')) {
-                e.preventDefault();
-                const card = e.target.closest('.recipe-card');
-                const shortText = card.querySelector('.short-text');
-                const fullText = card.querySelector('.full-text');
+        function toggleBreakdown(index) {
+            const breakdown = document.getElementById(`rating-float-${index}`);
 
-                shortText.classList.toggle('hidden');
-                fullText.classList.toggle('hidden');
-                e.target.textContent = fullText.classList.contains('hidden') ? 'See more' : 'See less';
+            if (breakdown.classList.contains('breakdown-hidden')) {
+                breakdown.classList.remove('breakdown-hidden');
+
+                breakdown.querySelectorAll('.fill').forEach(bar => {
+                    bar.style.width = '0%';
+                });
+
+                setTimeout(() => {
+                    breakdown.querySelectorAll('.fill').forEach(bar => {
+                        const targetWidth = bar.getAttribute('data-target-width');
+                        if (targetWidth) {
+                            bar.style.width = targetWidth;
+                        }
+                    });
+                }, 20);
+            } else {
+                breakdown.classList.add('breakdown-hidden');
+
+                breakdown.querySelectorAll('.fill').forEach(bar => {
+                    bar.style.width = '0%';
+                });
             }
+        }
+
+
+        function closeBreakdown(index) {
+            const breakdown = document.getElementById(`rating-float-${index}`);
+            breakdown.classList.add('breakdown-hidden');
+        }
+
+        function openModal(i) {
+
+            const recipe = allRecipes[i];
+            console.log(recipe)
+            const modal = document.getElementById("reviewsModal");
+            const container = document.getElementById("modal-reviews-container");
+
+            container.innerHTML = ""; // Clear previous reviews
+
+            const avgRating = recipe.rating || "N/A";
+            const totalRatings = recipe.rating_count || 0;
+            const fiveStarPercent = recipe['5_star_percentage'] || 0;
+            const fourStarPercent = recipe['4_star_percentage'] || 0;
+            const threeStarPercent = recipe['3_star_percentage'] || 0;
+            const twoStarPercent = recipe['2_star_percentage'] || 0;
+            const oneStarPercent = recipe['1_star_percentage'] || 0;
+
+            const ratingSummary = `
+                <div class="rating-summary">
+                    <div class="average-rating-section">
+                        <div class="big-rating">${avgRating.toFixed(2)}</div>
+                        <div class="stars">${generateStars(avgRating)}</div>
+                        <div class="rating-count">${totalRatings} ratings</div>
+                    </div>
+
+                    <div class="rating-breakdown">
+                        ${buildRatingRow("5.0", fiveStarPercent)}
+                        ${buildRatingRow("4.0", fourStarPercent)}
+                        ${buildRatingRow("3.0", threeStarPercent)}
+                        ${buildRatingRow("2.0", twoStarPercent)}
+                        ${buildRatingRow("1.0", oneStarPercent)}
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML += ratingSummary; 
+
+            const reviews = recipe.review_list || [];
+            const ratings = recipe.review_rating_list || [];
+
+            if (reviews.length === 0) {
+                container.innerHTML += "<p>No reviews available.</p>";
+            } else {
+                reviews.forEach((reviewText, idx) => {
+                    const rating = ratings[idx] || "N/A";
+                    const div = document.createElement("div");
+                    div.classList.add("single-review");
+
+                    div.innerHTML = `
+                        <hr>
+                        <p><strong>Rating: ${rating}★</strong></p>
+                        <p>${reviewText}</p>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+
+            modal.classList.remove('hidden');
+            modal.style.display = "block";
+        }
+
+
+        function reviewsCloseModal() {
+            const modal = document.getElementById("reviewsModal");
+            modal.classList.add('hidden');
+            modal.style.display = "none";
+        }
+
+        function generateStars(avg) {
+            return `
+                <div class="star-rating" data-rating="${avg}">
+                    <div class="star-base">★★★★★</div>
+                    <div class="star-fill">★★★★★</div>
+                </div>
+            `;
+        }
+
+        function buildRatingRow(star, percent) {
+            return `
+                <div class="rating-row">
+                    <span class="rating-label">${star}</span>
+                    <div class="bar-container">
+                        <div class="bar-fill" style="width: ${percent}%;"></div>
+                    </div>
+                    <span class="rating-number">${percent.toFixed(0)}%</span>
+                </div>
+            `;
+        }
+
+        document.addEventListener('click', function (event) {
+            document.querySelectorAll('.rating-float-box').forEach(box => {
+                if (!box.classList.contains('breakdown-hidden')) {
+                    if (!box.contains(event.target) && !event.target.classList.contains('rating-count')) {
+                        box.classList.add('breakdown-hidden');
+                        box.querySelectorAll('.fill').forEach(bar => {
+                            bar.style.width = '0%';
+                        });
+                    }
+                }
+            });
         });
+
 
         function fetchMovieSuggestions() {
             const query = document.getElementById('movie-search').value.trim();
@@ -372,9 +663,21 @@
         });
 
         // List of dietary restrictions to go through when parsing ad-hoc
-        dietaryRestrictions = ['vegetarian', 'vegan', 'pescatarian', 'gluten-free', 'dairy-free', 'kosher'];
+        dietaryRestrictions = ['vegetarian', 'vegan', 'pescatarian', 'gluten-free', 'dairy-free', 'kosher', 'dairy free', 'gluten free'];
+
         // List of drink restrictions to go through when parsing ad-hoc
-        alcRestrictions = ['alchoholic', 'non-alcoholic'];
+        alcRestrictions = ['alchoholic', 'non-alcoholic', 'non alcoholic'];
+
+        const multiWordDietary = ['dairy free', 'gluten free'];
+        const multiWordAlcoholMap = {
+            'non alcoholic': 'non-alcoholic',
+            'no alcohol': 'non-alcoholic',
+            'alcohol only': 'alcoholic',
+            'only alcohol': 'alcoholic'
+        };
+
+        const genericDrinkWords = ['drink', 'drinks', 'beverage', 'beverages'];
+        const genericFoodWords = ['meal', 'meals', 'food', 'foods', 'dish', 'dishes'];
 
         function searchMovie() {
             const movieTitle = document.getElementById("movie-search").value.trim();
@@ -384,46 +687,69 @@
 
             var additionalDrinkDesc = document.getElementById("description-drink-search").value.trim();
 
-            // Split the ad-hoc by spaces
-            // Find any restrictions
             foodRestrictions = [];
+            drinkRestrictions = [];
+
             if (additionalFoodDesc) {
+                additionalFoodDesc = additionalFoodDesc.toLowerCase();
+
+                multiWordDietary.forEach(phrase => {
+                    if (additionalFoodDesc.includes(phrase)) {
+                        foodRestrictions.push(phrase.replace(/\s+/g, '-'));
+                        additionalFoodDesc = additionalFoodDesc.replace(new RegExp(phrase, 'gi'), '').trim();
+                    }
+                });
+
                 splittedFoodDesc = additionalFoodDesc.toLowerCase().split(" ");
-                let indexesToRemove = [];
+                console.log(splittedFoodDesc)
+                let newFoodDesc = [];
 
                 splittedFoodDesc.forEach((word, i) => {
                     if (dietaryRestrictions.includes(word)) {
                         foodRestrictions.push(word);
-
-                        indexesToRemove.push(i);
+                    } else if (!genericFoodWords.includes(word)) {
+                        newFoodDesc.push(word);
                     }
                 });
 
-                indexesToRemove.forEach((index) => {
-                    splittedFoodDesc.splice(index, 1);
-                });
-
-                additionalFoodDesc = splittedFoodDesc.join(" ");
+                additionalFoodDesc = newFoodDesc.join(" ");
             };
 
-            drinkRestrictions = [];
             if (additionalDrinkDesc) {
-                splittedDrinkDesc = additionalDrinkDesc.toLowerCase().split(" ");
-                console.log("split drink", splittedDrinkDesc)
-                let indexesToRemove = [];
+                additionalDrinkDesc = additionalDrinkDesc.toLowerCase();
+
+                // Map multi-word alcohol phrases
+                Object.keys(multiWordAlcoholMap).forEach(phrase => {
+                    if (additionalDrinkDesc.includes(phrase)) {
+                        drinkRestrictions.push(multiWordAlcoholMap[phrase]);
+                        additionalDrinkDesc = additionalDrinkDesc.replace(phrase, '').trim();
+                    }
+                });
+
+                // Handle multi-word dietary restrictions
+                multiWordDietary.forEach(phrase => {
+                    if (additionalDrinkDesc.includes(phrase)) {
+                        foodRestrictions.push(phrase.replace(/\s+/g, '-'));
+                        additionalDrinkDesc = additionalDrinkDesc.replace(phrase, '').trim();
+                    }
+                });
+
+                splittedDrinkDesc = additionalDrinkDesc.split(" ").filter(w => w !== '');
+                console.log(splittedDrinkDesc)
+                let newDrinkDesc = [];
 
                 splittedDrinkDesc.forEach((word, i) => {
                     if (alcRestrictions.includes(word)) {
                         drinkRestrictions.push(word);
-
-                        indexesToRemove.push(i);
+                    }
+                    else if (dietaryRestrictions.includes(word)) {
+                        foodRestrictions.push(word);
+                    } else if (!genericDrinkWords.includes(word)) {
+                        newDrinkDesc.push(word);
                     }
                 });
-                indexesToRemove.forEach((index) => {
-                    splittedDrinkDesc.splice(index, 1);
-                });
 
-                additionalDrinkDesc = splittedDrinkDesc.join(" ");
+                additionalDrinkDesc = newDrinkDesc.join(" ").trim();
             };
 
             // Splice together the splitted ad-hoc with the restrictions removed
@@ -449,8 +775,7 @@
                 fetchUrl += `&fooddescription=${encodeURIComponent(additionalFoodDesc)}`;
             }
 
-            console.log(fetchUrl)
-
+            // Select the modal container
             const modalContainer = document.getElementById("modal-shadow");
             // Clean away any previous modals
             document.querySelectorAll(".cocktail-card").forEach(cocktail => cocktail.remove());
@@ -492,10 +817,14 @@
                             <div class="hr"></div>
                         `
 
+                        // The container for the cocktail buttons
                         const cocktailRow = document.createElement("div");
                         cocktailRow.className = "cocktail-row";
                         cocktailSection.appendChild(cocktailRow);
 
+                        // Track i to map each button to a respective modal
+                        // A better implementation would add metadata to each recipe
+                        // and then just use that
                         let i = 0;
                         data.cocktails.forEach(c => {
                             const cocktail = c.data;
@@ -508,15 +837,18 @@
                             cocktail.top_svd_terms = c.top_svd_terms;
                             cocktail.source = c.source;
 
+                            // If the most relevant cocktail
                             if (i == 0) {
                                 cocktailRecommended.innerHTML += cocktailCard(cocktail, i);
                             }
+                            // Else every other cocktail
                             else {
                                 cocktailRow.innerHTML += cocktailCard(cocktail, i);
 
                                 let cocktailModalContent = document.createElement("div");
                                 cocktailModalContent.className = 'cocktail-card hidden';
-                                cocktailModalContent.id = i;
+                                // i.e. The second modal has the id "cards2"
+                                cocktailModalContent.id = 'cards' + i;
 
                                 cocktailModalContent.innerHTML += cocktailModal(cocktail, i);
 
@@ -531,15 +863,27 @@
 
                     // Add recipes section
                     if (data.recipes?.length > 0) {
+                        // Create the container for everything
                         const recipeMain = document.createElement("div");
                         recipeMain.className = "recipe-main";
-                        recipeMain.innerHTML = `<h3 class="section-header">Recipes we'd recommend...</h3>`;
+                        recipeMain.innerHTML = `<h3 class="section-header">Some recipes to nibble on...</h3>`;
 
                         const recipeSection = document.createElement("div");
                         recipeSection.className = "recipe-section";
 
-                        data.recipes.forEach(r => {
+                        // Recipe Buttons
+                        // List the Name, Score, and Ratings
+                        const recipeButtons = document.createElement("div");
+                        recipeButtons.className = "recipe-buttons";
+
+                        // Recipe Cards
+                        // List everything else
+                        const recipeCards = document.createElement("div");
+                        recipeCards.className = "recipe-cards";
+
+                        data.recipes.forEach((r, i) => {
                             const recipe = r.data;
+
                             recipe.score = r.score;
                             recipe.jaccard_score = r.jaccard_score;
                             recipe.weighted_jaccard = r.weighted_jaccard;
@@ -549,9 +893,31 @@
                             recipe.top_svd_terms = r.top_svd_terms;
                             recipe.sentiment_text = r.sentiment_text;
                             recipe.sentiment_score = r.sentiment_score
-                            recipeSection.innerHTML += recipeTemplate(recipe);
+
+                            // Add the buttons!
+                            recipeButtons.innerHTML += recipeButtonMaker(recipe, i);
+                            // Add the recipes!
+                            recipeCards.innerHTML += recipeTemplate(recipe, i);
+                            allRecipes.push(recipe);
+
+                            // If there are recommended cocktail pairings
+                            if (recipe.recommended_cocktails) {
+                                recipe.recommended_cocktails.forEach((d, u) => {
+                                    // Create the div inside the modal container
+                                    let recipeModalContent = document.createElement("div");
+                                    recipeModalContent.className = 'cocktail-card hidden';
+                                    // Track the id "recipeIndex_cocktailPairingIndex"
+                                    recipeModalContent.id = `${i}_${u}`;
+
+                                    recipeModalContent.innerHTML += cocktailModal(d.data, i, rank = d.rank);
+                                    modalContainer.appendChild(recipeModalContent);
+                                })
+                            };
                         });
 
+
+                        recipeSection.appendChild(recipeButtons);
+                        recipeSection.appendChild(recipeCards);
                         recipeMain.appendChild(recipeSection);
                         resultsContainer.appendChild(recipeMain);
                     }
@@ -566,11 +932,24 @@
                     document.querySelectorAll('.star-rating').forEach(el => {
                         const rating = parseFloat(el.dataset.rating);
                         const percent = Math.max(0, Math.min(100, (rating / 5) * 100));
-                        console.log(rating)
                         el.querySelector('.star-fill').style.width = percent + '%';
                     });
 
+                    // Add a click-to-show to each cocktail button to show the modal
                     document.querySelectorAll('.cocktail-buttons').forEach(button => {
+                        button.addEventListener('click', () => {
+                            const id = button.getAttribute('id');
+                            const card = document.querySelector(`.cocktail-card[id='${id}']`);
+
+                            // If the card exists
+                            if (card) {
+                                modalContainer.classList.toggle('hidden')
+                                card.classList.toggle('hidden'); // toggle visibility
+                            }
+                        });
+                    });
+                    // Add a click-to-show to each cocktail pairing button
+                    document.querySelectorAll('.pairing-button').forEach(button => {
                         button.addEventListener('click', () => {
                             const id = button.getAttribute('id');
                             const card = document.querySelector(`.cocktail-card[id='${id}']`);
@@ -581,6 +960,7 @@
                             }
                         });
                     });
+                    // Add a click-to-close to the modal
                     document.querySelectorAll('.close-button').forEach(button => {
                         button.addEventListener('click', () => {
                             closeModal();
@@ -590,7 +970,6 @@
 
                     // Detect any Escape buttons too
                     document.onkeydown = function (e) {
-                        console.log("Pressed")
                         if (e.keyCode == 27) {
                             closeModal();
                         }
@@ -601,21 +980,40 @@
                         closeModal();
                     });
 
+                    // Show and hide the correct recipes whenever one is clicked
+                    // Fortunately works if you click the same one twice
+                    document.querySelectorAll('.recipe-button').forEach(button => {
+                        button.addEventListener('click', () => {
+                            const id = button.getAttribute('id');
+                            const card = document.querySelector(`.recipe-card[id='${id}']`);
+
+                            if (card.classList.contains('hidden')) {
+                                document.querySelectorAll('.recipe-card').forEach(card => {
+                                    card.classList.add('hidden');
+                                });
+
+                                card.classList.toggle('hidden'); // toggle visibility
+                            }
+                        });
+                    })
+
+                    // Adds a hidden class to every cocktail card
                     function closeModal() {
                         document.querySelectorAll('.cocktail-card').forEach(card => {
                             card.classList.add('hidden');
                         });
 
+                        // Hides the modal container too
                         document.querySelector(`.modal-shadow`).classList.add('hidden');
                     };
 
+                    // Scroll everything into view once it loads
+                    answerBox.scrollIntoView({ block: "start", inline: "nearest", behavior: "smooth" });
                 })
                 .catch(error => {
                     loadingIndicator.style.display = "none";
                     answerBox.innerHTML = errorTemplate("Failed to get results. Please try again.");
                     console.error('Error:', error);
-
-
                 });
         }
     </script>

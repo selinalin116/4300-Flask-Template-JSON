@@ -126,57 +126,6 @@ def get_script_phrases(script_text, min_word_length=3):
 
     return phrases
 
-# def normalize_ingredient(ingredient):
-#     """
-#     Normalize ingredient phrase to remove common descriptors
-#     """
-#     phrase = ingredient.lower().strip()
-#     results = set()
-
-#     # Compounds where we don't want to extract the base ingredient since the individual words do not have much significant meanings
-#     no_base_extraction = ['baking powder', 'baking soda']
-    
-#     # Common compound ingredints
-#     compound_ingredients = [
-#         'olive oil', 'vegetable oil', 'peanut butter', 'cream cheese', 
-#         'sour cream', 'maple syrup',
-#         'coconut milk', 'heavy cream', 'red wine', 'white wine', 
-#     ]
-    
-#     all_compounds = no_base_extraction + compound_ingredients
-
-#     for compound in all_compounds:
-#         if compound in phrase:
-#             results.add(compound)
-            
-#             if compound not in no_base_extraction:
-#                 base_ingredient = compound.split()[-1]  # Gets the last word of a compound ingredient since that is usually a noun
-#                 if base_ingredient not in results:
-#                     results.add(base_ingredient)
-#             else:
-#                 return
-
-#     phrase = ingredient.lower().strip()
-    
-#     # Common descriptors in ingredients
-#     modifiers = [
-#         'fresh', 'chopped', 'diced', 'sliced', 'crushed', 'ground', 'minced',
-#         'large', 'small', 'medium', 'extra', 'shredded', 'grated', 'whole', 'cups',
-#         'plain', 'unsweetened', 'sweetened', 'semi-sweet', 'cooked', 'raw', 'all-purpose',
-#         'brown', 'heavy', 'unsalted', 'light', 'dark', 'hard', 'smoked',
-#         'half', 'green', 'hot', 'red', 'warm', 'lean', 'sour', 'food', 'sweet', 'mixed', 'yellow', 'black', 'white', 'prepared', 'round', 'boiling', 'bay', 'dry', 'instant', 'cut', 'dried', 'fresh', 'stuffed'
-#     ]
-
-#     # Remove descriptors
-#     words = phrase.split()
-#     filtered_words = [word for word in words if word not in modifiers]
-
-#     if filtered_words:
-#         results.add(" ".join(filtered_words))  # cleaned full phrase
-#         results.update(filtered_words)   
-    
-#     return list(results)
-
 def normalize_ingredient(ingredient):
     """
     Normalize ingredient phrase to remove common descriptors
@@ -414,7 +363,7 @@ def get_cocktail_ingredients(cocktail):
 
 meat_no_fish = ['chicken','bacon','turkey','beef','pork','duck','steak','wings','ground round',
                 'boneless skinless chicken breast halves','ham','veal','lamb', 'sausage',
-                'ground chuck','suet','ox kidney']
+                'ground chuck','suet','ox kidney', 'roast']
 fish = ['fish', 'salmon', 'sardines','trout', 'mackerel', 'cod', 'haddock', 'pollock',
         'flounder', 'tilapia', 'shellfish', 'mussels', 'scallops', 'squid', 
         'oysters', 'crab', 'shrimp', 'sea bass', 'halibut', 'tuna','clams',
@@ -570,3 +519,4 @@ def is_plot_script(filename):
         return "plot"
     else:
         return "script"
+

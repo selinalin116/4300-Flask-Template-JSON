@@ -117,4 +117,3 @@ def extract_ingredients(cocktail):
             ingredients.append(cleaned_ingredient)
 
     return ingredients
-

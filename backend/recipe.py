@@ -149,6 +149,8 @@ def clean_recipe_data(recipe):
         'ingredients': [ingredient.strip().lower() for ingredient in ast.literal_eval(recipe['ingredients'])],
         'rating': recipe['average_rating'],
         'rating_count': recipe['review_count'],
+        'review_list': recipe['review_list'],
+        'review_rating_list': recipe['review_rating_list'],
         # 'instructions': recipe['steps'] 
         'instructions': instructions,
         'five_star': recipe['5_star_percentage'],
