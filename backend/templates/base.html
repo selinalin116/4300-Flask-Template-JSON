@@ -112,11 +112,13 @@
 
     <div id="reviewsModal" class="reviews-modal hidden">
         <div class="reviews-modal-content">
+        <div class="modal-header">
             <span class="close-modal" onclick="reviewsCloseModal()">&times;</span>
             <h2>Reviews</h2>
-            <div id="modal-reviews-container">
-                <!-- Reviews fill here -->
-            </div>
+        </div>
+        <div id="modal-reviews-container">
+            <!-- Reviews fill here -->
+        </div>
         </div>
     </div>
 
@@ -583,6 +585,24 @@
             `
             container.innerHTML += userSentiment;
 
+            const search_terms = recipe.search_terms || [];
+
+            let searchTerms = "";
+            if (search_terms.length > 0) {
+            const toTitleCase = str => str
+                .split('-')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');  
+
+            searchTerms = `
+                <div class="search-terms">
+                ${search_terms.map(term => `<span class="tag">${toTitleCase(term)}</span>`).join(' ')}
+                </div>
+            `;
+            }
+
+            container.innerHTML += searchTerms
+
             visibleReviewCount = 3;
             renderReviews(recipe);
 
@@ -838,7 +858,8 @@
                         return;
                     }
                     const source = data.source === "plot" ? "plot" : "script";
-                    const sourceInfo = `<div class="source-info"><strong>Similarity measures are based on:</strong> ${source}</div>`;
+                    const capitalizedSource = source.charAt(0).toUpperCase() + source.slice(1);
+                    const sourceInfo = `<div class="source-info"><strong>Similarity measures are based on:</strong> ${capitalizedSource}</div>`;
                     answerBox.innerHTML = sourceInfo;
                     const resultsContainer = document.createElement("div");
                     resultsContainer.className = "results-container";

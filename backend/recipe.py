@@ -142,6 +142,12 @@ def clean_recipe_data(recipe):
     Extracts and formats key details from a recipe dictionary.
     """
     instructions = parse_steps_to_paragraph(recipe["steps"])
+    raw_terms = recipe.get('search_terms')
+    if not raw_terms or raw_terms == 'None':
+        search_terms = []
+    else:
+        cleaned = str(raw_terms).strip("{}").replace("'", "").split(",")
+        search_terms = [term.strip() for term in cleaned if term.strip()]
 
     return {
         'name': recipe['name'].title(),
@@ -157,5 +163,6 @@ def clean_recipe_data(recipe):
         'four_star': recipe['4_star_percentage'],
         'three_star': recipe['3_star_percentage'],
         'two_star': recipe['2_star_percentage'],
-        'one_star': recipe['1_star_percentage']
+        'one_star': recipe['1_star_percentage'],
+        'search_terms': search_terms
     }
