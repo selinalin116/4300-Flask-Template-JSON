@@ -57,9 +57,9 @@ def find_foods():
     
     dietary_restrictions = dietary_list
 
-    # x = [r.strip() for r in drink_description.split(' ')] if drink_description else []
+    x = [r.strip() for r in drink_description.split(' ')] if drink_description else []
 
-    # y = [r.strip() for r in food_description.split(' ')] if food_description else []
+    y = [r.strip() for r in food_description.split(' ')] if food_description else []
 
     if alcohol_pref:
         alcohol_pref = alcohol_pref.strip().lower()
@@ -70,7 +70,7 @@ def find_foods():
     script = helper_functions.get_movie_script(movie_title, SCRIPT_FOLDER)
     if not script:
         return jsonify({"error": "Script or plot not found"})
-    
+
     script_filename = None
     variations = [f"plot {movie_title}.txt", f"{movie_title}.txt"]
     for file in os.listdir(SCRIPT_FOLDER):
@@ -79,9 +79,9 @@ def find_foods():
             break
     if not script_filename:
         return jsonify({"error": "Script or plot not found"})
-    
+
     source = "plot" if script_filename.startswith("plot") else "script"
-    
+
     script_tfidf = cocktail_vectorizer.transform([script])
     script_projected = script_tfidf.dot(vt.T)
     script_projected = normalize(script_projected)
@@ -93,7 +93,6 @@ def find_foods():
     beta = 0.9
 
     cocktail_desc_similarities = helper_functions.description_svd(cocktail_vectorizer, drink_description, vt, cocktail_vectors)
-    source = "script"
     weight_dict = {word: 1.5 for word in script_words}
     cocktail_tfidf = compute_idf()
     food_tfidf = recipe_compute_idf()
@@ -346,13 +345,13 @@ def find_foods():
     return jsonify({
         "cocktails": top_cocktails,
         "recipes": top_recipes,
-        "source":source
+        "source": source
     })
 
 @app.route("/movie-suggestions")
 def movie_suggestions():
     query = request.args.get('query', '').strip().lower()
-    if len(query) < 2: 
+    if len(query) < 3: 
         return jsonify([])
     try:
         movie_files = [

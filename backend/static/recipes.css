@@ -357,8 +357,20 @@ div.recipe-header > p {
 
 .sentiment-text {
     font-size: 14px;
-    color: #555;
+    color: black;
     margin-left: 8px;
+}
+
+.see-more-reviews {
+    text-align: center;
+    font-weight: bold;
+    margin-top: 16px;
+    padding: 8px;
+}
+
+.see-more-reviews:hover {
+    color: #e50914;
+    text-decoration: underline;
 }
 
 /* Rating breakdown */
@@ -503,14 +515,23 @@ div.recipe-header > p {
 
 .reviews-modal-content {
     background-color: #fff;
-    margin: 10% auto;
-    padding: 20px;
+    margin: 4% auto;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 40px;
+    padding-right: 40px;
     border-radius: 10px;
     width: 80%;
     max-width: 1000px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     animation: fadeIn 0.3s;
+    max-height: 80vh;       
+    overflow-y: auto;        
 }
+
+body.modal-open {
+    overflow: hidden;
+ }
 
 .close-modal {
     color: #aaa;
@@ -529,12 +550,81 @@ div.recipe-header > p {
     to {opacity: 1;}
 }
 
-/* See all reviews modal */
 .rating-summary {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
     text-align: center;
+    width: 100%;
+}
+
+.average-rating-section {
+    margin-left: 5px;
+}
+
+.big-rating {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.vertical-divider {
+    width: 1px;
+    height: 100%;
+    background-color: #ccc;
+    margin: 0 20px;
+}  
+
+.rating-breakdown {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.rating-row {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 6px;
+}
+
+.rating-label {
+    width: 40px;       
+    text-align: right;
+}
+
+.bar-container {
+    flex-grow: 1;
+    height: 15px;
+    background-color: #e0e0e0;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    background-color: #e50914;
+    width: 0%;
+    transition: width 0.6s ease;
+    border-radius: 5px 0 0 5px;
+}
+
+.rating-number {
+    width: 40px;
+    text-align: left;
+}
+
+.review-rating {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: -15px;
+}
+
+.small-rating {
+    margin-right: 7px;
+    font-weight: bold;
 }
 
 /* Movie dropdown */

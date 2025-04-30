@@ -441,15 +441,6 @@
                     <p class="detail-text">
                         <strong>Top SVD Themes:</strong> ${recipe.top_svd_terms && recipe.top_svd_terms.length > 0 ? recipe.top_svd_terms.join(', ') : 'N/A'}
                     </p>
-                    <p class="detail-text">
-                        <strong>User Sentiment:</strong>
-                        ${recipe.sentiment_text !== undefined && recipe.sentiment_score !== null
-                    ? `<span class="sentiment-text">
-                            ${recipe.sentiment_text} Ratings (Score of ${recipe.sentiment_score.toFixed(2)})
-                            </span>`
-                    : '<span>NO SENTIMENT</span>'
-                }
-                    </p>
                 </div>
             </div>
         `;
@@ -488,8 +479,50 @@
             breakdown.classList.add('breakdown-hidden');
         }
 
-        function openModal(i) {
+        function renderReviews(recipe) {
+            const container = document.getElementById("modal-reviews-container");
 
+
+            document.querySelectorAll(".single-review, .see-more-reviews").forEach(el => el.remove());
+
+            const reviews = recipe.review_list || [];
+            const ratings = recipe.review_rating_list || [];
+
+            const reviewsToShow = reviews.slice(0, visibleReviewCount);
+
+            reviewsToShow.forEach((reviewText, idx) => {
+                const rating = ratings[idx] || "N/A";
+                const div = document.createElement("div");
+                div.classList.add("single-review");
+
+                div.innerHTML = `
+                    <hr>
+                    <div class="review-rating">
+                        <p class="small-rating">${isNaN(rating) || rating === "N/A" ? rating : `${rating}.0`}</p>
+                        <div class="stars">${generateStars(rating)}</div>
+                    </div>
+                    <p>${reviewText}</p>
+                `;
+                container.appendChild(div);
+            });
+
+            if (visibleReviewCount < reviews.length) {
+                const seeMoreBtn = document.createElement("div");
+                seeMoreBtn.classList.add("see-more-reviews");
+                seeMoreBtn.innerText = "Show more reviews";
+                seeMoreBtn.style.cursor = "pointer";
+
+                seeMoreBtn.addEventListener("click", () => {
+                    visibleReviewCount += 3;
+                    renderReviews(recipe);
+                });
+
+                container.appendChild(seeMoreBtn);
+            }
+        }
+
+        function openModal(i) {
+            document.body.classList.add("modal-open");
             const recipe = allRecipes[i];
             console.log(recipe)
             const modal = document.getElementById("reviewsModal");
@@ -499,11 +532,11 @@
 
             const avgRating = recipe.rating || "N/A";
             const totalRatings = recipe.rating_count || 0;
-            const fiveStarPercent = recipe['5_star_percentage'] || 0;
-            const fourStarPercent = recipe['4_star_percentage'] || 0;
-            const threeStarPercent = recipe['3_star_percentage'] || 0;
-            const twoStarPercent = recipe['2_star_percentage'] || 0;
-            const oneStarPercent = recipe['1_star_percentage'] || 0;
+            const fiveStarPercent = recipe['five_star'] || 0;
+            const fourStarPercent = recipe['four_star'] || 0;
+            const threeStarPercent = recipe['three_star'] || 0;
+            const twoStarPercent = recipe['two_star'] || 0;
+            const oneStarPercent = recipe['one_star'] || 0;
 
             const ratingSummary = `
                 <div class="rating-summary">
@@ -512,6 +545,8 @@
                         <div class="stars">${generateStars(avgRating)}</div>
                         <div class="rating-count">${totalRatings} ratings</div>
                     </div>
+                    
+                    <div class="vertical-divider"></div>
 
                     <div class="rating-breakdown">
                         ${buildRatingRow("5.0", fiveStarPercent)}
@@ -525,25 +560,31 @@
 
             container.innerHTML += ratingSummary; 
 
-            const reviews = recipe.review_list || [];
-            const ratings = recipe.review_rating_list || [];
-
-            if (reviews.length === 0) {
-                container.innerHTML += "<p>No reviews available.</p>";
-            } else {
-                reviews.forEach((reviewText, idx) => {
-                    const rating = ratings[idx] || "N/A";
-                    const div = document.createElement("div");
-                    div.classList.add("single-review");
-
-                    div.innerHTML = `
-                        <hr>
-                        <p><strong>Rating: ${rating}★</strong></p>
-                        <p>${reviewText}</p>
-                    `;
-                    container.appendChild(div);
+            setTimeout(() => {
+                document.querySelectorAll('.bar-fill').forEach(bar => {
+                    const targetWidth = bar.getAttribute('data-target-width');
+                    if (targetWidth) {
+                        bar.style.width = targetWidth;
+                    }
                 });
-            }
+            }, 50);
+
+            const sentiment_text = recipe.sentiment_text;
+            const sentiment_score = recipe.sentiment_score
+
+            const userSentiment = `
+                <div class="user-sentiment">
+                    ${sentiment_text !== undefined && sentiment_score !== null
+                    ? `<p class="sentiment-text">
+                            User Sentiment: ${sentiment_text} Ratings (Score of ${sentiment_score.toFixed(2)})
+                        </p>`
+                    : '<p>NO SENTIMENT</p>'}
+                </div>
+            `
+            container.innerHTML += userSentiment; 
+
+            visibleReviewCount = 3;
+            renderReviews(recipe);
 
             modal.classList.remove('hidden');
             modal.style.display = "block";
@@ -551,16 +592,19 @@
 
 
         function reviewsCloseModal() {
+            document.body.classList.remove("modal-open");
             const modal = document.getElementById("reviewsModal");
             modal.classList.add('hidden');
             modal.style.display = "none";
         }
 
         function generateStars(avg) {
+            const safeAvg = isNaN(avg) || avg === "N/A" ? 0 : Number(avg);
+            const percent = Math.max(0, Math.min(100, (safeAvg / 5) * 100));
             return `
                 <div class="star-rating" data-rating="${avg}">
                     <div class="star-base">★★★★★</div>
-                    <div class="star-fill">★★★★★</div>
+                    <div class="star-fill" style="width: ${percent}%">★★★★★</div>
                 </div>
             `;
         }
@@ -568,10 +612,10 @@
         function buildRatingRow(star, percent) {
             return `
                 <div class="rating-row">
-                    <span class="rating-label">${star}</span>
                     <div class="bar-container">
-                        <div class="bar-fill" style="width: ${percent}%;"></div>
+                        <div class="bar-fill" style="width: 0%;" data-target-width="${percent}%"></div>
                     </div>
+                    <span class="rating-label">${star}</span>
                     <span class="rating-number">${percent.toFixed(0)}%</span>
                 </div>
             `;
