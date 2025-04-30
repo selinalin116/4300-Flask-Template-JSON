@@ -519,4 +519,3 @@ def is_plot_script(filename):
         return "plot"
     else:
         return "script"
-

@@ -238,6 +238,13 @@ def find_foods():
                     elif words:
                         ingredients.add(words[0])
             
+            recipe_title = recipe["name"].lower()
+            recipe_title_words = set(recipe_title.split())
+            title_match_count = len(recipe_title_words & script_words)
+            title_match_score = title_match_count / len(recipe_title_words) if recipe_title_words else 0
+            title_match_weight = 2
+            weighted_title_match_score = title_match_score * title_match_weight
+                
         except (SyntaxError, ValueError):
             ingredients = set()
 
@@ -249,7 +256,6 @@ def find_foods():
         # Compute top SVD terms
         top_svd_indices = np.argsort(-rec_script_projected[0])[:5]
         top_svd_terms = [recipe_vectorizer.get_feature_names_out()[i] for i in top_svd_indices]
-
 
         svd_script_score = rec_similarities[0][i]
         combined_desc_score = None
@@ -265,16 +271,21 @@ def find_foods():
         jaccard_score = recipe_jaccard_scores[i]
         raw_jaccard_score = food_raw_jaccard_scores[i]
 
-        # boost score if user preference matches recipe ingredients
+        # Boost score if user preference matches recipe ingredients
         preference_boost = 0
         if food_description:
             preference_boost = sum(1 for word in food_description.split() if word in ingredients) * 0.1
 
-        base_score = helper_functions.combine_scores(jaccard_score, combined_svd_score, alpha=0.4) + preference_boost
+        combined_score = (
+            0.4 * jaccard_score +
+            0.3 * combined_svd_score +
+            0.2 * weighted_title_match_score +
+            0.1 * preference_boost
+        )
 
         rating = recipe.get("average_rating", 0) or 0
         normalized_rating = rating / 5.0  
-        final_score = (0.95 * base_score) + (0.05 * normalized_rating)
+        final_score = (0.95 * combined_score) + (0.05 * normalized_rating)
 
         combined_scores.append(
             (recipe, 
@@ -283,7 +294,7 @@ def find_foods():
              jaccard_score, 
              svd_script_score, 
              combined_desc_score, 
-             base_score, 
+             combined_score, 
              intersecting_words, 
              top_svd_terms, 
              sentiment_text,

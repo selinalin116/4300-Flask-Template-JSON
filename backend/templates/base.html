@@ -112,14 +112,14 @@
 
     <div id="reviewsModal" class="reviews-modal hidden">
         <div class="reviews-modal-content">
-        <span class="close-modal" onclick="reviewsCloseModal()">&times;</span>
-        <h2>Reviews</h2>
-        <div id="modal-reviews-container">
-            <!-- Reviews fill here -->
-        </div>
+            <span class="close-modal" onclick="reviewsCloseModal()">&times;</span>
+            <h2>Reviews</h2>
+            <div id="modal-reviews-container">
+                <!-- Reviews fill here -->
+            </div>
         </div>
     </div>
-  
+
 
     <div class="modal-shadow hidden" id="modal-shadow">
         <!-- Div to cover the whole screen when a cocktail is clicked. -->
@@ -558,7 +558,7 @@
                 </div>
             `;
 
-            container.innerHTML += ratingSummary; 
+            container.innerHTML += ratingSummary;
 
             setTimeout(() => {
                 document.querySelectorAll('.bar-fill').forEach(bar => {
@@ -581,7 +581,7 @@
                     : '<p>NO SENTIMENT</p>'}
                 </div>
             `
-            container.innerHTML += userSentiment; 
+            container.innerHTML += userSentiment;
 
             visibleReviewCount = 3;
             renderReviews(recipe);
