@@ -84,8 +84,6 @@ def replace_dashes():
                 os.rename(old_file_path, new_file_path)
                 print(f"Renamed {old_file_path} to {new_file_path}")
 
-replace_dashes()
-
 BASE_URL = "https://en.wikipedia.org"
 LIST_URL = BASE_URL + "/wiki/List_of_Studio_Ghibli_works"
 OUTPUT_DIR = "ghibli_plots"
@@ -132,7 +130,6 @@ def save_plot(title, plot_text):
         f.write(plot_text)
     print(f"Saved: {filename}")
 
-delete_film_suffix()
 
 # def main():
 #     links = get_ghibli_movie_links()

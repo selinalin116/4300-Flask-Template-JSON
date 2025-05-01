@@ -483,15 +483,6 @@ def extract_alcohol_phrases(word_list):
     return phrases
 
 def load_all_scripts(script_folder):
-    """
-    Loads the full text of all .txt scripts in the given folder.
-    
-    Parameters:
-        script_folder (str): Path to the folder containing movie scripts.
-
-    Returns:
-        List[str]: A list of script texts (one per file).
-    """
     script_texts = []
     for filename in os.listdir(script_folder):
         if filename.endswith(".txt"):
