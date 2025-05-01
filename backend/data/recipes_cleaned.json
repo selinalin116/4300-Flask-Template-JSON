@@ -21463,37 +21463,6 @@
         "search_terms": "{'cake', 'dessert'}"
     },
     {
-        "name": "pecan honey butter",
-        "id": 2808,
-        "minutes": 5,
-        "tags": "['15-minutes-or-less', 'time-to-make', 'course', 'main-ingredient', 'preparation', 'for-large-groups', 'low-protein', '5-ingredients-or-less', 'condiments-etc', 'fruit', 'easy', 'nuts', 'dietary', 'gluten-free', 'free-of-something', 'low-in-something', 'number-of-servings', '3-steps-or-less']",
-        "nutrition": "[113.1, 17.0, 14.0, 2.0, 0.0, 30.0, 1.0]",
-        "steps": "['slowly beat the honey into the butter or margarine until well blended', 'stir in chopped pecans', 'pack in gift containers and refrigerate', 'bring to room temperature before serving on biscuits , rolls , or other bread']",
-        "description": "-",
-        "ingredients": "['honey', 'butter', 'pecans']",
-        "average_rating": 5.0,
-        "review_list": [
-            "As good as any gourmet spread I've tasted.  With a food processor to chop the nuts and then mix the butter and honey, this spread can be put together in about 5 minutes or less. I made my spread using unsalted butter.",
-            "This spread makes an excellent addition to fresh baked bread.  The butter and honey were whipped in the mixer and then the chopped pecans stirred in.  Ready in a flash.  The recipe was cut in half without a problem.",
-            "YUM! Made this for use on baked sweet potatoes. I might add just a pinch of cinnamon!"
-        ],
-        "review_rating_list": [
-            5,
-            5,
-            5
-        ],
-        "review_count": 3.0,
-        "5_star_percentage": 100.0,
-        "4_star_percentage": 0.0,
-        "3_star_percentage": 0.0,
-        "2_star_percentage": 0.0,
-        "1_star_percentage": 0.0,
-        "ingredients_raw_str": "[\"1\/4  cup    honey\",\"1   cup    butter, softened  (Use either butter or margarine)\",\"1\/2  cup    pecans, chopped \"]",
-        "serving_size": "1 (18 g)",
-        "servings": 20.0,
-        "search_terms": "{'gluten-free'}"
-    },
-    {
         "name": "pizza fondue",
         "id": 2814,
         "minutes": 25,
