@@ -241,9 +241,8 @@ def find_foods():
             recipe_title = recipe["name"].lower()
             recipe_title_words = set(recipe_title.split())
             title_match_count = len(recipe_title_words & script_words)
-            title_match_score = title_match_count / len(recipe_title_words) if recipe_title_words else 0
             title_match_weight = 2
-            weighted_title_match_score = title_match_score * title_match_weight
+            weighted_title_match_score = title_match_count * title_match_weight
                 
         except (SyntaxError, ValueError):
             ingredients = set()
@@ -277,9 +276,9 @@ def find_foods():
             preference_boost = sum(1 for word in food_description.split() if word in ingredients) * 0.1
 
         combined_score = (
-            0.4 * jaccard_score +
+            0.3 * jaccard_score +
             0.3 * combined_svd_score +
-            0.2 * weighted_title_match_score +
+            0.3 * weighted_title_match_score +
             0.1 * preference_boost
         )
 
