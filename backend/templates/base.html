@@ -140,7 +140,7 @@
     <div id="semantic-chart-modal" class="semantic-chart-modal" style="display:none;">
         <div class="semantic-modal-content">
             <span class="semantic-close-button" onclick="closeSemanticModal()">&times;</span>
-            <h3>Semantic Profile</h3>
+            <h3>Top SVD Dimensions</h3>
             <canvas id="semantic-chart-modal-canvas" width="400" height="400"></canvas>
         </div>
     </div>
@@ -178,6 +178,7 @@
 
 
     <script>
+        let allCocktails = [];
         let allRecipes = [];
         function noResultsTemplate(movieTitle) {
             return `<div class='no-results'>
@@ -247,7 +248,7 @@
                             <p class="detail-text">
                                 <strong>Shared Ingredients/Words:</strong> ${cocktail.jaccard_intersection && cocktail.jaccard_intersection.length > 0 ? cocktail.jaccard_intersection.join(', ') : 'N/A'}
                             </p>
-                            <p class="detail-text semantic-chart-toggle" onclick="toggleSemanticChart(${i})">
+                            <p class="detail-text semantic-chart-toggle" onclick="toggleSemanticChart(${i}, 'cocktail')">
                                 <strong>Top SVD Themes</strong>
                             </p>
                         </div>
@@ -303,7 +304,7 @@
                         <p class="detail-text">
                             <strong>Shared Ingredients/Words:</strong> ${cocktail.jaccard_intersection && cocktail.jaccard_intersection.length > 0 ? cocktail.jaccard_intersection.join(', ') : 'N/A'}
                         </p>
-                        <p class="detail-text semantic-chart-toggle" onclick="toggleSemanticChart(${i})">
+                        <p class="detail-text semantic-chart-toggle" onclick="toggleSemanticChart(${i}, 'cocktail')">
                             <strong>Top SVD Themes</strong>
                         </p>
                     </div>
@@ -499,23 +500,30 @@
 
         let modalChartInstance = null;
 
-        function toggleSemanticChart(i) {
+        function toggleSemanticChart(i, type = "recipe") {
             const modal = document.getElementById("semantic-chart-modal");
             const canvas = document.getElementById("semantic-chart-modal-canvas");
-            const recipe = allRecipes[i];
 
-            if (!modal || !canvas || !recipe) return;
+            if (!modal || !canvas) return;
 
-            const profile = recipe.semantic_profile;
+            let profile;
+            if (type === "recipe") {
+                const recipe = allRecipes[i];
+                if (!recipe) return;
+                profile = recipe.semantic_profile;
+            } else if (type === "cocktail") {
+                const cocktail = allCocktails[i];
+                if (!cocktail) return;
+                profile = cocktail.semantic_profile;
+            }
+
             if (!profile || profile.length === 0) return;
 
             const labels = profile.map(p => p.label);
             const values = profile.map(p => p.score);
 
-            // Show modal
             modal.style.display = "flex";
 
-            // Destroy any existing chart
             if (modalChartInstance) {
                 modalChartInstance.destroy();
             }
@@ -1066,6 +1074,7 @@
                             cocktail.jaccard_intersection = c.jaccard_intersection;
                             cocktail.top_svd_terms = c.top_svd_terms;
                             cocktail.source = c.source;
+                            allCocktails.push(cocktail)
 
                             // If the most relevant cocktail
                             if (i == 0) {

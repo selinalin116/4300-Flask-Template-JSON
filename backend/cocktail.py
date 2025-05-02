@@ -79,9 +79,26 @@ def get_semantic_profile(cocktail_index, vt, vectorizer, vectors, top_n=6):
 
 def clean_cocktail_data(cocktail, index=None, vt=None, vectorizer=None, vectors=None):
 
+    approx_recipe_vec = np.dot(vectors, vt)  # shape: (num_words,)
+
+    # Then extract top-N contributing words from this approximation
+    # top_word_indices = np.argsort(-approx_recipe_vec)[:6]
+    # feature_names = vectorizer.get_feature_names_out()
+
+    # semantic_profile = []
+    # if index is not None and vt is not None and vectorizer is not None and vectors is not None:
+    #     semantic_profile = get_semantic_profile(index, vt, vectorizer, vectors)
+
     semantic_profile = []
     if index is not None and vt is not None and vectorizer is not None and vectors is not None:
-        semantic_profile = get_semantic_profile(index, vt, vectorizer, vectors)
+        approx_recipe_vec = np.dot(vectors[index], vt) 
+        top_word_indices = np.argsort(-approx_recipe_vec)[:6]
+        feature_names = vectorizer.get_feature_names_out()
+        for i in top_word_indices:
+            semantic_profile.append({
+                "label": feature_names[i],
+                "score": round(approx_recipe_vec[i], 4)
+            })
 
     raw_ingredients, ingredients = get_cocktail_ingredients(cocktail)
 
