@@ -59,9 +59,9 @@ header div#logo-container {
 }
 
 div#name-bar {
-    color: white;
-    text-shadow: 0 2px 16px rgba(0,0,0,1);
-    background-color: var(--red);
+    color: black;
+    /* text-shadow: 0 2px 16px rgba(0,0,0,1); */
+    background-color: var(--grey);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -101,6 +101,9 @@ ul#name-list * {
 
     display: flex;
     align-items: center;
+    border-bottom: 2px solid var(--red);
+    border-top: 2px solid var(--red);
+
 }
 
 div#intro-container {

@@ -444,7 +444,10 @@
                     </div>
                 </div>
 
-                <div class="recipe-details instructions">
+                <div class="recipe-hr"></div>
+
+                <div class="instructions">
+                    <h4 class="recipe-headers">Ingredients</h4>
                     <ul class="ingredients-list dashed">
                     ${recipe.ingredients
                     .filter(ing => ing.trim() !== '')
@@ -454,9 +457,13 @@
                     })
                     .join('')}
                     </ul>
+                </div>
 
-                    <h4>Instructions:</h4>
-                    
+                <div class="recipe-hr"></div>
+
+                <div class="instructions">
+                    <h4 class="recipe-headers">Instructions</h4>
+
                     <ol>
                         ${(instructionsArray).map(step => `<li class="capitalized">${step}.</li>`).join('')}
                     </ol>
@@ -464,6 +471,7 @@
 
                 ${recipe.recommended_cocktails && recipe.recommended_cocktails.length > 0
                     ? `<div class="recommended-cocktails">
+                        <div class="recipe-hr"></div>
                         <h4 class="accent-text">Some Nice Pairings...</h4>
                         <ul class="recommended-cocktails-list">
                             ${recipe.recommended_cocktails.map(cocktail => {

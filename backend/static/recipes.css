@@ -251,7 +251,7 @@ button.recipe-button {
     border-radius: 0;
     border: 1px solid black;
     border-right: none;
-    /* background-color: var(--yellow); */
+    background-color: lightgrey;
     color: black;
     font-size: 15px;
     
@@ -285,6 +285,14 @@ button.selected-recipe {
     
     padding: 30px;
 }
+
+h4.recipe-headers {
+    font-weight: bold;
+    font-size: 1.3em;
+    font-family: 'Perpetua', serif;
+
+}
+
 h3.recipe-name {
     font-size: 40px;
     margin: 0;
@@ -325,6 +333,13 @@ div.recipe-header > p {
 .pairing-button:hover {
     text-decoration: underline;
     cursor: pointer;
+}
+
+div.recipe-hr {
+    background-color: black;
+    height: 1px;
+    width: 60%;
+    margin: 20px auto;
 }
 
 /* Rating section in food recipes container */
