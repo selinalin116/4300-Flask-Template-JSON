@@ -6,6 +6,7 @@ from collections import Counter
 import math
 import re
 from helper_functions import tokenize_ingredients, get_cocktail_ingredients
+import numpy as np
 
 with open('data/cocktails.json', 'r') as f:
     cocktails = json.load(f)
@@ -58,7 +59,30 @@ def jaccard_similarity(script, raw_ingredients):
     intersection = script_words & ingredient_words
     return len(intersection) / (len(script_words | ingredient_words) + 1e-8)
 
-def clean_cocktail_data(cocktail):
+def get_semantic_profile(cocktail_index, vt, vectorizer, vectors, top_n=6):
+    """
+    Returns top-N semantic dimensions for a recipe as [{label, score}] pairs.
+    Each label is the top word contributing to that SVD component.
+    """
+    vec = vectors[cocktail_index]
+    top_indices = np.argsort(-vec)[:top_n]
+    feature_names = vectorizer.get_feature_names_out()
+
+    semantic_profile = []
+    for i in top_indices:
+        top_word_index = np.argmax(vt[i])
+        label = feature_names[top_word_index]
+        score = float(vec[i])
+        semantic_profile.append({"label": label, "score": round(score, 4)})
+
+    return semantic_profile
+
+def clean_cocktail_data(cocktail, index=None, vt=None, vectorizer=None, vectors=None):
+
+    semantic_profile = []
+    if index is not None and vt is not None and vectorizer is not None and vectors is not None:
+        semantic_profile = get_semantic_profile(index, vt, vectorizer, vectors)
+
     raw_ingredients, ingredients = get_cocktail_ingredients(cocktail)
 
     instructions = cocktail.get('strInstructions', '').strip()
@@ -73,7 +97,8 @@ def clean_cocktail_data(cocktail):
         'ingredients': ingredients,
         'raw_ingredients': raw_ingredients,
         'instructions': instructions,
-        'recipe_link': cocktail_url
+        'recipe_link': cocktail_url,
+        'semantic_profile': semantic_profile
     }
 
 # def extract_ingredients(cocktail):

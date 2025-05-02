@@ -9,6 +9,7 @@ from collections import Counter
 import ssl
 import nltk
 from textblob import TextBlob
+import numpy as np
 
 # try:
 #     _create_unverified_https_context = ssl._create_unverified_context
@@ -136,10 +137,29 @@ def get_sentiment_text(score):
         return "Fairly Positive"
     else:
         return "Very Positive"
-
-def clean_recipe_data(recipe):
+    
+def get_semantic_profile(recipe_index, vt, vectorizer, vectors, top_n=6):
     """
-    Extracts and formats key details from a recipe dictionary.
+    Returns top-N semantic dimensions for a recipe as [{label, score}] pairs.
+    Each label is the top word contributing to that SVD component.
+    """
+    vec = vectors[recipe_index]
+    top_indices = np.argsort(-vec)[:top_n]
+    feature_names = vectorizer.get_feature_names_out()
+
+    semantic_profile = []
+    for i in top_indices:
+        top_word_index = np.argmax(vt[i])
+        label = feature_names[top_word_index]
+        score = float(vec[i])
+        semantic_profile.append({"label": label, "score": round(score, 4)})
+
+    return semantic_profile
+
+def clean_recipe_data(recipe, index=None, vt=None, vectorizer=None, vectors=None):
+    """
+    Extracts and formats key details from a recipe dictionary,
+    and includes a semantic profile if SVD context is provided.
     """
     instructions = parse_steps_to_paragraph(recipe["steps"])
     raw_terms = recipe.get('search_terms')
@@ -149,6 +169,10 @@ def clean_recipe_data(recipe):
         cleaned = str(raw_terms).strip("{}").replace("'", "").split(",")
         search_terms = [term.strip() for term in cleaned if term.strip()]
 
+    semantic_profile = []
+    if index is not None and vt is not None and vectorizer is not None and vectors is not None:
+        semantic_profile = get_semantic_profile(index, vt, vectorizer, vectors)
+
     return {
         'name': recipe['name'].title(),
         'description': helper_functions.capitalize_sentences(recipe['description']),
@@ -157,12 +181,12 @@ def clean_recipe_data(recipe):
         'rating_count': recipe['review_count'],
         'review_list': recipe['review_list'],
         'review_rating_list': recipe['review_rating_list'],
-        # 'instructions': recipe['steps'] 
         'instructions': instructions,
         'five_star': recipe['5_star_percentage'],
         'four_star': recipe['4_star_percentage'],
         'three_star': recipe['3_star_percentage'],
         'two_star': recipe['2_star_percentage'],
         'one_star': recipe['1_star_percentage'],
-        'search_terms': search_terms
+        'search_terms': search_terms,
+        'semantic_profile': semantic_profile
     }

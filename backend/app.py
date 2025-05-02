@@ -154,7 +154,7 @@ def find_foods():
             preference_boost = sum(1 for word in drink_description.split() if word in cocktail_ingredients) * 0.1
 
         combined_score = helper_functions.combine_scores(jaccard_score, combined_svd_score, alpha=0.4) + preference_boost
-        combined_cocktail_scores.append((cocktail, combined_score, raw_jaccard_score, jaccard_score, svd_text_score, combined_desc_score, intersecting_words, top_svd_terms, source))
+        combined_cocktail_scores.append((cocktail, combined_score, raw_jaccard_score, jaccard_score, svd_text_score, combined_desc_score, intersecting_words, top_svd_terms, source, i))
 
     combined_cocktail_scores = sorted(combined_cocktail_scores, key=lambda x: -x[1])
     if (len(dietary_restrictions)>0):
@@ -163,12 +163,14 @@ def find_foods():
     # Filter based on user preferences
     if (len(alcohol_preference)==1):
         combined_cocktail_scores = drinks_filtered(combined_cocktail_scores, 6, alcohol_preference)
-
     
     # Sort and Get Top Cocktails
     top_cocktails = [
         {
-            "data": clean_cocktail_data(cocktail),
+            "data": clean_cocktail_data(cocktail, index=original_index,
+                                  vt = vt,
+                                  vectorizer=cocktail_vectorizer,
+                                  vectors=cocktail_vectors),
             "score": round(score * 100, 1),
             "jaccard_score": round(raw_jaccard_score * 100, 1),
             "weighted_jaccard_score": round(jaccard_score * 100, 1),
@@ -178,7 +180,7 @@ def find_foods():
             "top_svd_terms": top_svd_terms,
             "source": source
         }
-        for cocktail, score, raw_jaccard_score, jaccard_score, svd_text_score, combined_desc_score, intersecting_words, top_svd_terms, source in combined_cocktail_scores[:6]
+        for cocktail, score, raw_jaccard_score, jaccard_score, svd_text_score, combined_desc_score, intersecting_words, top_svd_terms, source, original_index in combined_cocktail_scores[:6]
     ]
 
     rec_script_tfidf = recipe_vectorizer.transform([script])
@@ -222,6 +224,7 @@ def find_foods():
                 food_cosine_scores.append(sim)
 
     combined_scores = []
+
     for i, recipe in enumerate(recipes):
         try:
             ingredients = set()
@@ -241,7 +244,9 @@ def find_foods():
             recipe_title = recipe["name"].lower()
             recipe_title_words = set(recipe_title.split())
             title_match_count = len(recipe_title_words & script_words)
-            weighted_title_match_score = title_match_count
+            title_match_score = title_match_count / len(recipe_title_words) if recipe_title_words else 0
+            title_match_weight = 2
+            weighted_title_match_score = title_match_score * title_match_weight
                 
         except (SyntaxError, ValueError):
             ingredients = set()
@@ -276,12 +281,10 @@ def find_foods():
 
         combined_score = (
             0.3 * jaccard_score +
-            0.3 * combined_svd_score +
-            0.3 * weighted_title_match_score +
+            0.6 * combined_svd_score +
+            # 0.25 * weighted_title_match_score +
             0.1 * preference_boost
         )
-
-        combined_score = min(combined_score, 1.0)
 
         rating = recipe.get("average_rating", 0) or 0
         normalized_rating = rating / 5.0  
@@ -298,7 +301,16 @@ def find_foods():
              intersecting_words, 
              top_svd_terms, 
              sentiment_text,
-             sentiment_score ))
+             sentiment_score, i))
+    
+    if food_description:
+        r_vectorizer = recipe_vectorizer_instructions
+        r_vt = i_rec_vt
+        r_vectors = i_recipe_vectors
+    else:
+        r_vectorizer = recipe_vectorizer
+        r_vt = rec_vt
+        r_vectors = recipe_vectors
 
     combined_scores = sorted(
         combined_scores,
@@ -312,7 +324,11 @@ def find_foods():
 
     top_recipes = [
         {
-            "data": clean_recipe_data(recipe),
+            "data": clean_recipe_data(recipe,
+                                  index=original_index,
+                                  vt=r_vt,
+                                  vectorizer=r_vectorizer,
+                                  vectors=r_vectors),
             "score": round(score * 100, 1),
             "jaccard_score": round(raw_jaccard_score * 100, 1),
             "weighted_jaccard": round(jaccard_score * 100, 1),
@@ -323,7 +339,7 @@ def find_foods():
             "sentiment_text": sentiment_text,
             "sentiment_score": sentiment_score
             }
-        for recipe, score, raw_jaccard_score, jaccard_score, svd_script_score, combined_desc_score, _, intersecting_words, top_svd_terms, sentiment_text, sentiment_score in combined_scores[:6]
+        for recipe, score, raw_jaccard_score, jaccard_score, svd_script_score, combined_desc_score, _, intersecting_words, top_svd_terms, sentiment_text, sentiment_score, original_index in combined_scores[:6]
     ]
 
     pairings_by_recipe = defaultdict(list)

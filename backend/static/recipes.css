@@ -510,7 +510,7 @@ div.recipe-header > p {
     color: #e50914;
     text-decoration: underline;
 }
-
+/* 
 .tag {
     display: inline-block;
     background-color: #eee;
@@ -519,7 +519,7 @@ div.recipe-header > p {
     margin: 2px;
     border-radius: 12px;
     font-size: 13px;
-}
+} */
   
 /* Recipe Reviews Modal */
 .modal-header {
@@ -665,6 +665,96 @@ body.modal-open {
 .small-rating {
     margin-right: 7px;
     font-weight: bold;
+}
+
+.filter-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    gap: 10px;
+}
+
+.search-terms {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tag {
+    background-color: #eee;
+    padding: 4px 10px;
+    border-radius: 16px;
+    font-size: 13px;
+    color: #333;
+}
+
+/* Sort dropdown of review modal */
+.sort-container select {
+    /* width: auto;
+    min-width: 80px;
+    max-width: 120px; */
+    border: none;
+    background-color: #f3f3f3;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 14px;
+    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="black" height="14" viewBox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 14px;
+    padding-right: 30px;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.sort-container select:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #ccc;
+}
+
+/* Semantic Chart Modal */
+.semantic-chart-modal {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+  
+.semantic-modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow: auto;
+    position: relative;
+}
+  
+.semantic-close-button {
+    position: absolute;
+    top: 10px; right: 14px;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+}
+  
+  
+.semantic-chart-toggle {
+    cursor: pointer;
+    color: black;
+    transition: color 0.2s;
+}
+
+.semantic-chart-toggle:hover {
+    color: #1a4eab;
+    text-decoration: underline;
 }
 
 /* Movie dropdown */
