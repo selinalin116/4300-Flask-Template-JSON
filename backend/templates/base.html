@@ -16,7 +16,7 @@
     <header>
         <div id="logo-container">
             <a href="">
-                <img src="{{ url_for('static', filename='images/logo2.svg') }}">
+                <img src="{{ url_for('static', filename='images/DNM2.png') }}">
             </a>
             <h4>For All Your Movie Nights</h4>
         </div>
@@ -43,7 +43,7 @@
     <div id="hero">
         <div id="intro-container">
             <div id="description">
-                <h1>D.N.M.</h1>
+                <h1>D<span>rink</span>N<span>ibble</span>M<span>ovie</span></h1>
                 <p>Find the perfect cocktails and food for your movie night!</p>
             </div>
             <div class="search-container">
@@ -108,6 +108,20 @@
 
     <div id="answer-box" class="answer-box">
         <!-- Results will appear here -->
+
+        <div id="home-page">
+            <h3>What is DNM?</h3>
+            <p>
+                DrinkMovieNibble is a project that sought to solve an everyday issue. You want to watch a movie but have to fit in time for dinner...
+                why not do both at the same time? We've created the perfect app for you to use to find those perfect recipes and those perfect cocktails 
+                to enjoy while watching your favorite films. Watch some Mission Impossible with a martini in-hand. Have a hamburger while watching Pulp Fiction!
+            </p>
+            <p>
+                This app uses various basic NLP methods to return relevant results based on ad-hoc queries. This may or may not include Jaccard/Cosine Similarity, SVD,
+                BERT, Rocchio's, Word2Vec, etc.
+            </p>
+        </div>
+
     </div>
 
     <div id="reviewsModal" class="reviews-modal hidden">
@@ -127,6 +141,30 @@
         <!-- Div to cover the whole screen when a cocktail is clicked. -->
     </div>
     <footer>
+        <div>
+            <div>
+                <h4>Datasets:</h4>
+                <ul>
+                    <li><a href="https://www.kaggle.com/datasets/uom190346a/tastetrios-exploring-ingredient-combinations">TasteTrios by Laksika Tharmalingam</a></li>
+                    <li><a href="https://www.kaggle.com/datasets/shuyangli94/foodcom-recipes-with-search-terms-and-tags">Food.com Recipes by Shuyang Li</a></li>
+                    <li><a href="https://www.thecocktaildb.com/">TheCocktailDB</a></li>
+                    <li><a href="https://imsdb.com/">The Internet Movie Script Database</a></li>
+                    <li><a href="https://en.wikipedia.org/">Wikipedia</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Contributors:</h4>
+                <ul>
+                    <li><a href="https://www.linkedin.com/in/vivian-zhou-a7bb21203/">Vivian Zhou</a></li>
+                    <li><a href="https://www.linkedin.com/in/selina-lin-363a88267/">Selina Lin</a></li>
+                    <li><a href="">Iris Ho</a></li>
+                    <li><a href="https://www.linkedin.com/in/chris-chung-849901263/">Chris Chung</a></li>
+                </ul>
+            </div>
+        </div>
+        <p>A 
+            <a href="https://classes.cornell.edu/browse/roster/SP25/class/CS/4300">CS4300</a> Project.
+        </p>
 
     </footer>
 
@@ -1049,6 +1087,14 @@
                     // Fortunately works if you click the same one twice
                     document.querySelectorAll('.recipe-button').forEach(button => {
                         button.addEventListener('click', () => {
+                            // Remove the selected-button class from every button
+                            document.querySelectorAll('.recipe-button').forEach(button => {
+                                button.classList.remove('selected-recipe');
+                            })
+                            // Add the selected-button class to the clicked button
+                            button.classList.add('selected-recipe');
+
+
                             const id = button.getAttribute('id');
                             const card = document.querySelector(`.recipe-card[id='${id}']`);
 

@@ -1,7 +1,13 @@
+:root {
+    --red: #e60023;
+    --yellow: #fbb040;
+    --grey: #f8f5f0;
+}
+
 html {
     display: flex;
     justify-content: center;
-    background-color: black;
+    background-color: white;
 }
 
 html,
@@ -15,6 +21,8 @@ body {
 body {
     width: 100%;
     max-width: 1920px;
+    height: 100%;
+    overflow-y:hidden;
 }
 
 a {
@@ -33,7 +41,7 @@ h4 {
 header {
     display: flex;
     align-items: center;
-    height: 100px;
+    height: 80px;
     width: 100%;
     padding: 0 calc(5% + 30px);
     color: black;
@@ -52,11 +60,19 @@ header div#logo-container {
 
 div#name-bar {
     color: white;
-    background-color: black;
+    text-shadow: 0 2px 16px rgba(0,0,0,1);
+    background-color: var(--red);
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0 calc(5% + 30px);
+}
+
+div#name-bar h5 {
+    font-family: 'Perpetua', serif;
+    font-weight: normal;
+    font-size: 1.2em;
+    margin: 0;
 }
 
 div#authors-bar {
@@ -90,7 +106,7 @@ ul#name-list * {
 div#intro-container {
     width: 500px;
     height: 500px;
-    background-color: rgba(0, 0, 0, 0.9);
+
     margin-left: 5%;
 
     padding: 30px;
@@ -98,6 +114,12 @@ div#intro-container {
 
 div#description {
     color: white;
+    text-shadow: 0 2px 16px rgba(0,0,0,1);
+}
+
+div#description h1 span {
+    font-size: 0.5em;
+    font-weight: normal;
 }
 
 .hidden {
@@ -106,7 +128,7 @@ div#description {
 
 #loading-message {
     font-size: 1.2rem;
-    font-weight: 500;
+    font-weight: normal;
     color: white;
 }
 
@@ -125,10 +147,10 @@ div#description {
     align-items: center;
     margin-bottom: 12px;
     background: white;
-    border-radius: 4px;
     padding: 8px 12px;
     width: 100%;
     box-sizing: border-box;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 
 .input-box img {
@@ -156,16 +178,19 @@ div#description {
 }
 
 #search-button {
-    background-color: #e50914;
+    background-color: var(--red);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+
     color: white;
     border: none;
-    border-radius: 4px;
     padding: 12px 24px;
-    margin-top: 10px;
+    margin-top: 20px;
     margin-bottom: 20px;
+    font-family: "Montserrat", sans-serif;
+    text-transform: uppercase;
 
     font-size: 16px;
-    font-weight: bold;
+    font-weight: normal;
     cursor: pointer;
     transition: background-color 0.3s ease;
     width: 100%;
@@ -173,7 +198,7 @@ div#description {
 }
 
 #search-button:hover {
-    background-color: #f40612;
+    background-color: var(--red);
 }
 
 #search-button:active {
@@ -191,8 +216,9 @@ div#description {
 
 .answer-box {
     width: 100%;
-    padding: 50px;
     box-sizing: border-box;
+
+    background-color: white;
 }
 
 .error-message,
@@ -201,12 +227,50 @@ div#description {
     text-align: center;
 }
 
-footer {
-    height: 150px;
-    width: 100%;
-    background-color: black;
-    color: white;
+div#home-page {
+    margin: 60px auto;
+    padding: 30px 30px;
+    width: 70%;
+    height: 600px;
+    background-color: var(--grey);
+}
 
+div#home-page h3 {
+    font-size: 30px;
+}
+
+footer {
+    height: 300px;
+    width: 100%;
+    background-color: var(--grey);
+    border-top:100px solid grey;
+
+    padding: 30px 30px;
+    font-size: 0.9em;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+footer > div {
+    display: flex;
+    flex-direction: row;
+}
+
+footer > div > div:first-child{
+    margin-right: 200px;
+}
+
+footer ul {
+    list-style: none;
+}
+
+footer ul li {
+    margin-bottom: 10px;
+}
+
+footer ul li a:hover{
+    text-decoration: underline;
 }
 
 .dropdown-content {
@@ -284,11 +348,12 @@ footer {
 }
 
 .source-info {
-    margin: 1rem 0;
     padding: 0.5rem 1rem;
     border-left: 4px solid #6c5ce7;
     font-size: 20px;
-    color: white;
+    color: black;
+    margin: 50px;
+    margin-bottom: 20px;
 }
 
 @media (max-width: 1600px) {
