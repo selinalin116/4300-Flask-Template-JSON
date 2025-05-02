@@ -669,7 +669,6 @@
         function openModal(i) {
             document.body.classList.add("modal-open");
             const recipe = allRecipes[i];
-            console.log(recipe)
             const modal = document.getElementById("reviewsModal");
             const container = document.getElementById("modal-reviews-container");
 
@@ -938,7 +937,6 @@
                 });
 
                 splittedFoodDesc = additionalFoodDesc.toLowerCase().split(" ");
-                console.log(splittedFoodDesc)
                 let newFoodDesc = [];
 
                 splittedFoodDesc.forEach((word, i) => {
@@ -972,7 +970,6 @@
                 });
 
                 splittedDrinkDesc = additionalDrinkDesc.split(" ").filter(w => w !== '');
-                console.log(splittedDrinkDesc)
                 let newDrinkDesc = [];
 
                 splittedDrinkDesc.forEach((word, i) => {
