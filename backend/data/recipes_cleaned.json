@@ -13106,47 +13106,6 @@
         "search_terms": "{'low-sodium', 'low-carb', 'mexican', 'dinner', 'chicken'}"
     },
     {
-        "name": "apple juice marinade",
-        "id": 1320,
-        "minutes": 0,
-        "tags": "['15-minutes-or-less', 'time-to-make', 'course', 'main-ingredient', 'preparation', 'occasion', 'condiments-etc', 'fruit', 'poultry', 'easy', 'marinades-and-rubs', 'dietary', 'free-of-something', 'apples', 'meat', 'equipment', 'grilling', 'number-of-servings', '3-steps-or-less']",
-        "nutrition": "[376.8, 0.0, 341.0, 167.0, 16.0, 0.0, 30.0]",
-        "steps": "['combine all ingredients', 'marinade meat all day or over night', 'excellent for grilled pork chops']",
-        "description": "apple juice marinade (for chicken or pork)",
-        "ingredients": "['apple juice', 'soy sauce', 'honey', 'lemon juice', 'garlic powder', 'dry mustard', 'ginger']",
-        "average_rating": 4.25,
-        "review_list": [
-            "I did not have soy sauce so I used teriyaki sauce and this was wonderful!  I used it on a steak I later grilled and then on chicken breasts I panfried.  Both tasted great!",
-            "I used this on skinless boneless chicken breasts and it was fabulous.  I used 3 cloves of garlic instead of the garlic powder because everything needs more garlic.  I reduced the marinade while the chicken was cooking and used it as a dipping sauce.  I think next time I will use less honey, as the apple juice is pretty sweet.  I will definitely use this recipe again.",
-            "I used 1\/2 tsp fresh grated ginger in place of ground, and 3 cloves of garlic minced in place of powder, and this was fantastic.  I can't see why people would used ground\/powdered spices here when the fresh tastes so much better.",
-            "Gosh, this was just kindof bland for us.  I used fresh spices as well, marinated for 24 hours on boneless skinless chicken breasts.  I guess I just expected more flavor.  It was not bad by any means, but not very flavorful.",
-            "I loved this combination! It was delicious!",
-            "Made for Summer '09 Comfort Cafe.  I must admit that once I put this all together I had my doubts.  Certainly didn't smell very inviting.  I even poked my index finger in for a little dip and wasn't too excited about the outcome. BUT, BUT, once I marinated my chicken fingers for 24 hours, placed them on a skewer, then the bar-b...well it presented a wonderful surprise.  Light tasting, not heavy like some marinades, the sugar from the apple juice and honey, caramelized the tenders just enough.  Mmmm, Mmmmm, Mmmmm.  Will definitely make this again.  Perhaps I'll use pork chops next time.  Thanks for a wonderful marinade.",
-            "We loved this marinade. Using the proportions listed, this marinade almost completely covered three med-sized pork chops, which I left in the fridge for 2 days. The only exception was that I used fresh garlic, which I had quartered and chrushed open. We enjoyed the subtle flavor of the ingredients very much.",
-            "Love it! Used it twice now on boneless, skinless chicken breasts and thighs. I marinade all day and throw them on the grill. Great chicken by itself but I cook it in bulk and chop it up and freeze it to use for quick meals. Sweet and just a little tangy, keeps the chicken moist."
-        ],
-        "review_rating_list": [
-            5,
-            4,
-            4,
-            3,
-            5,
-            4,
-            4,
-            5
-        ],
-        "review_count": 8.0,
-        "5_star_percentage": 38.0,
-        "4_star_percentage": 50.0,
-        "3_star_percentage": 12.0,
-        "2_star_percentage": 0.0,
-        "1_star_percentage": 0.0,
-        "ingredients_raw_str": null,
-        "serving_size": null,
-        "servings": null,
-        "search_terms": null
-    },
-    {
         "name": "barley   mushroom stuffed green bell peppers",
         "id": 1355,
         "minutes": 45,
